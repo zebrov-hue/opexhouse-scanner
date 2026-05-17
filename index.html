@@ -7,884 +7,472 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --navy: #0D1B2A;
-    --navy2: #1A2E4A;
-    --teal: #00C9A7;
-    --teal2: #00A896;
-    --orange: #FF6B35;
-    --gold: #F5C842;
-    --white: #F0F4F8;
-    --gray: #8899AA;
-    --green-bg: #0A2E1A;
-    --green: #22C55E;
-    --yellow-bg: #2A1F00;
-    --yellow: #EAB308;
-    --red-bg: #2A0A0A;
-    --red: #EF4444;
+    --navy: #0D1B2A; --navy2: #1A2E4A; --teal: #00C9A7; --gold: #F5C842;
+    --white: #F0F4F8; --gray: #8899AA; --green: #22C55E; --yellow: #EAB308;
+    --red: #EF4444; --orange: #F97316;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--navy); color: var(--white); font-family: 'Syne', sans-serif; min-height: 100vh; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(0,201,167,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,201,167,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+  .container { max-width: 1500px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
 
-  body {
-    background: var(--navy);
-    color: var(--white);
-    font-family: 'Syne', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+  header { padding: 24px 0 20px; border-bottom: 1px solid rgba(0,201,167,0.15); margin-bottom: 28px; }
+  .header-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-mark { width: 38px; height: 38px; background: var(--teal); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: var(--navy); }
+  .logo-text { font-size: 19px; font-weight: 700; letter-spacing: -0.5px; }
+  .logo-sub { font-size: 10px; color: var(--gray); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 2px; margin-top: 2px; }
+  .badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .badge { padding: 4px 10px; border-radius: 20px; font-size: 9px; font-family: 'DM Mono', monospace; letter-spacing: 1px; }
+  .bt { background: rgba(0,201,167,0.1); border: 1px solid rgba(0,201,167,0.3); color: var(--teal); }
+  .bg { background: rgba(245,200,66,0.1); border: 1px solid rgba(245,200,66,0.3); color: var(--gold); }
 
-  /* ── GRID BACKGROUND ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,201,167,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,201,167,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 4px; width: fit-content; }
+  .tab { padding: 10px 24px; border-radius: 9px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; color: var(--gray); border: none; background: transparent; }
+  .tab.active { background: var(--teal); color: var(--navy); }
 
-  .container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 24px;
-    position: relative;
-    z-index: 1;
-  }
+  .config-panel { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 22px; margin-bottom: 22px; }
+  .config-title { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--gray); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 14px; }
+  .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: 9px; color: var(--gray); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 1px; }
+  .field input, .field select { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 7px; padding: 8px 11px; color: var(--white); font-family: 'DM Mono', monospace; font-size: 11px; outline: none; }
+  .field input:focus, .field select:focus { border-color: var(--teal); }
+  .field select option { background: var(--navy2); }
+  .src-row { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 18px; }
+  .src-chip { padding: 5px 13px; border-radius: 20px; font-family: 'DM Mono', monospace; font-size: 10px; cursor: pointer; transition: all 0.15s; user-select: none; background: rgba(0,201,167,0.1); border: 1px solid rgba(0,201,167,0.3); color: var(--teal); }
+  .src-chip.off { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); color: var(--gray); }
+  .src-lbl { font-size: 9px; color: var(--gray); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
 
-  /* ── HEADER ── */
-  header {
-    padding: 32px 0 24px;
-    border-bottom: 1px solid rgba(0,201,167,0.15);
-    margin-bottom: 40px;
-  }
-
-  .header-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .logo-mark {
-    width: 40px;
-    height: 40px;
-    background: var(--teal);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 18px;
-    color: var(--navy);
-    flex-shrink: 0;
-  }
-
-  .logo-text {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--white);
-    letter-spacing: -0.5px;
-  }
-
-  .logo-sub {
-    font-size: 11px;
-    color: var(--gray);
-    font-family: 'DM Mono', monospace;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-top: 2px;
-  }
-
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .badge {
-    background: rgba(0,201,167,0.1);
-    border: 1px solid rgba(0,201,167,0.3);
-    color: var(--teal);
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    letter-spacing: 1px;
-  }
-
-  /* ── CONFIG PANEL ── */
-  .config-panel {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 16px;
-    padding: 28px;
-    margin-bottom: 32px;
-  }
-
-  .config-title {
-    font-size: 13px;
-    font-family: 'DM Mono', monospace;
-    color: var(--gray);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 20px;
-  }
-
-  .config-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .field label {
-    font-size: 11px;
-    color: var(--gray);
-    font-family: 'DM Mono', monospace;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .field input, .field select {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    padding: 10px 14px;
-    color: var(--white);
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  .field input:focus, .field select:focus {
-    border-color: var(--teal);
-  }
-
-  .field select option {
-    background: var(--navy2);
-  }
-
-  .btn-scan {
-    background: var(--teal);
-    color: var(--navy);
-    border: none;
-    border-radius: 10px;
-    padding: 14px 32px;
-    font-family: 'Syne', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    letter-spacing: -0.3px;
-  }
-
-  .btn-scan:hover {
-    background: #00E5C0;
-    transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(0,201,167,0.3);
-  }
-
-  .btn-scan:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  .btn-scan .spinner {
-    width: 16px;
-    height: 16px;
-    border: 2px solid rgba(13,27,42,0.3);
-    border-top-color: var(--navy);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    display: none;
-  }
-
-  .btn-scan.loading .spinner { display: block; }
-  .btn-scan.loading .btn-icon { display: none; }
-
+  .btn-scan { background: var(--teal); color: var(--navy); border: none; border-radius: 9px; padding: 11px 26px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-scan:hover:not(:disabled) { background: #00E5C0; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,201,167,0.3); }
+  .btn-scan:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .sp { width: 14px; height: 14px; border: 2px solid rgba(13,27,42,0.3); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+  .btn-scan.loading .sp { display: block; }
+  .btn-scan.loading .bi { display: none; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── STATS BAR ── */
-  .stats-bar {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 16px;
-    margin-bottom: 32px;
-    opacity: 0;
-    transition: opacity 0.4s;
-  }
+  .pw { margin-bottom: 14px; display: none; }
+  .pw.show { display: block; }
+  .pt { background: rgba(255,255,255,0.05); border-radius: 3px; height: 3px; overflow: hidden; }
+  .pf { height: 100%; background: var(--teal); border-radius: 3px; transition: width 0.3s; width: 0%; }
+  .ptxt { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--teal); margin-top: 5px; }
 
-  .stats-bar.visible { opacity: 1; }
+  .sb { display: none; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  .sb.show { display: grid; }
+  .sc { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px; text-align: center; }
+  .sn { font-size: 26px; font-weight: 800; color: var(--teal); line-height: 1; margin-bottom: 3px; }
+  .sl { font-size: 9px; color: var(--gray); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 1px; }
 
-  .stat-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-  }
+  .fr { display: none; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .fr.show { display: flex; }
+  .fb { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 5px 13px; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); cursor: pointer; transition: all 0.15s; }
+  .fb.act, .fb:hover { border-color: var(--teal); color: var(--teal); background: rgba(0,201,167,0.08); }
+  .fb.g.act { border-color: var(--green); color: var(--green); background: rgba(34,197,94,0.08); }
+  .fb.y.act { border-color: var(--yellow); color: var(--yellow); background: rgba(234,179,8,0.08); }
+  .fb.o.act { border-color: var(--orange); color: var(--orange); background: rgba(249,115,22,0.08); }
+  .si { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 5px 13px; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--white); outline: none; width: 180px; }
+  .si:focus { border-color: var(--teal); }
+  .eb { margin-left: auto; background: rgba(245,200,66,0.1); border: 1px solid rgba(245,200,66,0.3); border-radius: 20px; padding: 5px 13px; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gold); cursor: pointer; }
+  .eb:hover { background: rgba(245,200,66,0.2); }
 
-  .stat-num {
-    font-size: 32px;
-    font-weight: 800;
-    color: var(--teal);
-    line-height: 1;
-    margin-bottom: 6px;
-  }
-
-  .stat-label {
-    font-size: 11px;
-    color: var(--gray);
-    font-family: 'DM Mono', monospace;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  /* ── STATUS LOG ── */
-  .status-log {
-    background: rgba(0,0,0,0.3);
-    border: 1px solid rgba(0,201,167,0.15);
-    border-radius: 10px;
-    padding: 16px 20px;
-    margin-bottom: 24px;
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    color: var(--teal);
-    min-height: 44px;
-    display: none;
-  }
-
-  .status-log.visible { display: block; }
-
-  /* ── FILTERS ── */
-  .filters-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    opacity: 0;
-    transition: opacity 0.4s;
-  }
-
-  .filters-row.visible { opacity: 1; }
-
-  .filter-btn {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 20px;
-    padding: 7px 16px;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--gray);
-    cursor: pointer;
-    transition: all 0.15s;
-    letter-spacing: 0.5px;
-  }
-
-  .filter-btn:hover, .filter-btn.active {
-    border-color: var(--teal);
-    color: var(--teal);
-    background: rgba(0,201,167,0.08);
-  }
-
-  .filter-btn.green.active { border-color: var(--green); color: var(--green); background: rgba(34,197,94,0.08); }
-  .filter-btn.yellow.active { border-color: var(--yellow); color: var(--yellow); background: rgba(234,179,8,0.08); }
-  .filter-btn.red.active { border-color: var(--red); color: var(--red); background: rgba(239,68,68,0.08); }
-
-  .export-btn {
-    margin-left: auto;
-    background: rgba(245,200,66,0.1);
-    border: 1px solid rgba(245,200,66,0.3);
-    border-radius: 20px;
-    padding: 7px 16px;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--gold);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .export-btn:hover {
-    background: rgba(245,200,66,0.2);
-  }
-
-  /* ── TABLE ── */
-  .table-wrap {
-    border-radius: 14px;
-    overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.08);
-    opacity: 0;
-    transition: opacity 0.4s;
-  }
-
-  .table-wrap.visible { opacity: 1; }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-
-  thead tr {
-    background: rgba(255,255,255,0.05);
-  }
-
-  thead th {
-    padding: 14px 16px;
-    text-align: left;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--gray);
-    font-weight: 500;
-    white-space: nowrap;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-  }
-
-  tbody tr {
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    transition: background 0.15s;
-  }
-
-  tbody tr:hover { background: rgba(255,255,255,0.03); }
+  .tw { border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); display: none; margin-bottom: 40px; }
+  .tw.show { display: block; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead tr { background: rgba(255,255,255,0.05); }
+  thead th { padding: 11px 12px; text-align: left; font-family: 'DM Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray); font-weight: 500; white-space: nowrap; border-bottom: 1px solid rgba(255,255,255,0.06); cursor: pointer; user-select: none; }
+  thead th:hover { color: var(--teal); }
+  tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.1s; }
+  tbody tr:hover { background: rgba(255,255,255,0.025); }
   tbody tr:last-child { border-bottom: none; }
-
-  td {
-    padding: 14px 16px;
-    vertical-align: top;
-    line-height: 1.5;
-  }
-
-  .td-entreprise { font-weight: 700; color: var(--white); }
-  .td-poste { color: var(--gray); font-size: 12px; }
-  .td-blocs { font-family: 'DM Mono', monospace; font-size: 11px; color: rgba(0,201,167,0.8); }
-  .td-salaire { font-family: 'DM Mono', monospace; font-size: 12px; }
-  .td-economie { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 700; color: var(--green); }
-
-  .priority-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    white-space: nowrap;
-  }
-
-  .priority-haute { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
-  .priority-moyenne { background: rgba(234,179,8,0.15); color: var(--yellow); border: 1px solid rgba(234,179,8,0.3); }
-  .priority-faible { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
-
-  .sens-badge {
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-  }
-
-  .link-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    color: var(--teal);
-    text-decoration: none;
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    opacity: 0.7;
-    transition: opacity 0.15s;
-  }
-
-  .link-btn:hover { opacity: 1; }
-
-  /* ── EMPTY STATE ── */
-  .empty-state {
-    text-align: center;
-    padding: 80px 20px;
-    color: var(--gray);
-  }
-
-  .empty-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
-    opacity: 0.4;
-  }
-
-  .empty-title {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    color: var(--white);
-    opacity: 0.5;
-  }
-
-  .empty-sub {
-    font-size: 13px;
-    font-family: 'DM Mono', monospace;
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 768px) {
-    .config-grid { grid-template-columns: 1fr; }
-    table { font-size: 12px; }
-    td { padding: 10px 12px; }
-  }
+  td { padding: 11px 12px; vertical-align: top; line-height: 1.5; }
+  .cn { font-weight: 700; color: var(--white); font-size: 12px; }
+  .cm { font-size: 9px; color: var(--gray); font-family: 'DM Mono', monospace; margin-top: 2px; }
+  .tmono { font-family: 'DM Mono', monospace; font-size: 10px; }
+  .tbloc { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(0,201,167,0.8); line-height: 1.7; }
+  .teco { font-family: 'DM Mono', monospace; font-weight: 700; color: var(--green); }
+  .pb { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 20px; font-size: 10px; font-family: 'DM Mono', monospace; white-space: nowrap; }
+  .pbh { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+  .pbm { background: rgba(234,179,8,0.15); color: var(--yellow); border: 1px solid rgba(234,179,8,0.3); }
+  .pbf { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+  .vbh { background: rgba(249,115,22,0.15); color: var(--orange); border: 1px solid rgba(249,115,22,0.3); display: inline-flex; padding: 3px 8px; border-radius: 20px; font-size: 10px; font-family: 'DM Mono', monospace; }
+  .vbm { background: rgba(234,179,8,0.15); color: var(--yellow); border: 1px solid rgba(234,179,8,0.3); display: inline-flex; padding: 3px 8px; border-radius: 20px; font-size: 10px; font-family: 'DM Mono', monospace; }
+  .pc { display: inline-block; background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); color: #A78BFA; border-radius: 20px; padding: 2px 7px; font-size: 9px; font-family: 'DM Mono', monospace; margin: 1px; }
+  .la { color: var(--teal); text-decoration: none; font-size: 10px; font-family: 'DM Mono', monospace; opacity: 0.6; }
+  .la:hover { opacity: 1; }
+  .empty { text-align: center; padding: 60px 20px; }
+  .ei { font-size: 36px; margin-bottom: 10px; opacity: 0.4; }
+  .et { font-size: 15px; font-weight: 700; color: var(--white); opacity: 0.4; margin-bottom: 5px; }
+  .es { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--gray); }
 </style>
 </head>
 <body>
-
 <div class="container">
 
-  <!-- HEADER -->
-  <header>
-    <div class="header-inner">
-      <div class="logo">
-        <div class="logo-mark">OH</div>
-        <div>
-          <div class="logo-text">Opex House</div>
-          <div class="logo-sub">Pipeline Scanner</div>
-        </div>
-      </div>
-      <div class="header-right">
-        <div class="badge">Adzuna API</div>
-        <div class="badge" id="last-scan">Jamais scanné</div>
-      </div>
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-mark">OH</div>
+      <div><div class="logo-text">Opex House</div><div class="logo-sub">Pipeline Scanner v2</div></div>
     </div>
-  </header>
-
-  <!-- CONFIG -->
-  <div class="config-panel">
-    <div class="config-title">⚙ Configuration du scan</div>
-    <div class="config-grid">
-      <div class="field">
-        <label>Adzuna App ID</label>
-        <input type="text" id="app-id" placeholder="zebrov69" value="zebrov69">
-      </div>
-      <div class="field">
-        <label>Adzuna App Key</label>
-        <input type="password" id="app-key" placeholder="8f5a15d1bfc4df10843b8a9307ec194f" value="8f5a15d1bfc4df10843b8a9307ec194f">
-      </div>
-      <div class="field">
-        <label>Région</label>
-        <select id="region">
-          <option value="ca">Canada</option>
-          <option value="us">États-Unis</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Seuil coût employeur min ($/h)</label>
-        <input type="number" id="seuil" value="27" min="20" max="60" step="0.5">
-      </div>
-    </div>
-    <button class="btn-scan" id="scan-btn" onclick="lancerScan()">
-      <span class="btn-icon">⚡</span>
-      <div class="spinner"></div>
-      Lancer le scan
-    </button>
-  </div>
-
-  <!-- STATUS -->
-  <div class="status-log" id="status-log"></div>
-
-  <!-- STATS -->
-  <div class="stats-bar" id="stats-bar">
-    <div class="stat-card">
-      <div class="stat-num" id="stat-total">0</div>
-      <div class="stat-label">Offres trouvées</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num" style="color:var(--green)" id="stat-haute">0</div>
-      <div class="stat-label">Priorité haute</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num" style="color:var(--yellow)" id="stat-moy">0</div>
-      <div class="stat-label">Priorité moyenne</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num" style="color:var(--teal)" id="stat-eco">0 $</div>
-      <div class="stat-label">Économie max/mois</div>
+    <div class="badges">
+      <span class="badge bt">JSearch</span><span class="badge bt">Adzuna</span>
+      <span class="badge bt">Jooble</span><span class="badge bt">Remotive</span>
+      <span class="badge bg" id="lsb">Jamais scanné</span>
     </div>
   </div>
+</header>
 
-  <!-- FILTERS + EXPORT -->
-  <div class="filters-row" id="filters-row">
-    <button class="filter-btn active" onclick="filtrer('tous', this)">Tous</button>
-    <button class="filter-btn green" onclick="filtrer('haute', this)">🟢 Haute</button>
-    <button class="filter-btn yellow" onclick="filtrer('moyenne', this)">🟡 Moyenne</button>
-    <button class="filter-btn red" onclick="filtrer('faible', this)">🔴 Faible</button>
-    <button class="export-btn" onclick="exporterCSV()">⬇ Export CSV</button>
-  </div>
-
-  <!-- TABLE -->
-  <div class="table-wrap" id="table-wrap">
-    <table id="pipeline-table">
-      <thead>
-        <tr>
-          <th>Priorité</th>
-          <th>Entreprise</th>
-          <th>Poste</th>
-          <th>Blocs externalisables</th>
-          <th>Salaire affiché</th>
-          <th>Coût employeur</th>
-          <th>Économie/mois</th>
-          <th>Sensibilité</th>
-          <th>Outils cloud</th>
-          <th>Lien</th>
-        </tr>
-      </thead>
-      <tbody id="pipeline-body">
-        <tr>
-          <td colspan="10">
-            <div class="empty-state">
-              <div class="empty-icon">🔍</div>
-              <div class="empty-title">Aucun scan lancé</div>
-              <div class="empty-sub">Configure tes paramètres et clique sur "Lancer le scan"</div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('pme',this)">🏢 Pipeline PME</button>
+  <button class="tab" onclick="switchTab('cc',this)">📞 Pipeline Call Centers</button>
 </div>
 
+<div class="config-panel">
+  <div class="config-title">⚙ Configuration</div>
+  <div class="config-grid">
+    <div class="field"><label>JSearch Key (RapidAPI)</label><input type="password" id="jk" value="5dda3681c5mshe59f206550f94bcp1434b0jsn70f9c5b72fec"></div>
+    <div class="field"><label>Adzuna App ID</label><input type="text" id="ai" value="zebrov69"></div>
+    <div class="field"><label>Adzuna App Key</label><input type="password" id="ak" value="8f5a15d1bfc4df10843b8a9307ec194f"></div>
+    <div class="field"><label>Jooble API Key</label><input type="password" id="jok" value="d2cc0fb5-4b89-4d9c-b668-ab85b0f23201"></div>
+    <div class="field"><label>Région</label><select id="reg"><option value="ca">🇨🇦 Canada</option><option value="us">🇺🇸 USA</option></select></div>
+  </div>
+  <div class="src-lbl">Sources actives</div>
+  <div class="src-row">
+    <div class="src-chip" id="s-js" onclick="tSrc('js')">⚡ JSearch</div>
+    <div class="src-chip" id="s-az" onclick="tSrc('az')">🔍 Adzuna</div>
+    <div class="src-chip" id="s-jo" onclick="tSrc('jo')">🌍 Jooble</div>
+    <div class="src-chip" id="s-re" onclick="tSrc('re')">🌐 Remotive</div>
+  </div>
+  <button class="btn-scan" id="sbtn" onclick="lancerScan()">
+    <span class="bi">⚡</span><div class="sp"></div><span id="blbl">Lancer le scan PME</span>
+  </button>
+</div>
+
+<div class="pw" id="pw"><div class="pt"><div class="pf" id="pf"></div></div><div class="ptxt" id="ptxt">...</div></div>
+
+<!-- STATS PME -->
+<div class="sb" id="sb-pme">
+  <div class="sc"><div class="sn" id="sp0">0</div><div class="sl">Offres qualifiées</div></div>
+  <div class="sc"><div class="sn" style="color:var(--green)" id="sp1">0</div><div class="sl">Haute priorité</div></div>
+  <div class="sc"><div class="sn" style="color:var(--yellow)" id="sp2">0</div><div class="sl">Priorité moyenne</div></div>
+  <div class="sc"><div class="sn" style="color:var(--teal)" id="sp3">0</div><div class="sl">Fit 4/4</div></div>
+  <div class="sc"><div class="sn" style="color:var(--gold)" id="sp4">—</div><div class="sl">Éco max/mois</div></div>
+</div>
+
+<!-- STATS CC -->
+<div class="sb" id="sb-cc">
+  <div class="sc"><div class="sn" id="sc0">0</div><div class="sl">Employeurs</div></div>
+  <div class="sc"><div class="sn" style="color:var(--orange)" id="sc1">0</div><div class="sl">Gros volume (5+)</div></div>
+  <div class="sc"><div class="sn" style="color:var(--yellow)" id="sc2">0</div><div class="sl">Volume (3-4)</div></div>
+  <div class="sc"><div class="sn" style="color:var(--teal)" id="sc3">0</div><div class="sl">Bilingues FR/EN</div></div>
+  <div class="sc"><div class="sn" style="color:var(--gold)" id="sc4">—</div><div class="sl">Éco potentielle max</div></div>
+</div>
+
+<!-- FILTERS PME -->
+<div class="fr" id="fr-pme">
+  <button class="fb act" onclick="fPME('tous',this)">Tous</button>
+  <button class="fb g" onclick="fPME('haute',this)">🟢 Haute</button>
+  <button class="fb y" onclick="fPME('moyenne',this)">🟡 Moyenne</button>
+  <button class="fb o" onclick="fPME('fit4',this)">⭐ Fit 4/4</button>
+  <input class="si" id="qi-pme" placeholder="Rechercher..." oninput="rPME()">
+  <button class="eb" onclick="xCSV('pme')">⬇ CSV</button>
+</div>
+
+<!-- FILTERS CC -->
+<div class="fr" id="fr-cc">
+  <button class="fb act" onclick="fCC('tous',this)">Tous</button>
+  <button class="fb o" onclick="fCC('gros',this)">🔥 Gros volume</button>
+  <button class="fb y" onclick="fCC('vol',this)">📊 Volume</button>
+  <button class="fb g" onclick="fCC('bil',this)">🗣 Bilingues</button>
+  <input class="si" id="qi-cc" placeholder="Rechercher..." oninput="rCC()">
+  <button class="eb" onclick="xCSV('cc')">⬇ CSV</button>
+</div>
+
+<!-- TABLE PME -->
+<div class="tw" id="tw-pme">
+  <table><thead><tr>
+    <th onclick="srtP('pn')">Priorité ↕</th>
+    <th onclick="srtP('fn')">Fit ↕</th>
+    <th onclick="srtP('en')">Entreprise ↕</th>
+    <th>Poste</th>
+    <th>Blocs externalisables</th>
+    <th>Pattern</th>
+    <th onclick="srtP('sn')">Salaire ↕</th>
+    <th onclick="srtP('cn')">Coût emp. ↕</th>
+    <th onclick="srtP('xn')">Éco/mois ↕</th>
+    <th>Sensibilité</th>
+    <th>Outils</th>
+    <th>Src</th>
+    <th>Lien</th>
+  </tr></thead>
+  <tbody id="tb-pme"><tr><td colspan="13"><div class="empty"><div class="ei">🔍</div><div class="et">Lance le scan PME</div><div class="es">Configure et clique sur "Lancer le scan"</div></div></td></tr></tbody>
+  </table>
+</div>
+
+<!-- TABLE CC -->
+<div class="tw" id="tw-cc">
+  <table><thead><tr>
+    <th onclick="srtC('vn')">Volume ↕</th>
+    <th onclick="srtC('en')">Entreprise ↕</th>
+    <th>Secteur</th>
+    <th onclick="srtC('pn')">Postes ↕</th>
+    <th onclick="srtC('sn')">Salaire moy. ↕</th>
+    <th onclick="srtC('xn')">Éco pot./mois ↕</th>
+    <th>Bilingue</th>
+    <th>Remote</th>
+    <th>Titres détectés</th>
+    <th>Lien</th>
+  </tr></thead>
+  <tbody id="tb-cc"><tr><td colspan="10"><div class="empty"><div class="ei">📞</div><div class="et">Lance le scan Call Centers</div><div class="es">Switche sur l'onglet et lance</div></div></td></tr></tbody>
+  </table>
+</div>
+
+</div>
 <script>
-// ── CONFIGURATION ──────────────────────────────────────────
+// STATE
+let tab='pme', OP=[], OC=[], src={js:1,az:1,jo:1,re:1};
+let tpCol='pn', tpDir=1, tcCol='vn', tcDir=-1, fpF='tous', fcF='tous';
 
-const POSTES = [
-  "adjoint administratif", "assistant administratif", "technicien comptable",
-  "commis comptable", "agent facturation", "comptes payables",
-  "comptes recevables", "bookkeeper", "coordonnateur administratif",
-  "agent service client", "support informatique", "coordonnateur marketing",
-  "technicien ressources humaines", "soutien administratif",
-];
+// KEYWORDS
+const KE=['saisie','facturation','comptes fournisseurs','comptes payables','comptes recevables','rapprochement','conciliation bancaire','entrée de données','traitement des factures','suivi des paiements','support administratif','classement','archivage','mise à jour','suivi des dossiers','gestion des courriels','prise de rendez-vous','service à la clientèle','réponse aux demandes','accounts payable','accounts receivable','data entry','bookkeeping','invoice processing','bank reconciliation','customer support','appointment scheduling'];
+const KSH=['paie','payroll','t4','relevé 1','das','déclaration gouvernementale','cpa','audit','vérification comptable','états financiers annuels'];
+const KSF=['saisie','comptes fournisseurs','facturation','rapprochement','conciliation','archivage','classement','support administratif','accounts payable','data entry','invoice','bookkeeping'];
+const KC=['quickbooks','acomba','sage','netsuite','xero','hubspot','salesforce','microsoft 365','google workspace','teams','slack','notion','asana','monday','zoho','dynamics','oracle','sap','freshdesk','zendesk'];
+const KXP=['gouvernement','ministère','ville de','agence de placement','randstad','adecco','manpower','robert half','hydro-québec','banque nationale','desjardins','commission scolaire','cisss','ciusss','soluvox','nordia','concentrix'];
+const KSN=['directeur','director','vp ','vice-président','chief','cfo','cto','coo','senior manager'];
+const KUR=['dès que possible','immediate','immédiatement','urgent','asap','start immediately'];
+const KGR=['croissance','expansion','nouveau poste','new position','growing','en pleine expansion'];
+const KCC=['agent de centre d\'appels','agent service client','téléagent','téléconseiller','représentant service client','call center agent','customer service representative','customer service agent','inbound agent','outbound agent','contact center agent','agent bilingue','bilingual agent','csr'];
+const KCX=['gouvernement','ministère','commission scolaire','cisss','ciusss','directeur','manager','superviseur','team lead','chef d\'équipe'];
+const FAM={'service client':['customer service','service client','service à la clientèle','relation client'],'agent bilingue':['bilingual','bilingue','french/english','français/anglais'],'agent téléphonique':['call center','centre d\'appels','téléphonique','inbound','outbound'],'support technique':['technical support','soutien technique','support tech']};
 
-const MOTS_EXTERNALISABLES = [
-  "saisie", "facturation", "comptes fournisseurs", "comptes payables",
-  "comptes recevables", "rapprochement", "conciliation bancaire",
-  "entrée de données", "traitement des factures", "suivi des paiements",
-  "support administratif", "classement", "archivage", "mise à jour",
-  "suivi des dossiers", "gestion des courriels", "prise de rendez-vous",
-  "service à la clientèle", "réponse aux demandes", "saisie comptable",
-  "traitement de la correspondance", "gestion des achats",
-];
+// HELPERS
+const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const slp=ms=>new Promise(r=>setTimeout(r,ms));
+function setP(p,t){document.getElementById('pf').style.width=p+'%';document.getElementById('ptxt').textContent=t;}
 
-const MOTS_SENSIBILITE_ELEVEE = [
-  "paie", "payroll", "t4", "relevé 1", "das", "déclaration",
-  "cpa", "audit", "vérification comptable", "états financiers annuels",
-];
-
-const MOTS_SENSIBILITE_FAIBLE = [
-  "saisie", "comptes fournisseurs", "facturation", "rapprochement",
-  "conciliation", "archivage", "classement", "support administratif",
-  "prise de rendez-vous", "comptes payables",
-];
-
-const MOTS_OUTILS_CLOUD = [
-  "quickbooks", "acomba", "sage", "netsuite", "xero", "hubspot",
-  "salesforce", "microsoft 365", "google workspace", "teams", "slack",
-  "notion", "asana", "monday", "zoho", "dynamics",
-];
-
-const EXCLUSIONS = [
-  "gouvernement", "ministère", "ville de", "agence de placement",
-  "randstad", "adecco", "manpower", "robert half",
-  "hydro-québec", "banque", "desjardins", "cisss", "ciusss",
-  "commission scolaire", "soluvox", "nordia",
-];
-
-let toutesOffres = [];
-let filtreCourant = 'tous';
-
-// ── SCORING ────────────────────────────────────────────────
-
-function scorerSensibilite(texte) {
-  const t = texte.toLowerCase();
-  const eleve = MOTS_SENSIBILITE_ELEVEE.filter(m => t.includes(m)).length;
-  const faible = MOTS_SENSIBILITE_FAIBLE.filter(m => t.includes(m)).length;
-  if (eleve >= 2) return "Élevée ❌";
-  if (eleve === 1 && faible === 0) return "Moyenne ⚠️";
-  if (faible >= 1) return "Faible ✅";
-  return "Moyenne ⚠️";
-}
-
-function scorerBlocs(texte) {
-  const t = texte.toLowerCase();
-  const trouves = MOTS_EXTERNALISABLES.filter(m => t.includes(m));
-  return trouves.slice(0, 4).map(m => m.charAt(0).toUpperCase() + m.slice(1)).join(' · ') || 'À vérifier';
-}
-
-function detecterOutils(texte) {
-  const t = texte.toLowerCase();
-  const trouves = MOTS_OUTILS_CLOUD.filter(m => t.includes(m));
-  return trouves.map(m => m.charAt(0).toUpperCase() + m.slice(1)).join(' / ') || 'Non mentionné';
-}
-
-function estExclu(texte) {
-  const t = texte.toLowerCase();
-  return EXCLUSIONS.some(m => t.includes(m));
-}
-
-function calculerPriorite(cout, sensibilite, blocs, outils) {
-  const seuil = parseFloat(document.getElementById('seuil').value) || 27;
-  if (!cout || cout < seuil) return 'exclu';
-  if (sensibilite === "Élevée ❌") return 'faible';
-
-  let score = 0;
-  if (cout >= 30) score += 3;
-  else if (cout >= 27) score += 1;
-  if (sensibilite === "Faible ✅") score += 3;
-  else if (sensibilite === "Moyenne ⚠️") score += 1;
-  if (blocs !== 'À vérifier') score += 2;
-  if (outils !== 'Non mentionné') score += 1;
-
-  if (score >= 7) return 'haute';
-  if (score >= 4) return 'moyenne';
-  return 'faible';
-}
-
-// ── API ADZUNA ─────────────────────────────────────────────
-
-async function fetchAdzuna(poste, appId, appKey, region) {
-  const url = `https://api.adzuna.com/v1/api/jobs/${region}/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=20&what=${encodeURIComponent(poste)}&where=Quebec&content-type=application/json`;
-  
-  try {
-    const resp = await fetch(url);
-    if (!resp.ok) return [];
-    const data = await resp.json();
-    return data.results || [];
-  } catch(e) {
-    return [];
-  }
-}
-
-function extraireSalaire(offre) {
-  if (offre.salary_min && offre.salary_max) {
-    const moy = (offre.salary_min + offre.salary_max) / 2;
-    // Si annuel, convertir en horaire
-    if (moy > 1000) return moy / (52 * 40);
-    return moy;
-  }
+function salH(o){
+  if(o.salary_min&&o.salary_max){const m=(o.salary_min+o.salary_max)/2;return m>500?m/(52*40):m;}
+  if(o.salary_min)return o.salary_min>500?o.salary_min/(52*40):o.salary_min;
+  const t=(o.description||o.snippet||'').toLowerCase();
+  const m1=t.match(/(\d+[.,]\d+)\s*(?:à|-)\s*(\d+[.,]\d+)\s*\$?\s*(?:\/h|par heure|\/hour)/);
+  if(m1)return(parseFloat(m1[1])+parseFloat(m1[2]))/2;
+  const m2=t.match(/\$\s*(\d{2,3}[.,]\d{2})\s*(?:\/h|per hour)/);
+  if(m2)return parseFloat(m2[1]);
   return null;
 }
 
-// ── SCAN PRINCIPAL ─────────────────────────────────────────
+function sensib(t){
+  const h=KSH.filter(k=>t.includes(k)).length,f=KSF.filter(k=>t.includes(k)).length;
+  if(h>=2)return'Élevée ❌';if(h===1&&f===0)return'Moyenne ⚠️';if(f>=1)return'Faible ✅';return'Moyenne ⚠️';
+}
+function blocs(t){return KE.filter(k=>t.includes(k)).slice(0,5).map(k=>k.charAt(0).toUpperCase()+k.slice(1)).join(' · ')||'À qualifier';}
+function outils(t){return KC.filter(k=>t.includes(k)).map(k=>k.charAt(0).toUpperCase()+k.slice(1)).join(' / ')||'—';}
+function patterns(t){const p=[];if(KUR.some(k=>t.includes(k)))p.push('Urgent');if(KGR.some(k=>t.includes(k)))p.push('Croissance');if(t.includes('remplacement')||t.includes('replacement'))p.push('Remplacement');return p;}
+function fit(o){let s=0;if(o.tp)s++;if(o.rm)s++;if(o.bl!=='À qualifier')s++;if(o.cn>=27)s++;return s;}
+function prio(s,b,o,c,f){if(s==='Élevée ❌')return'faible';let sc=0;if(c>=30)sc+=3;else if(c>=27)sc+=2;else if(c>=24)sc+=1;if(s==='Faible ✅')sc+=3;else if(s==='Moyenne ⚠️')sc+=1;if(b!=='À qualifier')sc+=2;if(o!=='—')sc+=1;if(f>=3)sc+=2;if(sc>=8)return'haute';if(sc>=4)return'moyenne';return'faible';}
+function normCC(titre){const t=titre.toLowerCase().replace(/representative|representant|représentant/g,'agent').replace(/customer service|service à la clientèle|service client/g,'service client').replace(/call center|centre d.appels|contact center/g,'call center').replace(/bilingual|bilingue/g,'bilingue').replace(/\s+/g,' ').trim();for(const[f,mots]of Object.entries(FAM)){if(mots.some(m=>t.includes(m)))return f;}return t.split(' ').slice(0,3).join(' ');}
+function isCCp(titre){const t=titre.toLowerCase();return KCC.some(k=>t.includes(k));}
 
-async function lancerScan() {
-  const appId = document.getElementById('app-id').value.trim();
-  const appKey = document.getElementById('app-key').value.trim();
-  const region = document.getElementById('region').value;
+// PROCESS PME
+function procPME(o,src2){
+  const ti=o.title||o.job_title||'',co=o.company?.display_name||o.company_name||o.employer_name||o.company||'';
+  const de=o.description||o.snippet||o.job_description||'',li=o.redirect_url||o.url||o.job_apply_link||o.link||'';
+  const da=(o.created||o.date_posted||o.updated||'').split('T')[0]||'';
+  const t=`${ti} ${co} ${de}`.toLowerCase();
+  if(KXP.some(k=>t.includes(k)))return null;if(KSN.some(k=>t.includes(k)))return null;if(!ti)return null;
+  const s=sensib(t),bl=blocs(t),ou=outils(t),pa=patterns(t);
+  const sal=salH(o),cout=sal?sal*1.20:null,eco=cout&&cout>23?Math.round((cout-23)*160):null;
+  const rm=t.includes('télétravail')||t.includes('remote')||t.includes('work from home');
+  const tp=!t.includes('temps partiel')&&!t.includes('part-time');
+  if(cout&&cout<22)return null;
+  const ob={s,bl,ou,pa,sn:sal||0,cn:cout||0,xn:eco||0,sa:sal?`${sal.toFixed(2)} $/h`:'À discuter',ca:cout?`~${cout.toFixed(2)} $/h`:'—',xa:eco?`${eco.toLocaleString('fr-CA')} $`:'—',rm,tp,en:co||'Inconnue',ti,src:src2,li,da,fn:0,pn:0,pr:'faible'};
+  ob.fn=fit(ob);ob.pr=prio(s,bl,ou,cout||0,ob.fn);ob.pn=ob.pr==='haute'?0:ob.pr==='moyenne'?1:2;
+  return ob;
+}
 
-  if (!appId || !appKey) {
-    logStatus('⚠ Entre ton App ID et App Key Adzuna');
-    return;
+// PROCESS CC
+function procCC(o,src2){
+  const ti=o.title||o.job_title||'',co=o.company?.display_name||o.company_name||o.employer_name||o.company||'';
+  const de=o.description||o.snippet||o.job_description||'',li=o.redirect_url||o.url||o.job_apply_link||o.link||'';
+  const t=`${ti} ${co} ${de}`.toLowerCase();
+  if(!isCCp(ti))return null;if(KCX.some(k=>t.includes(k)))return null;if(!co)return null;
+  const sal=salH(o),cout=sal?sal*1.20:null,rm=t.includes('télétravail')||t.includes('remote')||t.includes('work from home');
+  const bil=t.includes('bilingue')||t.includes('bilingual')||t.includes('french/english')||t.includes('français/anglais');
+  const sec=t.includes('assurance')?'Assurance':t.includes('télécom')||t.includes('telecom')?'Télécom':t.includes('santé')||t.includes('medical')?'Santé':t.includes('retail')?'Retail':t.includes('tech')?'Tech':t.includes('financ')?'Finance':'Général';
+  const fam=normCC(ti);
+  return{co,ti,fam,sal,cout,rm,bil,sec,li,src:src2};
+}
+
+// AGREGER CC
+function agrCC(brutes){
+  const m={};
+  for(const b of brutes){
+    if(!b)continue;
+    const k=b.co.toLowerCase().trim();
+    if(!m[k])m[k]={en:b.co,sec:b.sec,ps:[],sals:[],rm:false,bil:false,li:b.li};
+    const ex=m[k].ps.find(p=>p.fam===b.fam);
+    if(ex)ex.cnt++;else m[k].ps.push({fam:b.fam,cnt:1,ti:b.ti});
+    if(b.sal)m[k].sals.push(b.sal);
+    if(b.rm)m[k].rm=true;if(b.bil)m[k].bil=true;
   }
-
-  const btn = document.getElementById('scan-btn');
-  btn.disabled = true;
-  btn.classList.add('loading');
-  btn.querySelector('span:not(.spinner)') && (btn.querySelector('.btn-icon') ? btn.querySelector('.btn-icon').style.display = 'none' : null);
-
-  const statusLog = document.getElementById('status-log');
-  statusLog.classList.add('visible');
-
-  toutesOffres = [];
-  let total = 0;
-
-  const postesAScanner = POSTES.slice(0, 8); // Limiter pour économiser les requêtes
-
-  for (let i = 0; i < postesAScanner.length; i++) {
-    const poste = postesAScanner[i];
-    logStatus(`📡 Scan "${poste}" (${i+1}/${postesAScanner.length})...`);
-
-    const resultats = await fetchAdzuna(poste, appId, appKey, region);
-    
-    for (const offre of resultats) {
-      const titre = offre.title || '';
-      const entreprise = offre.company?.display_name || '';
-      const description = offre.description || '';
-      const lien = offre.redirect_url || '';
-      const date = offre.created?.split('T')[0] || '';
-      const texteComplet = `${titre} ${entreprise} ${description}`.toLowerCase();
-
-      // Filtres
-      if (estExclu(texteComplet)) continue;
-      if (!offre.contract_type?.toLowerCase().includes('permanent') && 
-          !offre.contract_time?.toLowerCase().includes('full_time') &&
-          resultats.indexOf(offre) > 5) continue;
-
-      const salaire = extraireSalaire(offre);
-      const coutEmployeur = salaire ? salaire * 1.20 : null;
-      const seuil = parseFloat(document.getElementById('seuil').value) || 27;
-      const economie = coutEmployeur && coutEmployeur >= seuil ? Math.round((coutEmployeur - 23) * 160) : null;
-
-      const sensibilite = scorerSensibilite(texteComplet);
-      const blocs = scorerBlocs(texteComplet);
-      const outils = detecterOutils(texteComplet);
-      const priorite = calculerPriorite(coutEmployeur, sensibilite, blocs, outils);
-
-      if (priorite === 'exclu') continue;
-
-      toutesOffres.push({
-        priorite,
-        entreprise: entreprise || 'Inconnue',
-        titre,
-        blocs,
-        salaire_affiche: salaire ? `${salaire.toFixed(2)} $/h` : 'À discuter',
-        cout_employeur: coutEmployeur ? `~${coutEmployeur.toFixed(2)} $/h` : 'Inconnu',
-        economie: economie ? `${economie.toLocaleString('fr-CA')} $` : '—',
-        economie_num: economie || 0,
-        sensibilite,
-        outils,
-        lien,
-        date,
-      });
-
-      total++;
-    }
-
-    await sleep(300); // Respecter l'API
-  }
-
-  // Trier
-  const ordre = { haute: 0, moyenne: 1, faible: 2 };
-  toutesOffres.sort((a, b) => (ordre[a.priorite] || 3) - (ordre[b.priorite] || 3));
-
-  // Dédupliquer
-  const vus = new Set();
-  toutesOffres = toutesOffres.filter(o => {
-    const cle = `${o.entreprise}|${o.titre}`.toLowerCase();
-    if (vus.has(cle)) return false;
-    vus.add(cle);
-    return true;
-  });
-
-  logStatus(`✅ Scan terminé — ${toutesOffres.length} offres qualifiées`);
-  document.getElementById('last-scan').textContent = `Scanné: ${new Date().toLocaleTimeString('fr-CA')}`;
-
-  afficherStats();
-  afficherTableau(toutesOffres);
-
-  btn.disabled = false;
-  btn.classList.remove('loading');
+  return Object.values(m).map(e=>{
+    const tot=e.ps.reduce((s,p)=>s+p.cnt,0);
+    const sm=e.sals.length?e.sals.reduce((a,b)=>a+b,0)/e.sals.length:null;
+    const cm=sm?sm*1.20:null;
+    const em=cm&&cm>16?Math.round((cm-16)*160*Math.min(tot,10)):null;
+    const vl=tot>=5?'gros':tot>=3?'vol':'faible';
+    return{en:e.en,sec:e.sec,pn:tot,vn:tot>=5?0:tot>=3?1:2,vl,tits:e.ps.map(p=>`${p.ti}${p.cnt>1?` (×${p.cnt})`:''}`).join(', '),sn:sm||0,sa:sm?`~${sm.toFixed(2)} $/h`:'À discuter',cn:cm||0,xn:em||0,xa:em?`${em.toLocaleString('fr-CA')} $`:'—',rm:e.rm,bil:e.bil,li:e.li};
+  }).filter(e=>e.pn>=2).sort((a,b)=>a.vn-b.vn||b.pn-a.pn);
 }
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-function logStatus(msg) {
-  document.getElementById('status-log').textContent = msg;
+// API
+async function fJS(q,k,r){
+  const loc=r==='ca'?'Canada':'USA';
+  try{const res=await fetch(`https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(q+' remote '+loc)}&num_pages=2&date_posted=month`,{headers:{'x-rapidapi-key':k,'x-rapidapi-host':'jsearch.p.rapidapi.com'}});if(!res.ok)return[];const d=await res.json();return(d.data||[]).map(j=>({title:j.job_title,company:{display_name:j.employer_name},description:j.job_description,redirect_url:j.job_apply_link,created:j.job_posted_at_datetime_utc,salary_min:j.job_min_salary,salary_max:j.job_max_salary}));}catch{return[];}
+}
+async function fAZ(q,i,k,r){
+  try{const res=await fetch(`https://api.adzuna.com/v1/api/jobs/${r}/search/1?app_id=${i}&app_key=${k}&results_per_page=20&what=${encodeURIComponent(q)}&content-type=application/json`);if(!res.ok)return[];const d=await res.json();return d.results||[];}catch{return[];}
+}
+async function fJO(q,k){
+  try{const res=await fetch(`https://jooble.org/api/${k}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({keywords:q,location:'Quebec, Canada',page:1,SearchMode:1})});if(!res.ok)return[];const d=await res.json();return(d.jobs||[]).map(j=>({title:j.title,company:j.company,description:j.snippet,redirect_url:j.link,created:j.updated,salary_min:j.salary?parseFloat(j.salary.replace(/[^0-9.]/g,'')):null}));}catch{return[];}
+}
+async function fRE(){
+  const cats=['data','finance','customer-support','marketing','hr'],r=[];
+  for(const c of cats){try{const res=await fetch(`https://remotive.com/api/remote-jobs?category=${c}&limit=15`);if(!res.ok)continue;const d=await res.json();r.push(...(d.jobs||[]).map(j=>({title:j.title,company:{display_name:j.company_name},description:j.description,redirect_url:j.url,created:j.publication_date})));}catch{continue;}await slp(150);}
+  return r;
 }
 
-// ── AFFICHAGE ──────────────────────────────────────────────
-
-function afficherStats() {
-  const haute = toutesOffres.filter(o => o.priorite === 'haute').length;
-  const moy = toutesOffres.filter(o => o.priorite === 'moyenne').length;
-  const maxEco = Math.max(...toutesOffres.map(o => o.economie_num), 0);
-
-  document.getElementById('stat-total').textContent = toutesOffres.length;
-  document.getElementById('stat-haute').textContent = haute;
-  document.getElementById('stat-moy').textContent = moy;
-  document.getElementById('stat-eco').textContent = maxEco > 0 ? `${maxEco.toLocaleString('fr-CA')} $` : '—';
-
-  document.getElementById('stats-bar').classList.add('visible');
-  document.getElementById('filters-row').classList.add('visible');
-  document.getElementById('table-wrap').classList.add('visible');
+// SCAN
+async function lancerScan(){
+  const jk=document.getElementById('jk').value.trim(),ai=document.getElementById('ai').value.trim(),ak=document.getElementById('ak').value.trim(),jok=document.getElementById('jok').value.trim(),r=document.getElementById('reg').value;
+  const btn=document.getElementById('sbtn');btn.disabled=true;btn.classList.add('loading');
+  document.getElementById('pw').classList.add('show');
+  if(tab==='pme')await scanPME(jk,ai,ak,jok,r);else await scanCC(jk,ai,ak,jok,r);
+  btn.disabled=false;btn.classList.remove('loading');
+  document.getElementById('lsb').textContent=`Scan: ${new Date().toLocaleTimeString('fr-CA')}`;
 }
 
-function afficherTableau(offres) {
-  const tbody = document.getElementById('pipeline-body');
-
-  if (!offres.length) {
-    tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state">
-      <div class="empty-icon">📭</div>
-      <div class="empty-title">Aucune offre pour ce filtre</div>
-      <div class="empty-sub">Essaie un autre filtre ou relance le scan</div>
-    </div></td></tr>`;
-    return;
-  }
-
-  const prioriteLabel = {
-    haute: '<span class="priority-badge priority-haute">🟢 Haute</span>',
-    moyenne: '<span class="priority-badge priority-moyenne">🟡 Moyenne</span>',
-    faible: '<span class="priority-badge priority-faible">🔴 Faible</span>',
-  };
-
-  tbody.innerHTML = offres.map(o => `
-    <tr>
-      <td>${prioriteLabel[o.priorite] || ''}</td>
-      <td>
-        <div class="td-entreprise">${escHtml(o.entreprise)}</div>
-        <div class="td-poste">${escHtml(o.titre)}</div>
-        <div style="font-size:10px;color:var(--gray);font-family:'DM Mono',monospace;margin-top:4px">${o.date}</div>
-      </td>
-      <td class="td-poste">${escHtml(o.titre)}</td>
-      <td class="td-blocs">${escHtml(o.blocs)}</td>
-      <td class="td-salaire">${o.salaire_affiche}</td>
-      <td class="td-salaire">${o.cout_employeur}</td>
-      <td class="td-economie">${o.economie}</td>
-      <td><span class="sens-badge">${o.sensibilite}</span></td>
-      <td style="font-size:11px;color:var(--gray);font-family:'DM Mono',monospace">${o.outils}</td>
-      <td>${o.lien ? `<a href="${o.lien}" target="_blank" class="link-btn">Voir ↗</a>` : '—'}</td>
-    </tr>
-  `).join('');
+async function scanPME(jk,ai,ak,jok,r){
+  const PF=['adjoint administratif','technicien comptable','commis comptable','agent facturation','comptes payables','bookkeeper','coordonnateur administratif','agent service client','support informatique','coordonnateur marketing','technicien RH'];
+  const PE=['administrative assistant','accounting technician','bookkeeper','accounts payable','customer service agent','data entry','IT helpdesk','marketing coordinator'];
+  const ps=[...PF,...PE];const br=[];let i=0;
+  for(const p of ps.slice(0,8)){setP(Math.round(i/8*25),`⚡ JSearch: "${p}"...`);if(src.js&&jk)br.push(...(await fJS(p+' Quebec',jk,r)).map(o=>({...o,_s:'JSearch'})));i++;await slp(300);}
+  for(const p of ps.slice(0,6)){setP(25+Math.round(i/6*25),`🔍 Adzuna: "${p}"...`);if(src.az&&ai&&ak)br.push(...(await fAZ(p,ai,ak,r)).map(o=>({...o,_s:'Adzuna'})));await slp(250);}
+  for(const p of ps.slice(0,4)){setP(55+Math.round(i/4*15),`🌍 Jooble: "${p}"...`);if(src.jo&&jok)br.push(...(await fJO(p,jok)).map(o=>({...o,_s:'Jooble'})));await slp(250);}
+  setP(72,'🌐 Remotive...');if(src.re)br.push(...(await fRE()).map(o=>({...o,_s:'Remotive'})));
+  setP(85,`🔍 Traitement ${br.length} offres...`);await slp(100);
+  const vu=new Set();OP=[];
+  for(const o of br){const x=procPME(o,o._s);if(!x)continue;const k=`${x.en}|${x.ti}|${x.li}`.toLowerCase();if(vu.has(k))continue;vu.add(k);OP.push(x);}
+  OP.sort((a,b)=>a.pn-b.pn||b.fn-a.fn);
+  setP(100,`✅ ${OP.length} offres PME qualifiées`);
+  statsPME();renPME(OP);
+  ['sb-pme','fr-pme','tw-pme'].forEach(id=>document.getElementById(id).classList.add('show'));
 }
 
-function filtrer(type, btn) {
-  filtreCourant = type;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-
-  const filtrees = type === 'tous' ? toutesOffres : toutesOffres.filter(o => o.priorite === type);
-  afficherTableau(filtrees);
+async function scanCC(jk,ai,ak,jok,r){
+  const PC=['agent service client','call center agent','customer service representative','téléagent','agent bilingue','bilingual customer service','inbound agent'];
+  const br=[];let i=0;
+  for(const p of PC.slice(0,5)){setP(Math.round(i/5*35),`⚡ JSearch CC: "${p}"...`);if(src.js&&jk)br.push(...(await fJS(p+' Quebec Canada',jk,r)).map(o=>({...o,_s:'JSearch'})));i++;await slp(350);}
+  for(const p of PC.slice(0,4)){setP(35+Math.round(i/4*30),`🔍 Adzuna CC: "${p}"...`);if(src.az&&ai&&ak)br.push(...(await fAZ(p,ai,ak,r)).map(o=>({...o,_s:'Adzuna'})));await slp(250);}
+  for(const p of PC.slice(0,3)){setP(68+Math.round(i/3*18),`🌍 Jooble CC: "${p}"...`);if(src.jo&&jok)br.push(...(await fJO(p,jok)).map(o=>({...o,_s:'Jooble'})));await slp(250);}
+  setP(88,'Agrégation par employeur...');await slp(100);
+  const tr=br.map(o=>procCC(o,o._s)).filter(Boolean);
+  OC=agrCC(tr);
+  setP(100,`✅ ${OC.length} employeurs call center détectés`);
+  statsCC();renCC(OC);
+  ['sb-cc','fr-cc','tw-cc'].forEach(id=>document.getElementById(id).classList.add('show'));
 }
 
-function escHtml(str) {
-  return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+// STATS
+function statsPME(){
+  document.getElementById('sp0').textContent=OP.length;
+  document.getElementById('sp1').textContent=OP.filter(o=>o.pr==='haute').length;
+  document.getElementById('sp2').textContent=OP.filter(o=>o.pr==='moyenne').length;
+  document.getElementById('sp3').textContent=OP.filter(o=>o.fn===4).length;
+  const m=Math.max(...OP.map(o=>o.xn),0);
+  document.getElementById('sp4').textContent=m>0?`${m.toLocaleString('fr-CA')} $`:'—';
+}
+function statsCC(){
+  document.getElementById('sc0').textContent=OC.length;
+  document.getElementById('sc1').textContent=OC.filter(o=>o.vl==='gros').length;
+  document.getElementById('sc2').textContent=OC.filter(o=>o.vl==='vol').length;
+  document.getElementById('sc3').textContent=OC.filter(o=>o.bil).length;
+  const m=Math.max(...OC.map(o=>o.xn),0);
+  document.getElementById('sc4').textContent=m>0?`${m.toLocaleString('fr-CA')} $`:'—';
 }
 
-// ── EXPORT CSV ─────────────────────────────────────────────
+// RENDER
+function renPME(of){
+  const tb=document.getElementById('tb-pme');
+  if(!of.length){tb.innerHTML=`<tr><td colspan="13"><div class="empty"><div class="ei">📭</div><div class="et">Aucune offre</div><div class="es">Essaie un autre filtre</div></div></td></tr>`;return;}
+  const pc={haute:'pbh',moyenne:'pbm',faible:'pbf'},pl={haute:'🟢 Haute',moyenne:'🟡 Moy.',faible:'🔴 Faible'};
+  const fd=n=>'●'.repeat(n)+'○'.repeat(4-n);
+  tb.innerHTML=of.map(o=>`<tr>
+    <td><span class="pb ${pc[o.pr]}">${pl[o.pr]}</span></td>
+    <td><span style="font-family:'DM Mono',monospace;font-size:11px" title="${o.fn}/4"><span style="color:var(--teal)">${fd(o.fn)}</span> ${o.fn}/4</span></td>
+    <td><div class="cn">${esc(o.en)}</div><div class="cm">${o.src} · ${o.da}</div></td>
+    <td class="tmono" style="color:var(--gray);font-size:10px">${esc(o.ti)}</td>
+    <td class="tbloc">${esc(o.bl)}</td>
+    <td>${o.pa.map(p=>`<span class="pc">${p}</span>`).join('')||'—'}</td>
+    <td class="tmono" style="color:var(--gray)">${o.sa}</td>
+    <td class="tmono" style="color:var(--gray)">${o.ca}</td>
+    <td class="teco">${o.xa}</td>
+    <td style="font-size:10px;font-family:'DM Mono',monospace">${o.s}</td>
+    <td style="font-size:9px;color:var(--gray);font-family:'DM Mono',monospace">${o.ou}</td>
+    <td><span style="font-size:9px;color:var(--teal);font-family:'DM Mono',monospace">${o.src}</span></td>
+    <td>${o.li?`<a href="${esc(o.li)}" target="_blank" class="la">Voir ↗</a>`:'—'}</td>
+  </tr>`).join('');
+}
 
-function exporterCSV() {
-  if (!toutesOffres.length) return;
+function renCC(em){
+  const tb=document.getElementById('tb-cc');
+  if(!em.length){tb.innerHTML=`<tr><td colspan="10"><div class="empty"><div class="ei">📭</div><div class="et">Aucun employeur</div><div class="es">Lance le scan call centers</div></div></td></tr>`;return;}
+  tb.innerHTML=em.map(e=>`<tr>
+    <td>${e.vl==='gros'?'<span class="vbh">🔥 Gros volume</span>':'<span class="vbm">📊 Volume</span>'}</td>
+    <td><div class="cn">${esc(e.en)}</div></td>
+    <td style="font-size:10px;color:var(--gray);font-family:'DM Mono',monospace">${e.sec}</td>
+    <td><span style="font-size:20px;font-weight:800;color:${e.pn>=5?'var(--orange)':'var(--yellow)'}">${e.pn}</span></td>
+    <td class="tmono" style="color:var(--gray)">${e.sa}</td>
+    <td class="teco">${e.xa}</td>
+    <td style="font-size:13px">${e.bil?'✅':'—'}</td>
+    <td style="font-size:13px">${e.rm?'✅':'—'}</td>
+    <td style="font-size:9px;color:var(--gray);font-family:'DM Mono',monospace;max-width:200px">${esc(e.tits)}</td>
+    <td>${e.li?`<a href="${esc(e.li)}" target="_blank" class="la">Voir ↗</a>`:'—'}</td>
+  </tr>`).join('');
+}
 
-  const headers = ['Priorité','Entreprise','Poste','Blocs externalisables','Salaire affiché','Coût employeur','Économie/mois','Sensibilité','Outils cloud','Lien'];
-  const rows = toutesOffres.map(o => [
-    o.priorite, o.entreprise, o.titre, o.blocs,
-    o.salaire_affiche, o.cout_employeur, o.economie,
-    o.sensibilite, o.outils, o.lien
-  ].map(v => `"${(v||'').replace(/"/g,'""')}"`).join(','));
+// FILTRES
+function fPME(f,btn){fpF=f;document.querySelectorAll('#fr-pme .fb').forEach(b=>b.classList.remove('act'));btn.classList.add('act');apPME();}
+function rPME(){apPME();}
+function apPME(){const q=document.getElementById('qi-pme').value.toLowerCase();let f=OP;if(fpF==='haute')f=f.filter(o=>o.pr==='haute');else if(fpF==='moyenne')f=f.filter(o=>o.pr==='moyenne');else if(fpF==='fit4')f=f.filter(o=>o.fn===4);if(q)f=f.filter(o=>o.en.toLowerCase().includes(q)||o.ti.toLowerCase().includes(q)||o.bl.toLowerCase().includes(q));renPME(f);}
+function fCC(f,btn){fcF=f;document.querySelectorAll('#fr-cc .fb').forEach(b=>b.classList.remove('act'));btn.classList.add('act');apCC();}
+function rCC(){apCC();}
+function apCC(){const q=document.getElementById('qi-cc').value.toLowerCase();let f=OC;if(fcF==='gros')f=f.filter(o=>o.vl==='gros');else if(fcF==='vol')f=f.filter(o=>o.vl==='vol');else if(fcF==='bil')f=f.filter(o=>o.bil);if(q)f=f.filter(o=>o.en.toLowerCase().includes(q)||o.sec.toLowerCase().includes(q));renCC(f);}
 
-  const csv = [headers.join(','), ...rows].join('\n');
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `pipeline_opexhouse_${new Date().toISOString().split('T')[0]}.csv`;
-  a.click();
+// TRI
+function srtP(c){if(tpCol===c)tpDir*=-1;else{tpCol=c;tpDir=1;}OP.sort((a,b)=>typeof a[c]==='string'?tpDir*a[c].localeCompare(b[c]):tpDir*(a[c]-b[c]));apPME();}
+function srtC(c){if(tcCol===c)tcDir*=-1;else{tcCol=c;tcDir=-1;}OC.sort((a,b)=>typeof a[c]==='string'?tcDir*a[c].localeCompare(b[c]):tcDir*(a[c]-b[c]));apCC();}
+
+// TABS
+function switchTab(t,btn){
+  tab=t;document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  document.getElementById('blbl').textContent=t==='pme'?'Lancer le scan PME':'Lancer le scan Call Centers';
+  ['pme','cc'].forEach(x=>{const show=x===t;['sb','fr','tw'].forEach(el=>{const el2=document.getElementById(`${el}-${x}`);if(el2){if(show&&(x==='pme'?OP.length>0:OC.length>0))el2.classList.add('show');else if(!show)el2.classList.remove('show');}});});
+}
+
+// SOURCE TOGGLE
+function tSrc(s){src[s]=!src[s];document.getElementById('s-'+s).classList.toggle('off',!src[s]);}
+
+// EXPORT
+function xCSV(t){
+  let rows,h;
+  if(t==='pme'){h=['Priorité','Fit','Entreprise','Poste','Blocs','Patterns','Salaire','Coût emp.','Éco/mois','Sensibilité','Outils','Source','Lien'];rows=OP.map(o=>[o.pr,`${o.fn}/4`,o.en,o.ti,o.bl,o.pa.join(';'),o.sa,o.ca,o.xa,o.s,o.ou,o.src,o.li]);}
+  else{h=['Volume','Entreprise','Secteur','Postes','Salaire moy.','Éco pot.','Bilingue','Remote','Titres'];rows=OC.map(o=>[o.vl,o.en,o.sec,o.pn,o.sa,o.xa,o.bil?'Oui':'Non',o.rm?'Oui':'Non',o.tits]);}
+  const csv=[h.join(','),...rows.map(r=>r.map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(','))].join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));a.download=`pipeline_opex_${t}_${new Date().toISOString().split('T')[0]}.csv`;a.click();
 }
 </script>
-
 </body>
 </html>
