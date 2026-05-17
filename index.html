@@ -554,7 +554,8 @@ function srtC(c){if(tcCol===c)tcDir*=-1;else{tcCol=c;tcDir=-1;}OC.sort((a,b)=>ty
 function switchTab(t,btn){
   tab=t;document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
   document.getElementById('blbl').textContent=t==='pme'?'Lancer le scan PME':'Lancer le scan Call Centers';
-  ['pme','cc'].forEach(x=>{const show=x===t;['sb','fr','tw'].forEach(el=>{const el2=document.getElementById(`${el}-${x}`);if(el2){if(show&&(x==='pme'?OP.length>0:OC.length>0))el2.classList.add('show');else if(!show)el2.classList.remove('show');}});});
+  ['sb-pme','fr-pme','tw-pme'].forEach(id=>{const el=document.getElementById(id);if(!el)return;if(t==='pme'&&OP.length>0)el.classList.add('show');else if(t!=='pme')el.classList.remove('show');});
+  ['sb-cc','fr-cc','tw-cc'].forEach(id=>{const el=document.getElementById(id);if(!el)return;if(t==='cc'&&OC.length>0)el.classList.add('show');else if(t!=='cc')el.classList.remove('show');});
 }
 
 function tSrc(s){src[s]=!src[s];document.getElementById('s-'+s).classList.toggle('off',!src[s]);}
