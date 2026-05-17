@@ -4,237 +4,394 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Opex House — Scanner Pipeline</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --navy: #0D1B2A; --navy2: #1A2E4A; --teal: #00C9A7; --gold: #F5C842;
-    --white: #F0F4F8; --gray: #8899AA; --green: #22C55E; --yellow: #EAB308;
-    --red: #EF4444; --orange: #F97316;
-  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--navy); color: var(--white); font-family: 'Syne', sans-serif; min-height: 100vh; }
-  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(0,201,167,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,201,167,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
-  .container { max-width: 1500px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
 
-  header { padding: 24px 0 20px; border-bottom: 1px solid rgba(0,201,167,0.15); margin-bottom: 28px; }
+  body {
+    background: #F8F9FA;
+    color: #1A1A2E;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    min-height: 100vh;
+  }
+
+  .container { max-width: 1600px; margin: 0 auto; padding: 0 32px; }
+
+  /* HEADER */
+  header {
+    background: #fff;
+    border-bottom: 1px solid #E5E7EB;
+    padding: 20px 0;
+    margin-bottom: 32px;
+  }
+
   .header-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
-  .logo { display: flex; align-items: center; gap: 12px; }
-  .logo-mark { width: 38px; height: 38px; background: var(--teal); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: var(--navy); }
-  .logo-text { font-size: 19px; font-weight: 700; letter-spacing: -0.5px; }
-  .logo-sub { font-size: 10px; color: var(--gray); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 2px; margin-top: 2px; }
-  .badges { display: flex; gap: 6px; flex-wrap: wrap; }
-  .badge { padding: 4px 10px; border-radius: 20px; font-size: 9px; font-family: 'DM Mono', monospace; letter-spacing: 1px; }
-  .bt { background: rgba(0,201,167,0.1); border: 1px solid rgba(0,201,167,0.3); color: var(--teal); }
-  .bg { background: rgba(245,200,66,0.1); border: 1px solid rgba(245,200,66,0.3); color: var(--gold); }
 
-  .tabs { display: flex; gap: 4px; margin-bottom: 24px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 4px; width: fit-content; }
-  .tab { padding: 10px 24px; border-radius: 9px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; color: var(--gray); border: none; background: transparent; }
-  .tab.active { background: var(--teal); color: var(--navy); }
+  .logo { display: flex; align-items: center; gap: 14px; }
 
-  .config-panel { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 22px; margin-bottom: 22px; }
-  .config-title { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--gray); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 14px; }
-  .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 18px; }
-  .field { display: flex; flex-direction: column; gap: 5px; }
-  .field label { font-size: 9px; color: var(--gray); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 1px; }
-  .field input, .field select { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 7px; padding: 8px 11px; color: var(--white); font-family: 'DM Mono', monospace; font-size: 11px; outline: none; }
-  .field input:focus, .field select:focus { border-color: var(--teal); }
-  .field select option { background: var(--navy2); }
-  .src-row { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 18px; }
-  .src-chip { padding: 5px 13px; border-radius: 20px; font-family: 'DM Mono', monospace; font-size: 10px; cursor: pointer; transition: all 0.15s; user-select: none; background: rgba(0,201,167,0.1); border: 1px solid rgba(0,201,167,0.3); color: var(--teal); }
-  .src-chip.off { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); color: var(--gray); }
-  .src-lbl { font-size: 9px; color: var(--gray); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .logo-mark {
+    width: 40px; height: 40px;
+    background: #1A1A2E;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; color: #fff; letter-spacing: 0.5px;
+  }
 
-  .btn-scan { background: var(--teal); color: var(--navy); border: none; border-radius: 9px; padding: 11px 26px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
-  .btn-scan:hover:not(:disabled) { background: #00E5C0; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,201,167,0.3); }
-  .btn-scan:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-  .sp { width: 14px; height: 14px; border: 2px solid rgba(13,27,42,0.3); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+  .logo-name { font-size: 18px; font-weight: 700; color: #1A1A2E; }
+  .logo-sub { font-size: 12px; color: #6B7280; margin-top: 1px; }
+
+  .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+  .tag {
+    background: #F3F4F6; border: 1px solid #E5E7EB;
+    color: #6B7280; padding: 4px 12px; border-radius: 4px;
+    font-size: 12px; font-weight: 500;
+  }
+
+  .tag-accent { background: #EFF6FF; border-color: #BFDBFE; color: #1D4ED8; }
+
+  /* TABS */
+  .tabs {
+    display: flex; gap: 0;
+    border-bottom: 2px solid #E5E7EB;
+    margin-bottom: 28px;
+  }
+
+  .tab {
+    padding: 12px 28px; font-size: 15px; font-weight: 500;
+    color: #6B7280; border: none; background: transparent;
+    cursor: pointer; border-bottom: 2px solid transparent;
+    margin-bottom: -2px; transition: all 0.15s;
+  }
+
+  .tab:hover { color: #1A1A2E; }
+  .tab.active { color: #1A1A2E; font-weight: 600; border-bottom-color: #1A1A2E; }
+
+  /* CARDS */
+  .card {
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .card-title {
+    font-size: 12px; font-weight: 600; color: #6B7280;
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 18px;
+  }
+
+  /* FORM */
+  .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+
+  .field label { font-size: 12px; font-weight: 500; color: #374151; }
+
+  .field input, .field select {
+    border: 1px solid #D1D5DB; border-radius: 6px;
+    padding: 9px 12px; font-size: 14px; font-family: 'Inter', sans-serif;
+    color: #1A1A2E; background: #fff; outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .field input:focus, .field select:focus { border-color: #1A1A2E; }
+
+  .src-label { font-size: 12px; font-weight: 500; color: #374151; margin-bottom: 8px; }
+
+  .src-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+
+  .src-chip {
+    padding: 6px 14px; border-radius: 4px; font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all 0.15s; user-select: none;
+    background: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8;
+  }
+
+  .src-chip.off { background: #F9FAFB; border-color: #E5E7EB; color: #9CA3AF; }
+
+  .btn-scan {
+    background: #1A1A2E; color: #fff; border: none; border-radius: 6px;
+    padding: 10px 24px; font-size: 14px; font-weight: 600;
+    font-family: 'Inter', sans-serif; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: background 0.15s;
+  }
+
+  .btn-scan:hover:not(:disabled) { background: #2D2D4A; }
+  .btn-scan:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .sp {
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+    border-radius: 50%; animation: spin 0.7s linear infinite; display: none;
+  }
+
   .btn-scan.loading .sp { display: block; }
   .btn-scan.loading .bi { display: none; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .pw { margin-bottom: 14px; display: none; }
+  /* PROGRESS */
+  .pw { margin-bottom: 20px; display: none; }
   .pw.show { display: block; }
-  .pt { background: rgba(255,255,255,0.05); border-radius: 3px; height: 3px; overflow: hidden; }
-  .pf { height: 100%; background: var(--teal); border-radius: 3px; transition: width 0.3s; width: 0%; }
-  .ptxt { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--teal); margin-top: 5px; }
+  .pt { background: #E5E7EB; border-radius: 4px; height: 4px; overflow: hidden; }
+  .pf { height: 100%; background: #1A1A2E; border-radius: 4px; transition: width 0.3s; width: 0%; }
+  .ptxt { font-size: 13px; color: #6B7280; margin-top: 6px; }
 
-  .sb { display: none; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 20px; }
-  .sb.show { display: grid; }
-  .sc { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px; text-align: center; }
-  .sn { font-size: 26px; font-weight: 800; color: var(--teal); line-height: 1; margin-bottom: 3px; }
-  .sl { font-size: 9px; color: var(--gray); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 1px; }
+  /* STATS */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 24px; display: none; }
+  .stats-grid.show { display: grid; }
 
-  .fr { display: none; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
-  .fr.show { display: flex; }
-  .fb { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 5px 13px; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); cursor: pointer; transition: all 0.15s; }
-  .fb.act, .fb:hover { border-color: var(--teal); color: var(--teal); background: rgba(0,201,167,0.08); }
-  .fb.g.act { border-color: var(--green); color: var(--green); background: rgba(34,197,94,0.08); }
-  .fb.y.act { border-color: var(--yellow); color: var(--yellow); background: rgba(234,179,8,0.08); }
-  .fb.o.act { border-color: var(--orange); color: var(--orange); background: rgba(249,115,22,0.08); }
-  .si { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 5px 13px; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--white); outline: none; width: 180px; }
-  .si:focus { border-color: var(--teal); }
-  .eb { margin-left: auto; background: rgba(245,200,66,0.1); border: 1px solid rgba(245,200,66,0.3); border-radius: 20px; padding: 5px 13px; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gold); cursor: pointer; }
-  .eb:hover { background: rgba(245,200,66,0.2); }
+  .stat {
+    background: #fff; border: 1px solid #E5E7EB; border-radius: 8px;
+    padding: 20px; text-align: center;
+  }
 
-  .tw { border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); display: none; margin-bottom: 40px; }
-  .tw.show { display: block; }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  thead tr { background: rgba(255,255,255,0.05); }
-  thead th { padding: 14px 16px; text-align: left; font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray); font-weight: 500; white-space: nowrap; border-bottom: 1px solid rgba(255,255,255,0.06); cursor: pointer; user-select: none; }
-  thead th:hover { color: var(--teal); }
-  tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.1s; }
-  tbody tr:hover { background: rgba(255,255,255,0.025); }
+  .stat-n { font-size: 32px; font-weight: 700; color: #1A1A2E; line-height: 1; margin-bottom: 6px; }
+  .stat-l { font-size: 12px; color: #6B7280; font-weight: 500; }
+
+  /* FILTERS */
+  .filter-row { display: none; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filter-row.show { display: flex; }
+
+  .fb {
+    padding: 6px 16px; border-radius: 4px; font-size: 13px; font-weight: 500;
+    color: #6B7280; border: 1px solid #E5E7EB; background: #fff;
+    cursor: pointer; transition: all 0.15s;
+  }
+
+  .fb:hover { border-color: #9CA3AF; color: #374151; }
+  .fb.act { background: #1A1A2E; color: #fff; border-color: #1A1A2E; }
+
+  .search-inp {
+    border: 1px solid #D1D5DB; border-radius: 4px;
+    padding: 6px 14px; font-size: 13px; font-family: 'Inter', sans-serif;
+    color: #1A1A2E; outline: none; width: 200px;
+  }
+
+  .search-inp:focus { border-color: #1A1A2E; }
+
+  .btn-csv {
+    margin-left: auto; background: #fff; border: 1px solid #D1D5DB;
+    border-radius: 4px; padding: 6px 14px; font-size: 13px; font-weight: 500;
+    color: #374151; cursor: pointer; transition: all 0.15s;
+  }
+
+  .btn-csv:hover { border-color: #9CA3AF; }
+
+  /* TABLE */
+  .table-wrap {
+    background: #fff; border: 1px solid #E5E7EB; border-radius: 8px;
+    overflow: hidden; display: none; margin-bottom: 40px; overflow-x: auto;
+  }
+
+  .table-wrap.show { display: block; }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead tr { background: #F9FAFB; border-bottom: 1px solid #E5E7EB; }
+
+  thead th {
+    padding: 13px 16px; text-align: left; font-size: 12px; font-weight: 600;
+    color: #6B7280; white-space: nowrap; cursor: pointer; user-select: none;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+
+  thead th:hover { color: #1A1A2E; }
+
+  tbody tr { border-bottom: 1px solid #F3F4F6; transition: background 0.1s; }
+  tbody tr:hover { background: #F9FAFB; }
   tbody tr:last-child { border-bottom: none; }
-  td { padding: 16px 16px; vertical-align: top; line-height: 1.5; }
-  .cn { font-weight: 700; color: var(--white); font-size: 14px; }
-  .cm { font-size: 11px; color: var(--gray); font-family: 'DM Mono', monospace; margin-top: 2px; }
-  .tmono { font-family: 'DM Mono', monospace; font-size: 12px; }
-  .tbloc { font-family: 'DM Mono', monospace; font-size: 12px; color: rgba(0,201,167,0.8); line-height: 1.7; }
-  .teco { font-family: 'DM Mono', monospace; font-weight: 700; color: var(--green); }
-  .pb { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 20px; font-size: 10px; font-family: 'DM Mono', monospace; white-space: nowrap; }
-  .pbh { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
-  .pbm { background: rgba(234,179,8,0.15); color: var(--yellow); border: 1px solid rgba(234,179,8,0.3); }
-  .pbf { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
-  .vbh { background: rgba(249,115,22,0.15); color: var(--orange); border: 1px solid rgba(249,115,22,0.3); display: inline-flex; padding: 3px 8px; border-radius: 20px; font-size: 10px; font-family: 'DM Mono', monospace; }
-  .vbm { background: rgba(234,179,8,0.15); color: var(--yellow); border: 1px solid rgba(234,179,8,0.3); display: inline-flex; padding: 3px 8px; border-radius: 20px; font-size: 10px; font-family: 'DM Mono', monospace; }
-  .pc { display: inline-block; background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); color: #A78BFA; border-radius: 20px; padding: 2px 7px; font-size: 9px; font-family: 'DM Mono', monospace; margin: 1px; }
-  .la { color: var(--teal); text-decoration: none; font-size: 10px; font-family: 'DM Mono', monospace; opacity: 0.6; }
-  .la:hover { opacity: 1; }
+
+  td { padding: 16px; vertical-align: top; line-height: 1.6; font-size: 14px; }
+
+  .co-name { font-weight: 600; color: #1A1A2E; font-size: 15px; }
+  .co-meta { font-size: 12px; color: #9CA3AF; margin-top: 2px; }
+
+  .td-mono { font-family: 'Inter', monospace; font-size: 13px; color: #374151; }
+  .td-blocs { font-size: 13px; color: #1D4ED8; line-height: 1.8; }
+  .td-eco { font-weight: 700; color: #059669; font-size: 14px; }
+
+  .badge {
+    display: inline-flex; align-items: center; padding: 3px 10px;
+    border-radius: 4px; font-size: 12px; font-weight: 600; white-space: nowrap;
+  }
+
+  .badge-green { background: #D1FAE5; color: #065F46; }
+  .badge-yellow { background: #FEF3C7; color: #92400E; }
+  .badge-red { background: #FEE2E2; color: #991B1B; }
+  .badge-orange { background: #FFEDD5; color: #9A3412; }
+  .badge-blue { background: #DBEAFE; color: #1E40AF; }
+
+  .pattern-tag {
+    display: inline-block; background: #F3F4F6; border: 1px solid #E5E7EB;
+    color: #374151; border-radius: 4px; padding: 2px 8px;
+    font-size: 12px; margin: 1px;
+  }
+
+  .link-btn {
+    color: #1D4ED8; text-decoration: none; font-size: 13px;
+    font-weight: 500;
+  }
+
+  .link-btn:hover { text-decoration: underline; }
+
   .empty { text-align: center; padding: 60px 20px; }
-  .ei { font-size: 36px; margin-bottom: 10px; opacity: 0.4; }
-  .et { font-size: 15px; font-weight: 700; color: var(--white); opacity: 0.4; margin-bottom: 5px; }
-  .es { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--gray); }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-title { font-size: 16px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+  .empty-sub { font-size: 14px; color: #9CA3AF; }
+
+  .divider { height: 1px; background: #E5E7EB; margin: 0; }
 </style>
 </head>
 <body>
-<div class="container">
 
 <header>
-  <div class="header-inner">
-    <div class="logo">
-      <div class="logo-mark">OH</div>
-      <div><div class="logo-text">Opex House</div><div class="logo-sub">Pipeline Scanner v2</div></div>
-    </div>
-    <div class="badges">
-      <span class="badge bt">JSearch</span><span class="badge bt">Adzuna</span>
-      <span class="badge bt">Jooble</span><span class="badge bt">Remotive</span>
-      <span class="badge bg" id="lsb">Jamais scanné</span>
+  <div class="container">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-mark">OH</div>
+        <div>
+          <div class="logo-name">Opex House</div>
+          <div class="logo-sub">Pipeline Scanner</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <span class="tag">JSearch</span>
+        <span class="tag">Adzuna</span>
+        <span class="tag">Jooble</span>
+        <span class="tag">Remotive</span>
+        <span class="tag tag-accent" id="lsb">Jamais scanné</span>
+      </div>
     </div>
   </div>
 </header>
 
-<div class="tabs">
-  <button class="tab active" onclick="switchTab('pme',this)">🏢 Pipeline PME</button>
-  <button class="tab" onclick="switchTab('cc',this)">📞 Pipeline Call Centers</button>
-</div>
+<div class="container">
 
-<div class="config-panel">
-  <div class="config-title">⚙ Configuration</div>
-  <div class="config-grid">
-    <div class="field"><label>JSearch Key (RapidAPI)</label><input type="password" id="jk" value="5dda3681c5mshe59f206550f94bcp1434b0jsn70f9c5b72fec"></div>
-    <div class="field"><label>Adzuna App ID</label><input type="text" id="ai" value="zebrov69"></div>
-    <div class="field"><label>Adzuna App Key</label><input type="password" id="ak" value="8f5a15d1bfc4df10843b8a9307ec194f"></div>
-    <div class="field"><label>Jooble API Key</label><input type="password" id="jok" value="d2cc0fb5-4b89-4d9c-b668-ab85b0f23201"></div>
-    <div class="field"><label>Région</label><select id="reg"><option value="ca">🇨🇦 Canada</option><option value="us">🇺🇸 USA</option></select></div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('pme',this)">Pipeline PME</button>
+    <button class="tab" onclick="switchTab('cc',this)">Pipeline Call Centers</button>
   </div>
-  <div class="src-lbl">Sources actives</div>
-  <div class="src-row">
-    <div class="src-chip" id="s-js" onclick="tSrc('js')">⚡ JSearch</div>
-    <div class="src-chip" id="s-az" onclick="tSrc('az')">🔍 Adzuna</div>
-    <div class="src-chip" id="s-jo" onclick="tSrc('jo')">🌍 Jooble</div>
-    <div class="src-chip" id="s-re" onclick="tSrc('re')">🌐 Remotive</div>
+
+  <!-- CONFIG -->
+  <div class="card">
+    <div class="card-title">Configuration</div>
+    <div class="config-grid">
+      <div class="field"><label>JSearch Key (RapidAPI)</label><input type="password" id="jk" value="5dda3681c5mshe59f206550f94bcp1434b0jsn70f9c5b72fec"></div>
+      <div class="field"><label>Adzuna App ID</label><input type="text" id="ai" value="zebrov69"></div>
+      <div class="field"><label>Adzuna App Key</label><input type="password" id="ak" value="8f5a15d1bfc4df10843b8a9307ec194f"></div>
+      <div class="field"><label>Jooble API Key</label><input type="password" id="jok" value="d2cc0fb5-4b89-4d9c-b668-ab85b0f23201"></div>
+      <div class="field"><label>Région</label><select id="reg"><option value="ca">Canada</option><option value="us">États-Unis</option></select></div>
+    </div>
+    <div class="src-label">Sources actives</div>
+    <div class="src-row">
+      <div class="src-chip" id="s-js" onclick="tSrc('js')">JSearch</div>
+      <div class="src-chip" id="s-az" onclick="tSrc('az')">Adzuna</div>
+      <div class="src-chip" id="s-jo" onclick="tSrc('jo')">Jooble</div>
+      <div class="src-chip" id="s-re" onclick="tSrc('re')">Remotive</div>
+    </div>
+    <button class="btn-scan" id="sbtn" onclick="lancerScan()">
+      <span class="bi">→</span><div class="sp"></div><span id="blbl">Lancer le scan PME</span>
+    </button>
   </div>
-  <button class="btn-scan" id="sbtn" onclick="lancerScan()">
-    <span class="bi">⚡</span><div class="sp"></div><span id="blbl">Lancer le scan PME</span>
-  </button>
+
+  <!-- PROGRESS -->
+  <div class="pw" id="pw">
+    <div class="pt"><div class="pf" id="pf"></div></div>
+    <div class="ptxt" id="ptxt">Initialisation...</div>
+  </div>
+
+  <!-- STATS PME -->
+  <div class="stats-grid" id="sb-pme">
+    <div class="stat"><div class="stat-n" id="sp0">0</div><div class="stat-l">Offres qualifiées</div></div>
+    <div class="stat"><div class="stat-n" style="color:#065F46" id="sp1">0</div><div class="stat-l">Haute priorité</div></div>
+    <div class="stat"><div class="stat-n" style="color:#92400E" id="sp2">0</div><div class="stat-l">Priorité moyenne</div></div>
+    <div class="stat"><div class="stat-n" style="color:#1D4ED8" id="sp3">0</div><div class="stat-l">Fit 4/4</div></div>
+    <div class="stat"><div class="stat-n" style="color:#059669" id="sp4">—</div><div class="stat-l">Éco max / mois</div></div>
+  </div>
+
+  <!-- STATS CC -->
+  <div class="stats-grid" id="sb-cc">
+    <div class="stat"><div class="stat-n" id="sc0">0</div><div class="stat-l">Employeurs</div></div>
+    <div class="stat"><div class="stat-n" style="color:#9A3412" id="sc1">0</div><div class="stat-l">Gros volume (5+)</div></div>
+    <div class="stat"><div class="stat-n" style="color:#92400E" id="sc2">0</div><div class="stat-l">Volume (3–4)</div></div>
+    <div class="stat"><div class="stat-n" style="color:#1D4ED8" id="sc3">0</div><div class="stat-l">Bilingues FR/EN</div></div>
+    <div class="stat"><div class="stat-n" style="color:#059669" id="sc4">—</div><div class="stat-l">Éco potentielle max</div></div>
+  </div>
+
+  <!-- FILTERS PME -->
+  <div class="filter-row" id="fr-pme">
+    <button class="fb act" onclick="fPME('tous',this)">Tous</button>
+    <button class="fb" onclick="fPME('haute',this)">Haute priorité</button>
+    <button class="fb" onclick="fPME('moyenne',this)">Priorité moyenne</button>
+    <button class="fb" onclick="fPME('fit4',this)">Fit 4/4</button>
+    <input class="search-inp" id="qi-pme" placeholder="Rechercher..." oninput="rPME()">
+    <button class="btn-csv" onclick="xCSV('pme')">↓ Exporter CSV</button>
+  </div>
+
+  <!-- FILTERS CC -->
+  <div class="filter-row" id="fr-cc">
+    <button class="fb act" onclick="fCC('tous',this)">Tous</button>
+    <button class="fb" onclick="fCC('gros',this)">Gros volume</button>
+    <button class="fb" onclick="fCC('vol',this)">Volume</button>
+    <button class="fb" onclick="fCC('bil',this)">Bilingues</button>
+    <input class="search-inp" id="qi-cc" placeholder="Rechercher..." oninput="rCC()">
+    <button class="btn-csv" onclick="xCSV('cc')">↓ Exporter CSV</button>
+  </div>
+
+  <!-- TABLE PME -->
+  <div class="table-wrap" id="tw-pme">
+    <table>
+      <thead><tr>
+        <th onclick="srtP('pn')">Priorité</th>
+        <th onclick="srtP('fn')">Fit</th>
+        <th onclick="srtP('en')">Entreprise</th>
+        <th>Poste</th>
+        <th>Blocs externalisables</th>
+        <th>Signal</th>
+        <th onclick="srtP('sn')">Salaire</th>
+        <th onclick="srtP('cn')">Coût employeur</th>
+        <th onclick="srtP('xn')">Économie / mois</th>
+        <th>Sensibilité</th>
+        <th>Outils</th>
+        <th>Source</th>
+        <th>Lien</th>
+      </tr></thead>
+      <tbody id="tb-pme">
+        <tr><td colspan="13"><div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">Aucun scan lancé</div><div class="empty-sub">Configurez et cliquez sur "Lancer le scan"</div></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TABLE CC -->
+  <div class="table-wrap" id="tw-cc">
+    <table>
+      <thead><tr>
+        <th onclick="srtC('vn')">Volume</th>
+        <th onclick="srtC('en')">Entreprise</th>
+        <th>Secteur</th>
+        <th onclick="srtC('pn')">Postes détectés</th>
+        <th onclick="srtC('sn')">Salaire moyen</th>
+        <th onclick="srtC('xn')">Économie potentielle</th>
+        <th>Bilingue FR/EN</th>
+        <th>Remote</th>
+        <th>Titres détectés</th>
+        <th>Lien</th>
+      </tr></thead>
+      <tbody id="tb-cc">
+        <tr><td colspan="10"><div class="empty"><div class="empty-icon">📞</div><div class="empty-title">Aucun scan lancé</div><div class="empty-sub">Sélectionnez l'onglet Call Centers et lancez le scan</div></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+
 </div>
 
-<div class="pw" id="pw"><div class="pt"><div class="pf" id="pf"></div></div><div class="ptxt" id="ptxt">...</div></div>
-
-<!-- STATS PME -->
-<div class="sb" id="sb-pme">
-  <div class="sc"><div class="sn" id="sp0">0</div><div class="sl">Offres qualifiées</div></div>
-  <div class="sc"><div class="sn" style="color:var(--green)" id="sp1">0</div><div class="sl">Haute priorité</div></div>
-  <div class="sc"><div class="sn" style="color:var(--yellow)" id="sp2">0</div><div class="sl">Priorité moyenne</div></div>
-  <div class="sc"><div class="sn" style="color:var(--teal)" id="sp3">0</div><div class="sl">Fit 4/4</div></div>
-  <div class="sc"><div class="sn" style="color:var(--gold)" id="sp4">—</div><div class="sl">Éco max/mois</div></div>
-</div>
-
-<!-- STATS CC -->
-<div class="sb" id="sb-cc">
-  <div class="sc"><div class="sn" id="sc0">0</div><div class="sl">Employeurs</div></div>
-  <div class="sc"><div class="sn" style="color:var(--orange)" id="sc1">0</div><div class="sl">Gros volume (5+)</div></div>
-  <div class="sc"><div class="sn" style="color:var(--yellow)" id="sc2">0</div><div class="sl">Volume (3-4)</div></div>
-  <div class="sc"><div class="sn" style="color:var(--teal)" id="sc3">0</div><div class="sl">Bilingues FR/EN</div></div>
-  <div class="sc"><div class="sn" style="color:var(--gold)" id="sc4">—</div><div class="sl">Éco potentielle max</div></div>
-</div>
-
-<!-- FILTERS PME -->
-<div class="fr" id="fr-pme">
-  <button class="fb act" onclick="fPME('tous',this)">Tous</button>
-  <button class="fb g" onclick="fPME('haute',this)">🟢 Haute</button>
-  <button class="fb y" onclick="fPME('moyenne',this)">🟡 Moyenne</button>
-  <button class="fb o" onclick="fPME('fit4',this)">⭐ Fit 4/4</button>
-  <input class="si" id="qi-pme" placeholder="Rechercher..." oninput="rPME()">
-  <button class="eb" onclick="xCSV('pme')">⬇ CSV</button>
-</div>
-
-<!-- FILTERS CC -->
-<div class="fr" id="fr-cc">
-  <button class="fb act" onclick="fCC('tous',this)">Tous</button>
-  <button class="fb o" onclick="fCC('gros',this)">🔥 Gros volume</button>
-  <button class="fb y" onclick="fCC('vol',this)">📊 Volume</button>
-  <button class="fb g" onclick="fCC('bil',this)">🗣 Bilingues</button>
-  <input class="si" id="qi-cc" placeholder="Rechercher..." oninput="rCC()">
-  <button class="eb" onclick="xCSV('cc')">⬇ CSV</button>
-</div>
-
-<!-- TABLE PME -->
-<div class="tw" id="tw-pme">
-  <table><thead><tr>
-    <th onclick="srtP('pn')">Priorité ↕</th>
-    <th onclick="srtP('fn')">Fit ↕</th>
-    <th onclick="srtP('en')">Entreprise ↕</th>
-    <th>Poste</th>
-    <th>Blocs externalisables</th>
-    <th>Pattern</th>
-    <th onclick="srtP('sn')">Salaire ↕</th>
-    <th onclick="srtP('cn')">Coût emp. ↕</th>
-    <th onclick="srtP('xn')">Éco/mois ↕</th>
-    <th>Sensibilité</th>
-    <th>Outils</th>
-    <th>Src</th>
-    <th>Lien</th>
-  </tr></thead>
-  <tbody id="tb-pme"><tr><td colspan="13"><div class="empty"><div class="ei">🔍</div><div class="et">Lance le scan PME</div><div class="es">Configure et clique sur "Lancer le scan"</div></div></td></tr></tbody>
-  </table>
-</div>
-
-<!-- TABLE CC -->
-<div class="tw" id="tw-cc">
-  <table><thead><tr>
-    <th onclick="srtC('vn')">Volume ↕</th>
-    <th onclick="srtC('en')">Entreprise ↕</th>
-    <th>Secteur</th>
-    <th onclick="srtC('pn')">Postes ↕</th>
-    <th onclick="srtC('sn')">Salaire moy. ↕</th>
-    <th onclick="srtC('xn')">Éco pot./mois ↕</th>
-    <th>Bilingue</th>
-    <th>Remote</th>
-    <th>Titres détectés</th>
-    <th>Lien</th>
-  </tr></thead>
-  <tbody id="tb-cc"><tr><td colspan="10"><div class="empty"><div class="ei">📞</div><div class="et">Lance le scan Call Centers</div><div class="es">Switche sur l'onglet et lance</div></div></td></tr></tbody>
-  </table>
-</div>
-
-</div>
 <script>
-// STATE
 let tab='pme', OP=[], OC=[], src={js:1,az:1,jo:1,re:1};
 let tpCol='pn', tpDir=1, tcCol='vn', tcDir=-1, fpF='tous', fcF='tous';
 
-// KEYWORDS
 const KE=['saisie','facturation','comptes fournisseurs','comptes payables','comptes recevables','rapprochement','conciliation bancaire','entrée de données','traitement des factures','suivi des paiements','support administratif','classement','archivage','mise à jour','suivi des dossiers','gestion des courriels','prise de rendez-vous','service à la clientèle','réponse aux demandes','accounts payable','accounts receivable','data entry','bookkeeping','invoice processing','bank reconciliation','customer support','appointment scheduling'];
 const KSH=['paie','payroll','t4','relevé 1','das','déclaration gouvernementale','cpa','audit','vérification comptable','états financiers annuels'];
 const KSF=['saisie','comptes fournisseurs','facturation','rapprochement','conciliation','archivage','classement','support administratif','accounts payable','data entry','invoice','bookkeeping'];
@@ -247,7 +404,6 @@ const KCC=['agent de centre d\'appels','agent service client','téléagent','té
 const KCX=['gouvernement','ministère','commission scolaire','cisss','ciusss','directeur','manager','superviseur','team lead','chef d\'équipe'];
 const FAM={'service client':['customer service','service client','service à la clientèle','relation client'],'agent bilingue':['bilingual','bilingue','french/english','français/anglais'],'agent téléphonique':['call center','centre d\'appels','téléphonique','inbound','outbound'],'support technique':['technical support','soutien technique','support tech']};
 
-// HELPERS
 const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const slp=ms=>new Promise(r=>setTimeout(r,ms));
 function setP(p,t){document.getElementById('pf').style.width=p+'%';document.getElementById('ptxt').textContent=t;}
@@ -265,17 +421,16 @@ function salH(o){
 
 function sensib(t){
   const h=KSH.filter(k=>t.includes(k)).length,f=KSF.filter(k=>t.includes(k)).length;
-  if(h>=2)return'Élevée ❌';if(h===1&&f===0)return'Moyenne ⚠️';if(f>=1)return'Faible ✅';return'Moyenne ⚠️';
+  if(h>=2)return'Élevée';if(h===1&&f===0)return'Moyenne';if(f>=1)return'Faible';return'Moyenne';
 }
 function blocs(t){return KE.filter(k=>t.includes(k)).slice(0,5).map(k=>k.charAt(0).toUpperCase()+k.slice(1)).join(' · ')||'À qualifier';}
-function outils(t){return KC.filter(k=>t.includes(k)).map(k=>k.charAt(0).toUpperCase()+k.slice(1)).join(' / ')||'—';}
+function outils(t){return KC.filter(k=>t.includes(k)).map(k=>k.charAt(0).toUpperCase()+k.slice(1)).join(', ')||'—';}
 function patterns(t){const p=[];if(KUR.some(k=>t.includes(k)))p.push('Urgent');if(KGR.some(k=>t.includes(k)))p.push('Croissance');if(t.includes('remplacement')||t.includes('replacement'))p.push('Remplacement');return p;}
 function fit(o){let s=0;if(o.tp)s++;if(o.rm)s++;if(o.bl!=='À qualifier')s++;if(o.cn>=27)s++;return s;}
-function prio(s,b,o,c,f){if(s==='Élevée ❌')return'faible';let sc=0;if(c>=30)sc+=3;else if(c>=27)sc+=2;else if(c>=24)sc+=1;if(s==='Faible ✅')sc+=3;else if(s==='Moyenne ⚠️')sc+=1;if(b!=='À qualifier')sc+=2;if(o!=='—')sc+=1;if(f>=3)sc+=2;if(sc>=8)return'haute';if(sc>=4)return'moyenne';return'faible';}
+function prio(s,b,o,c,f){if(s==='Élevée')return'faible';let sc=0;if(c>=30)sc+=3;else if(c>=27)sc+=2;else if(c>=24)sc+=1;if(s==='Faible')sc+=3;else if(s==='Moyenne')sc+=1;if(b!=='À qualifier')sc+=2;if(o!=='—')sc+=1;if(f>=3)sc+=2;if(sc>=8)return'haute';if(sc>=4)return'moyenne';return'faible';}
 function normCC(titre){const t=titre.toLowerCase().replace(/representative|representant|représentant/g,'agent').replace(/customer service|service à la clientèle|service client/g,'service client').replace(/call center|centre d.appels|contact center/g,'call center').replace(/bilingual|bilingue/g,'bilingue').replace(/\s+/g,' ').trim();for(const[f,mots]of Object.entries(FAM)){if(mots.some(m=>t.includes(m)))return f;}return t.split(' ').slice(0,3).join(' ');}
 function isCCp(titre){const t=titre.toLowerCase();return KCC.some(k=>t.includes(k));}
 
-// PROCESS PME
 function procPME(o,src2){
   const ti=o.title||o.job_title||'',co=o.company?.display_name||o.company_name||o.employer_name||o.company||'';
   const de=o.description||o.snippet||o.job_description||'',li=o.redirect_url||o.url||o.job_apply_link||o.link||'';
@@ -292,7 +447,6 @@ function procPME(o,src2){
   return ob;
 }
 
-// PROCESS CC
 function procCC(o,src2){
   const ti=o.title||o.job_title||'',co=o.company?.display_name||o.company_name||o.employer_name||o.company||'';
   const de=o.description||o.snippet||o.job_description||'',li=o.redirect_url||o.url||o.job_apply_link||o.link||'';
@@ -301,11 +455,9 @@ function procCC(o,src2){
   const sal=salH(o),cout=sal?sal*1.20:null,rm=t.includes('télétravail')||t.includes('remote')||t.includes('work from home');
   const bil=t.includes('bilingue')||t.includes('bilingual')||t.includes('french/english')||t.includes('français/anglais');
   const sec=t.includes('assurance')?'Assurance':t.includes('télécom')||t.includes('telecom')?'Télécom':t.includes('santé')||t.includes('medical')?'Santé':t.includes('retail')?'Retail':t.includes('tech')?'Tech':t.includes('financ')?'Finance':'Général';
-  const fam=normCC(ti);
-  return{co,ti,fam,sal,cout,rm,bil,sec,li,src:src2};
+  return{co,ti,fam:normCC(ti),sal,cout,rm,bil,sec,li,src:src2};
 }
 
-// AGREGER CC
 function agrCC(brutes){
   const m={};
   for(const b of brutes){
@@ -327,46 +479,32 @@ function agrCC(brutes){
   }).filter(e=>e.pn>=2).sort((a,b)=>a.vn-b.vn||b.pn-a.pn);
 }
 
-// API
-async function fJS(q,k,r){
-  const loc=r==='ca'?'Canada':'USA';
-  try{const res=await fetch(`https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(q+' remote '+loc)}&num_pages=2&date_posted=month`,{headers:{'x-rapidapi-key':k,'x-rapidapi-host':'jsearch.p.rapidapi.com'}});if(!res.ok)return[];const d=await res.json();return(d.data||[]).map(j=>({title:j.job_title,company:{display_name:j.employer_name},description:j.job_description,redirect_url:j.job_apply_link,created:j.job_posted_at_datetime_utc,salary_min:j.job_min_salary,salary_max:j.job_max_salary}));}catch{return[];}
-}
-async function fAZ(q,i,k,r){
-  try{const res=await fetch(`https://api.adzuna.com/v1/api/jobs/${r}/search/1?app_id=${i}&app_key=${k}&results_per_page=20&what=${encodeURIComponent(q)}&content-type=application/json`);if(!res.ok)return[];const d=await res.json();return d.results||[];}catch{return[];}
-}
-async function fJO(q,k){
-  try{const res=await fetch(`https://jooble.org/api/${k}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({keywords:q,location:'Quebec, Canada',page:1,SearchMode:1})});if(!res.ok)return[];const d=await res.json();return(d.jobs||[]).map(j=>({title:j.title,company:j.company,description:j.snippet,redirect_url:j.link,created:j.updated,salary_min:j.salary?parseFloat(j.salary.replace(/[^0-9.]/g,'')):null}));}catch{return[];}
-}
-async function fRE(){
-  const cats=['data','finance','customer-support','marketing','hr'],r=[];
-  for(const c of cats){try{const res=await fetch(`https://remotive.com/api/remote-jobs?category=${c}&limit=15`);if(!res.ok)continue;const d=await res.json();r.push(...(d.jobs||[]).map(j=>({title:j.title,company:{display_name:j.company_name},description:j.description,redirect_url:j.url,created:j.publication_date})));}catch{continue;}await slp(150);}
-  return r;
-}
+async function fJS(q,k,r){const loc=r==='ca'?'Canada':'USA';try{const res=await fetch(`https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(q+' remote '+loc)}&num_pages=2&date_posted=month`,{headers:{'x-rapidapi-key':k,'x-rapidapi-host':'jsearch.p.rapidapi.com'}});if(!res.ok)return[];const d=await res.json();return(d.data||[]).map(j=>({title:j.job_title,company:{display_name:j.employer_name},description:j.job_description,redirect_url:j.job_apply_link,created:j.job_posted_at_datetime_utc,salary_min:j.job_min_salary,salary_max:j.job_max_salary}));}catch{return[];}}
+async function fAZ(q,i,k,r){try{const res=await fetch(`https://api.adzuna.com/v1/api/jobs/${r}/search/1?app_id=${i}&app_key=${k}&results_per_page=20&what=${encodeURIComponent(q)}&content-type=application/json`);if(!res.ok)return[];const d=await res.json();return d.results||[];}catch{return[];}}
+async function fJO(q,k){try{const res=await fetch(`https://jooble.org/api/${k}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({keywords:q,location:'Quebec, Canada',page:1,SearchMode:1})});if(!res.ok)return[];const d=await res.json();return(d.jobs||[]).map(j=>({title:j.title,company:j.company,description:j.snippet,redirect_url:j.link,created:j.updated,salary_min:j.salary?parseFloat(j.salary.replace(/[^0-9.]/g,'')):null}));}catch{return[];}}
+async function fRE(){const cats=['data','finance','customer-support','marketing','hr'],r=[];for(const c of cats){try{const res=await fetch(`https://remotive.com/api/remote-jobs?category=${c}&limit=15`);if(!res.ok)continue;const d=await res.json();r.push(...(d.jobs||[]).map(j=>({title:j.title,company:{display_name:j.company_name},description:j.description,redirect_url:j.url,created:j.publication_date})));}catch{continue;}await slp(150);}return r;}
 
-// SCAN
 async function lancerScan(){
   const jk=document.getElementById('jk').value.trim(),ai=document.getElementById('ai').value.trim(),ak=document.getElementById('ak').value.trim(),jok=document.getElementById('jok').value.trim(),r=document.getElementById('reg').value;
   const btn=document.getElementById('sbtn');btn.disabled=true;btn.classList.add('loading');
   document.getElementById('pw').classList.add('show');
   if(tab==='pme')await scanPME(jk,ai,ak,jok,r);else await scanCC(jk,ai,ak,jok,r);
   btn.disabled=false;btn.classList.remove('loading');
-  document.getElementById('lsb').textContent=`Scan: ${new Date().toLocaleTimeString('fr-CA')}`;
+  document.getElementById('lsb').textContent=`Scanné à ${new Date().toLocaleTimeString('fr-CA')}`;
 }
 
 async function scanPME(jk,ai,ak,jok,r){
-  const PF=['adjoint administratif','technicien comptable','commis comptable','agent facturation','comptes payables','bookkeeper','coordonnateur administratif','agent service client','support informatique','coordonnateur marketing','technicien RH'];
-  const PE=['administrative assistant','accounting technician','bookkeeper','accounts payable','customer service agent','data entry','IT helpdesk','marketing coordinator'];
-  const ps=[...PF,...PE];const br=[];let i=0;
-  for(const p of ps.slice(0,8)){setP(Math.round(i/8*25),`⚡ JSearch: "${p}"...`);if(src.js&&jk)br.push(...(await fJS(p+' Quebec',jk,r)).map(o=>({...o,_s:'JSearch'})));i++;await slp(300);}
-  for(const p of ps.slice(0,6)){setP(25+Math.round(i/6*25),`🔍 Adzuna: "${p}"...`);if(src.az&&ai&&ak)br.push(...(await fAZ(p,ai,ak,r)).map(o=>({...o,_s:'Adzuna'})));await slp(250);}
-  for(const p of ps.slice(0,4)){setP(55+Math.round(i/4*15),`🌍 Jooble: "${p}"...`);if(src.jo&&jok)br.push(...(await fJO(p,jok)).map(o=>({...o,_s:'Jooble'})));await slp(250);}
-  setP(72,'🌐 Remotive...');if(src.re)br.push(...(await fRE()).map(o=>({...o,_s:'Remotive'})));
-  setP(85,`🔍 Traitement ${br.length} offres...`);await slp(100);
+  const PS=['adjoint administratif','technicien comptable','commis comptable','agent facturation','comptes payables','bookkeeper','coordonnateur administratif','agent service client','support informatique','coordonnateur marketing','technicien RH','administrative assistant','accounting technician','accounts payable','customer service agent','data entry','IT helpdesk'];
+  const br=[];let i=0;
+  for(const p of PS.slice(0,8)){setP(Math.round(i/8*25),`Scan JSearch : "${p}"...`);if(src.js&&jk)br.push(...(await fJS(p+' Quebec',jk,r)).map(o=>({...o,_s:'JSearch'})));i++;await slp(300);}
+  for(const p of PS.slice(0,6)){setP(25+Math.round(i/6*25),`Scan Adzuna : "${p}"...`);if(src.az&&ai&&ak)br.push(...(await fAZ(p,ai,ak,r)).map(o=>({...o,_s:'Adzuna'})));await slp(250);}
+  for(const p of PS.slice(0,4)){setP(55+Math.round(i/4*15),`Scan Jooble : "${p}"...`);if(src.jo&&jok)br.push(...(await fJO(p,jok)).map(o=>({...o,_s:'Jooble'})));await slp(250);}
+  setP(72,'Scan Remotive...');if(src.re)br.push(...(await fRE()).map(o=>({...o,_s:'Remotive'})));
+  setP(85,`Traitement de ${br.length} offres brutes...`);await slp(100);
   const vu=new Set();OP=[];
   for(const o of br){const x=procPME(o,o._s);if(!x)continue;const k=`${x.en}|${x.ti}|${x.li}`.toLowerCase();if(vu.has(k))continue;vu.add(k);OP.push(x);}
   OP.sort((a,b)=>a.pn-b.pn||b.fn-a.fn);
-  setP(100,`✅ ${OP.length} offres PME qualifiées`);
+  setP(100,`Terminé — ${OP.length} offres qualifiées`);
   statsPME();renPME(OP);
   ['sb-pme','fr-pme','tw-pme'].forEach(id=>document.getElementById(id).classList.add('show'));
 }
@@ -374,18 +512,17 @@ async function scanPME(jk,ai,ak,jok,r){
 async function scanCC(jk,ai,ak,jok,r){
   const PC=['agent service client','call center agent','customer service representative','téléagent','agent bilingue','bilingual customer service','inbound agent'];
   const br=[];let i=0;
-  for(const p of PC.slice(0,5)){setP(Math.round(i/5*35),`⚡ JSearch CC: "${p}"...`);if(src.js&&jk)br.push(...(await fJS(p+' Quebec Canada',jk,r)).map(o=>({...o,_s:'JSearch'})));i++;await slp(350);}
-  for(const p of PC.slice(0,4)){setP(35+Math.round(i/4*30),`🔍 Adzuna CC: "${p}"...`);if(src.az&&ai&&ak)br.push(...(await fAZ(p,ai,ak,r)).map(o=>({...o,_s:'Adzuna'})));await slp(250);}
-  for(const p of PC.slice(0,3)){setP(68+Math.round(i/3*18),`🌍 Jooble CC: "${p}"...`);if(src.jo&&jok)br.push(...(await fJO(p,jok)).map(o=>({...o,_s:'Jooble'})));await slp(250);}
+  for(const p of PC.slice(0,5)){setP(Math.round(i/5*35),`Scan JSearch CC : "${p}"...`);if(src.js&&jk)br.push(...(await fJS(p+' Quebec Canada',jk,r)).map(o=>({...o,_s:'JSearch'})));i++;await slp(350);}
+  for(const p of PC.slice(0,4)){setP(35+Math.round(i/4*30),`Scan Adzuna CC : "${p}"...`);if(src.az&&ai&&ak)br.push(...(await fAZ(p,ai,ak,r)).map(o=>({...o,_s:'Adzuna'})));await slp(250);}
+  for(const p of PC.slice(0,3)){setP(68+Math.round(i/3*18),`Scan Jooble CC : "${p}"...`);if(src.jo&&jok)br.push(...(await fJO(p,jok)).map(o=>({...o,_s:'Jooble'})));await slp(250);}
   setP(88,'Agrégation par employeur...');await slp(100);
   const tr=br.map(o=>procCC(o,o._s)).filter(Boolean);
   OC=agrCC(tr);
-  setP(100,`✅ ${OC.length} employeurs call center détectés`);
+  setP(100,`Terminé — ${OC.length} employeurs détectés`);
   statsCC();renCC(OC);
   ['sb-cc','fr-cc','tw-cc'].forEach(id=>document.getElementById(id).classList.add('show'));
 }
 
-// STATS
 function statsPME(){
   document.getElementById('sp0').textContent=OP.length;
   document.getElementById('sp1').textContent=OP.filter(o=>o.pr==='haute').length;
@@ -394,6 +531,7 @@ function statsPME(){
   const m=Math.max(...OP.map(o=>o.xn),0);
   document.getElementById('sp4').textContent=m>0?`${m.toLocaleString('fr-CA')} $`:'—';
 }
+
 function statsCC(){
   document.getElementById('sc0').textContent=OC.length;
   document.getElementById('sc1').textContent=OC.filter(o=>o.vl==='gros').length;
@@ -403,47 +541,46 @@ function statsCC(){
   document.getElementById('sc4').textContent=m>0?`${m.toLocaleString('fr-CA')} $`:'—';
 }
 
-// RENDER
 function renPME(of){
   const tb=document.getElementById('tb-pme');
-  if(!of.length){tb.innerHTML=`<tr><td colspan="13"><div class="empty"><div class="ei">📭</div><div class="et">Aucune offre</div><div class="es">Essaie un autre filtre</div></div></td></tr>`;return;}
-  const pc={haute:'pbh',moyenne:'pbm',faible:'pbf'},pl={haute:'🟢 Haute',moyenne:'🟡 Moy.',faible:'🔴 Faible'};
-  const fd=n=>'●'.repeat(n)+'○'.repeat(4-n);
+  if(!of.length){tb.innerHTML=`<tr><td colspan="13"><div class="empty"><div class="empty-icon">📭</div><div class="empty-title">Aucune offre</div><div class="empty-sub">Essayez un autre filtre</div></div></td></tr>`;return;}
+  const pc={haute:'badge-green',moyenne:'badge-yellow',faible:'badge-red'};
+  const pl={haute:'Haute',moyenne:'Moyenne',faible:'Faible'};
+  const sc={Faible:'badge-green',Moyenne:'badge-yellow',Élevée:'badge-red'};
   tb.innerHTML=of.map(o=>`<tr>
-    <td><span class="pb ${pc[o.pr]}">${pl[o.pr]}</span></td>
-    <td><span style="font-family:'DM Mono',monospace;font-size:11px" title="${o.fn}/4"><span style="color:var(--teal)">${fd(o.fn)}</span> ${o.fn}/4</span></td>
-    <td><div class="cn">${esc(o.en)}</div><div class="cm">${o.src} · ${o.da}</div></td>
-    <td class="tmono" style="color:var(--gray);font-size:10px">${esc(o.ti)}</td>
-    <td class="tbloc">${esc(o.bl)}</td>
-    <td>${o.pa.map(p=>`<span class="pc">${p}</span>`).join('')||'—'}</td>
-    <td class="tmono" style="color:var(--gray)">${o.sa}</td>
-    <td class="tmono" style="color:var(--gray)">${o.ca}</td>
-    <td class="teco">${o.xa}</td>
-    <td style="font-size:15px;font-family:'DM Mono',monospace">${o.s}</td>
-    <td style="font-size:12px;color:var(--gray);font-family:'DM Mono',monospace">${o.ou}</td>
-    <td><span style="font-size:12px;color:var(--teal);font-family:'DM Mono',monospace">${o.src}</span></td>
-    <td>${o.li?`<a href="${esc(o.li)}" target="_blank" class="la">Voir ↗</a>`:'—'}</td>
+    <td><span class="badge ${pc[o.pr]}">${pl[o.pr]}</span></td>
+    <td><span style="font-size:14px;font-weight:600;color:#1A1A2E">${o.fn}/4</span></td>
+    <td><div class="co-name">${esc(o.en)}</div><div class="co-meta">${o.src} · ${o.da}</div></td>
+    <td style="color:#374151;font-size:14px">${esc(o.ti)}</td>
+    <td class="td-blocs">${esc(o.bl)}</td>
+    <td>${o.pa.map(p=>`<span class="pattern-tag">${p}</span>`).join('')||'—'}</td>
+    <td class="td-mono">${o.sa}</td>
+    <td class="td-mono">${o.ca}</td>
+    <td class="td-eco">${o.xa}</td>
+    <td><span class="badge ${sc[o.s]||'badge-yellow'}">${o.s}</span></td>
+    <td style="font-size:13px;color:#6B7280">${o.ou}</td>
+    <td><span class="badge badge-blue">${o.src}</span></td>
+    <td>${o.li?`<a href="${esc(o.li)}" target="_blank" class="link-btn">Voir →</a>`:'—'}</td>
   </tr>`).join('');
 }
 
 function renCC(em){
   const tb=document.getElementById('tb-cc');
-  if(!em.length){tb.innerHTML=`<tr><td colspan="10"><div class="empty"><div class="ei">📭</div><div class="et">Aucun employeur</div><div class="es">Lance le scan call centers</div></div></td></tr>`;return;}
+  if(!em.length){tb.innerHTML=`<tr><td colspan="10"><div class="empty"><div class="empty-icon">📭</div><div class="empty-title">Aucun employeur</div><div class="empty-sub">Lancez le scan Call Centers</div></div></td></tr>`;return;}
   tb.innerHTML=em.map(e=>`<tr>
-    <td>${e.vl==='gros'?'<span class="vbh">🔥 Gros volume</span>':'<span class="vbm">📊 Volume</span>'}</td>
-    <td><div class="cn">${esc(e.en)}</div></td>
-    <td style="font-size:12px;color:var(--gray);font-family:'DM Mono',monospace">${e.sec}</td>
-    <td><span style="font-size:22px;font-weight:800;color:${e.pn>=5?'var(--orange)':'var(--yellow)'}">${e.pn}</span></td>
-    <td class="tmono" style="color:var(--gray)">${e.sa}</td>
-    <td class="teco">${e.xa}</td>
-    <td style="font-size:15px">${e.bil?'✅':'—'}</td>
-    <td style="font-size:15px">${e.rm?'✅':'—'}</td>
-    <td style="font-size:12px;color:var(--gray);font-family:'DM Mono',monospace;max-width:200px">${esc(e.tits)}</td>
-    <td>${e.li?`<a href="${esc(e.li)}" target="_blank" class="la">Voir ↗</a>`:'—'}</td>
+    <td><span class="badge ${e.vl==='gros'?'badge-orange':'badge-yellow'}">${e.vl==='gros'?'Gros volume':'Volume'}</span></td>
+    <td><div class="co-name">${esc(e.en)}</div></td>
+    <td style="font-size:14px;color:#374151">${e.sec}</td>
+    <td><span style="font-size:22px;font-weight:700;color:#1A1A2E">${e.pn}</span></td>
+    <td class="td-mono">${e.sa}</td>
+    <td class="td-eco">${e.xa}</td>
+    <td style="font-size:14px">${e.bil?'✅ Oui':'—'}</td>
+    <td style="font-size:14px">${e.rm?'✅ Oui':'—'}</td>
+    <td style="font-size:13px;color:#6B7280;max-width:220px">${esc(e.tits)}</td>
+    <td>${e.li?`<a href="${esc(e.li)}" target="_blank" class="link-btn">Voir →</a>`:'—'}</td>
   </tr>`).join('');
 }
 
-// FILTRES
 function fPME(f,btn){fpF=f;document.querySelectorAll('#fr-pme .fb').forEach(b=>b.classList.remove('act'));btn.classList.add('act');apPME();}
 function rPME(){apPME();}
 function apPME(){const q=document.getElementById('qi-pme').value.toLowerCase();let f=OP;if(fpF==='haute')f=f.filter(o=>o.pr==='haute');else if(fpF==='moyenne')f=f.filter(o=>o.pr==='moyenne');else if(fpF==='fit4')f=f.filter(o=>o.fn===4);if(q)f=f.filter(o=>o.en.toLowerCase().includes(q)||o.ti.toLowerCase().includes(q)||o.bl.toLowerCase().includes(q));renPME(f);}
@@ -451,21 +588,17 @@ function fCC(f,btn){fcF=f;document.querySelectorAll('#fr-cc .fb').forEach(b=>b.c
 function rCC(){apCC();}
 function apCC(){const q=document.getElementById('qi-cc').value.toLowerCase();let f=OC;if(fcF==='gros')f=f.filter(o=>o.vl==='gros');else if(fcF==='vol')f=f.filter(o=>o.vl==='vol');else if(fcF==='bil')f=f.filter(o=>o.bil);if(q)f=f.filter(o=>o.en.toLowerCase().includes(q)||o.sec.toLowerCase().includes(q));renCC(f);}
 
-// TRI
 function srtP(c){if(tpCol===c)tpDir*=-1;else{tpCol=c;tpDir=1;}OP.sort((a,b)=>typeof a[c]==='string'?tpDir*a[c].localeCompare(b[c]):tpDir*(a[c]-b[c]));apPME();}
 function srtC(c){if(tcCol===c)tcDir*=-1;else{tcCol=c;tcDir=-1;}OC.sort((a,b)=>typeof a[c]==='string'?tcDir*a[c].localeCompare(b[c]):tcDir*(a[c]-b[c]));apCC();}
 
-// TABS
 function switchTab(t,btn){
   tab=t;document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
   document.getElementById('blbl').textContent=t==='pme'?'Lancer le scan PME':'Lancer le scan Call Centers';
   ['pme','cc'].forEach(x=>{const show=x===t;['sb','fr','tw'].forEach(el=>{const el2=document.getElementById(`${el}-${x}`);if(el2){if(show&&(x==='pme'?OP.length>0:OC.length>0))el2.classList.add('show');else if(!show)el2.classList.remove('show');}});});
 }
 
-// SOURCE TOGGLE
 function tSrc(s){src[s]=!src[s];document.getElementById('s-'+s).classList.toggle('off',!src[s]);}
 
-// EXPORT
 function xCSV(t){
   let rows,h;
   if(t==='pme'){h=['Priorité','Fit','Entreprise','Poste','Blocs','Patterns','Salaire','Coût emp.','Éco/mois','Sensibilité','Outils','Source','Lien'];rows=OP.map(o=>[o.pr,`${o.fn}/4`,o.en,o.ti,o.bl,o.pa.join(';'),o.sa,o.ca,o.xa,o.s,o.ou,o.src,o.li]);}
