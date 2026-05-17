@@ -3,266 +3,143 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Opex House — Scanner Pipeline</title>
+<title>Opex House — Pipeline Scanner</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: #F8F9FA;
-    color: #1A1A2E;
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    min-height: 100vh;
-  }
-
-  .container { max-width: 1600px; margin: 0 auto; padding: 0 32px; }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#F8F9FA;color:#111827;font-family:'Inter',sans-serif;font-size:15px;min-height:100vh;}
+  .container{max-width:1600px;margin:0 auto;padding:0 32px;}
 
   /* HEADER */
-  header {
-    background: #fff;
-    border-bottom: 1px solid #E5E7EB;
-    padding: 20px 0;
-    margin-bottom: 32px;
-  }
-
-  .header-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
-
-  .logo { display: flex; align-items: center; gap: 14px; }
-
-  .logo-mark {
-    width: 40px; height: 40px;
-    background: #1A1A2E;
-    border-radius: 6px;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 14px; color: #fff; letter-spacing: 0.5px;
-  }
-
-  .logo-name { font-size: 18px; font-weight: 700; color: #1A1A2E; }
-  .logo-sub { font-size: 12px; color: #6B7280; margin-top: 1px; }
-
-  .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-
-  .tag {
-    background: #F3F4F6; border: 1px solid #E5E7EB;
-    color: #6B7280; padding: 4px 12px; border-radius: 4px;
-    font-size: 12px; font-weight: 500;
-  }
-
-  .tag-accent { background: #EFF6FF; border-color: #BFDBFE; color: #1D4ED8; }
+  header{background:#fff;border-bottom:2px solid #111827;padding:18px 0;margin-bottom:28px;}
+  .hi{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  .logo{display:flex;align-items:center;gap:12px;}
+  .lm{width:38px;height:38px;background:#111827;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;letter-spacing:0.5px;}
+  .ln{font-size:17px;font-weight:700;color:#111827;}
+  .ls{font-size:11px;color:#6B7280;margin-top:1px;}
+  .hr{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .tag{background:#F3F4F6;border:1px solid #E5E7EB;color:#6B7280;padding:3px 10px;border-radius:3px;font-size:11px;font-weight:500;}
+  .tag-a{background:#EFF6FF;border-color:#BFDBFE;color:#1D4ED8;}
 
   /* TABS */
-  .tabs {
-    display: flex; gap: 0;
-    border-bottom: 2px solid #E5E7EB;
-    margin-bottom: 28px;
-  }
-
-  .tab {
-    padding: 12px 28px; font-size: 15px; font-weight: 500;
-    color: #6B7280; border: none; background: transparent;
-    cursor: pointer; border-bottom: 2px solid transparent;
-    margin-bottom: -2px; transition: all 0.15s;
-  }
-
-  .tab:hover { color: #1A1A2E; }
-  .tab.active { color: #1A1A2E; font-weight: 600; border-bottom-color: #1A1A2E; }
+  .tabs{display:flex;border-bottom:2px solid #E5E7EB;margin-bottom:24px;}
+  .tab{padding:11px 28px;font-size:15px;font-weight:500;color:#6B7280;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;font-family:'Inter',sans-serif;}
+  .tab:hover{color:#111827;}
+  .tab.active{color:#111827;font-weight:600;border-bottom-color:#111827;}
 
   /* CARDS */
-  .card {
-    background: #fff;
-    border: 1px solid #E5E7EB;
-    border-radius: 8px;
-    padding: 24px;
-    margin-bottom: 24px;
-  }
+  .card{background:#fff;border:1px solid #E5E7EB;border-radius:6px;padding:22px;margin-bottom:20px;}
+  .ct{font-size:11px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;}
 
-  .card-title {
-    font-size: 12px; font-weight: 600; color: #6B7280;
-    text-transform: uppercase; letter-spacing: 1px;
-    margin-bottom: 18px;
-  }
-
-  /* FORM */
-  .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px; }
-
-  .field { display: flex; flex-direction: column; gap: 6px; }
-
-  .field label { font-size: 12px; font-weight: 500; color: #374151; }
-
-  .field input, .field select {
-    border: 1px solid #D1D5DB; border-radius: 6px;
-    padding: 9px 12px; font-size: 14px; font-family: 'Inter', sans-serif;
-    color: #1A1A2E; background: #fff; outline: none;
-    transition: border-color 0.15s;
-  }
-
-  .field input:focus, .field select:focus { border-color: #1A1A2E; }
-
-  .src-label { font-size: 12px; font-weight: 500; color: #374151; margin-bottom: 8px; }
-
-  .src-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-
-  .src-chip {
-    padding: 6px 14px; border-radius: 4px; font-size: 13px; font-weight: 500;
-    cursor: pointer; transition: all 0.15s; user-select: none;
-    background: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8;
-  }
-
-  .src-chip.off { background: #F9FAFB; border-color: #E5E7EB; color: #9CA3AF; }
-
-  .btn-scan {
-    background: #1A1A2E; color: #fff; border: none; border-radius: 6px;
-    padding: 10px 24px; font-size: 14px; font-weight: 600;
-    font-family: 'Inter', sans-serif; cursor: pointer;
-    display: inline-flex; align-items: center; gap: 8px;
-    transition: background 0.15s;
-  }
-
-  .btn-scan:hover:not(:disabled) { background: #2D2D4A; }
-  .btn-scan:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  .sp {
-    width: 14px; height: 14px;
-    border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
-    border-radius: 50%; animation: spin 0.7s linear infinite; display: none;
-  }
-
-  .btn-scan.loading .sp { display: block; }
-  .btn-scan.loading .bi { display: none; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  /* CONFIG */
+  .cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:18px;}
+  .field{display:flex;flex-direction:column;gap:5px;}
+  .field label{font-size:12px;font-weight:500;color:#374151;}
+  .field input,.field select{border:1px solid #D1D5DB;border-radius:4px;padding:8px 11px;font-size:14px;font-family:'Inter',sans-serif;color:#111827;background:#fff;outline:none;transition:border-color .15s;}
+  .field input:focus,.field select:focus{border-color:#111827;}
+  .sl{font-size:12px;font-weight:500;color:#374151;margin-bottom:7px;}
+  .sr{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px;}
+  .sc{padding:5px 13px;border-radius:3px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;user-select:none;background:#EFF6FF;border:1px solid #BFDBFE;color:#1D4ED8;}
+  .sc.off{background:#F9FAFB;border-color:#E5E7EB;color:#9CA3AF;}
+  .btn-scan{background:#111827;color:#fff;border:none;border-radius:4px;padding:10px 22px;font-size:14px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .15s;}
+  .btn-scan:hover:not(:disabled){background:#374151;}
+  .btn-scan:disabled{opacity:.5;cursor:not-allowed;}
+  .sp{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none;}
+  .btn-scan.loading .sp{display:block;}
+  .btn-scan.loading .bi{display:none;}
+  @keyframes spin{to{transform:rotate(360deg);}}
 
   /* PROGRESS */
-  .pw { margin-bottom: 20px; display: none; }
-  .pw.show { display: block; }
-  .pt { background: #E5E7EB; border-radius: 4px; height: 4px; overflow: hidden; }
-  .pf { height: 100%; background: #1A1A2E; border-radius: 4px; transition: width 0.3s; width: 0%; }
-  .ptxt { font-size: 13px; color: #6B7280; margin-top: 6px; }
+  .pw{margin-bottom:16px;display:none;}
+  .pw.show{display:block;}
+  .pt{background:#E5E7EB;border-radius:3px;height:3px;overflow:hidden;}
+  .pf{height:100%;background:#111827;border-radius:3px;transition:width .3s;width:0%;}
+  .ptxt{font-size:12px;color:#6B7280;margin-top:5px;}
 
   /* STATS */
-  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 24px; display: none; }
-  .stats-grid.show { display: grid; }
-
-  .stat {
-    background: #fff; border: 1px solid #E5E7EB; border-radius: 8px;
-    padding: 20px; text-align: center;
-  }
-
-  .stat-n { font-size: 32px; font-weight: 700; color: #1A1A2E; line-height: 1; margin-bottom: 6px; }
-  .stat-l { font-size: 12px; color: #6B7280; font-weight: 500; }
+  .sg{display:none;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:20px;}
+  .sg.show{display:grid;}
+  .st{background:#fff;border:1px solid #E5E7EB;border-radius:6px;padding:18px;text-align:center;}
+  .sn{font-size:28px;font-weight:700;color:#111827;line-height:1;margin-bottom:4px;}
+  .sk{font-size:11px;color:#6B7280;font-weight:500;}
 
   /* FILTERS */
-  .filter-row { display: none; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-  .filter-row.show { display: flex; }
-
-  .fb {
-    padding: 6px 16px; border-radius: 4px; font-size: 13px; font-weight: 500;
-    color: #6B7280; border: 1px solid #E5E7EB; background: #fff;
-    cursor: pointer; transition: all 0.15s;
-  }
-
-  .fb:hover { border-color: #9CA3AF; color: #374151; }
-  .fb.act { background: #1A1A2E; color: #fff; border-color: #1A1A2E; }
-
-  .search-inp {
-    border: 1px solid #D1D5DB; border-radius: 4px;
-    padding: 6px 14px; font-size: 13px; font-family: 'Inter', sans-serif;
-    color: #1A1A2E; outline: none; width: 200px;
-  }
-
-  .search-inp:focus { border-color: #1A1A2E; }
-
-  .btn-csv {
-    margin-left: auto; background: #fff; border: 1px solid #D1D5DB;
-    border-radius: 4px; padding: 6px 14px; font-size: 13px; font-weight: 500;
-    color: #374151; cursor: pointer; transition: all 0.15s;
-  }
-
-  .btn-csv:hover { border-color: #9CA3AF; }
+  .fr{display:none;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+  .fr.show{display:flex;}
+  .fb{padding:6px 14px;border-radius:4px;font-size:13px;font-weight:500;color:#6B7280;border:1px solid #E5E7EB;background:#fff;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif;}
+  .fb:hover{border-color:#9CA3AF;color:#374151;}
+  .fb.act{background:#111827;color:#fff;border-color:#111827;}
+  .fb.toggle-faible{background:#FEF3C7;border-color:#FCD34D;color:#92400E;}
+  .fb.toggle-faible.on{background:#FEE2E2;border-color:#FCA5A5;color:#991B1B;}
+  .si{border:1px solid #D1D5DB;border-radius:4px;padding:6px 12px;font-size:13px;font-family:'Inter',sans-serif;color:#111827;outline:none;width:200px;}
+  .si:focus{border-color:#111827;}
+  .btn-csv{margin-left:auto;background:#fff;border:1px solid #D1D5DB;border-radius:4px;padding:6px 14px;font-size:13px;font-weight:500;color:#374151;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif;}
+  .btn-csv:hover{border-color:#9CA3AF;}
+  .btn-det{background:#fff;border:1px solid #D1D5DB;border-radius:4px;padding:6px 12px;font-size:12px;font-weight:500;color:#6B7280;cursor:pointer;font-family:'Inter',sans-serif;}
+  .btn-det:hover{color:#374151;}
 
   /* TABLE */
-  .table-wrap {
-    background: #fff; border: 1px solid #E5E7EB; border-radius: 8px;
-    overflow: hidden; display: none; margin-bottom: 40px; overflow-x: auto;
-  }
+  .tw{background:#fff;border:1px solid #E5E7EB;border-radius:6px;overflow:hidden;display:none;margin-bottom:32px;overflow-x:auto;}
+  .tw.show{display:block;}
+  table{width:100%;border-collapse:collapse;}
+  thead tr{background:#F9FAFB;border-bottom:1px solid #E5E7EB;}
+  thead th{padding:13px 16px;text-align:left;font-size:12px;font-weight:600;color:#6B7280;white-space:nowrap;cursor:pointer;user-select:none;text-transform:uppercase;letter-spacing:.4px;}
+  thead th:hover{color:#111827;}
+  .th-sec{color:#9CA3AF!important;font-size:11px!important;}
+  tbody tr{border-bottom:1px solid #F3F4F6;transition:background .1s;}
+  tbody tr:hover{background:#F9FAFB;}
+  tbody tr:last-child{border-bottom:none;}
+  tbody tr.row-faible{opacity:.5;}
+  td{padding:15px 16px;vertical-align:top;line-height:1.6;font-size:14px;}
+  td.td-sec{display:none;}
+  td.td-sec.show{display:table-cell;}
+  .cn{font-weight:600;color:#111827;font-size:15px;}
+  .cm{font-size:11px;color:#9CA3AF;margin-top:2px;}
+  .td-mono{font-size:13px;color:#374151;}
+  .td-blocs{font-size:13px;color:#1D4ED8;line-height:1.8;}
+  .td-eco{font-weight:700;color:#059669;font-size:14px;}
+  .td-marge{font-weight:700;color:#7C3AED;font-size:14px;}
+  .td-angle{font-size:13px;color:#374151;font-style:italic;}
 
-  .table-wrap.show { display: block; }
+  /* BADGES */
+  .badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:3px;font-size:12px;font-weight:600;white-space:nowrap;}
+  .bg{background:#D1FAE5;color:#065F46;}
+  .by{background:#FEF3C7;color:#92400E;}
+  .br{background:#FEE2E2;color:#991B1B;}
+  .bo{background:#FFEDD5;color:#9A3412;}
+  .bb{background:#DBEAFE;color:#1E40AF;}
+  .bv{background:#EDE9FE;color:#5B21B6;}
+  .pt-tag{display:inline-block;background:#F3F4F6;border:1px solid #E5E7EB;color:#374151;border-radius:3px;padding:2px 7px;font-size:12px;margin:1px;}
+  .lnk{color:#1D4ED8;text-decoration:none;font-size:13px;font-weight:500;}
+  .lnk:hover{text-decoration:underline;}
+  .empty{text-align:center;padding:56px 20px;}
+  .ei{font-size:36px;margin-bottom:10px;}
+  .et{font-size:15px;font-weight:600;color:#374151;margin-bottom:5px;}
+  .es{font-size:13px;color:#9CA3AF;}
 
-  table { width: 100%; border-collapse: collapse; }
-
-  thead tr { background: #F9FAFB; border-bottom: 1px solid #E5E7EB; }
-
-  thead th {
-    padding: 13px 16px; text-align: left; font-size: 12px; font-weight: 600;
-    color: #6B7280; white-space: nowrap; cursor: pointer; user-select: none;
-    text-transform: uppercase; letter-spacing: 0.5px;
-  }
-
-  thead th:hover { color: #1A1A2E; }
-
-  tbody tr { border-bottom: 1px solid #F3F4F6; transition: background 0.1s; }
-  tbody tr:hover { background: #F9FAFB; }
-  tbody tr:last-child { border-bottom: none; }
-
-  td { padding: 16px; vertical-align: top; line-height: 1.6; font-size: 14px; }
-
-  .co-name { font-weight: 600; color: #1A1A2E; font-size: 15px; }
-  .co-meta { font-size: 12px; color: #9CA3AF; margin-top: 2px; }
-
-  .td-mono { font-family: 'Inter', monospace; font-size: 13px; color: #374151; }
-  .td-blocs { font-size: 13px; color: #1D4ED8; line-height: 1.8; }
-  .td-eco { font-weight: 700; color: #059669; font-size: 14px; }
-
-  .badge {
-    display: inline-flex; align-items: center; padding: 3px 10px;
-    border-radius: 4px; font-size: 12px; font-weight: 600; white-space: nowrap;
-  }
-
-  .badge-green { background: #D1FAE5; color: #065F46; }
-  .badge-yellow { background: #FEF3C7; color: #92400E; }
-  .badge-red { background: #FEE2E2; color: #991B1B; }
-  .badge-orange { background: #FFEDD5; color: #9A3412; }
-  .badge-blue { background: #DBEAFE; color: #1E40AF; }
-
-  .pattern-tag {
-    display: inline-block; background: #F3F4F6; border: 1px solid #E5E7EB;
-    color: #374151; border-radius: 4px; padding: 2px 8px;
-    font-size: 12px; margin: 1px;
-  }
-
-  .link-btn {
-    color: #1D4ED8; text-decoration: none; font-size: 13px;
-    font-weight: 500;
-  }
-
-  .link-btn:hover { text-decoration: underline; }
-
-  .empty { text-align: center; padding: 60px 20px; }
-  .empty-icon { font-size: 40px; margin-bottom: 12px; }
-  .empty-title { font-size: 16px; font-weight: 600; color: #374151; margin-bottom: 6px; }
-  .empty-sub { font-size: 14px; color: #9CA3AF; }
-
-  .divider { height: 1px; background: #E5E7EB; margin: 0; }
+  /* LEXIQUE */
+  .lexique{background:#fff;border:1px solid #E5E7EB;border-radius:6px;padding:22px;margin-bottom:40px;}
+  .lex-title{font-size:13px;font-weight:600;color:#374151;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #E5E7EB;}
+  .lex-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0;}
+  .lex-row{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #F3F4F6;}
+  .lex-row:last-child{border-bottom:none;}
+  .lex-col{font-size:13px;font-weight:600;color:#111827;min-width:160px;}
+  .lex-def{font-size:13px;color:#6B7280;line-height:1.5;}
 </style>
 </head>
 <body>
 
 <header>
   <div class="container">
-    <div class="header-inner">
+    <div class="hi">
       <div class="logo">
-        <div class="logo-mark">OH</div>
-        <div>
-          <div class="logo-name">Opex House</div>
-          <div class="logo-sub">Pipeline Scanner</div>
-        </div>
+        <div class="lm">OH</div>
+        <div><div class="ln">Opex House</div><div class="ls">Pipeline Scanner — Outil interne</div></div>
       </div>
-      <div class="header-right">
-        <span class="tag">JSearch</span>
-        <span class="tag">Adzuna</span>
-        <span class="tag">Jooble</span>
-        <span class="tag">Remotive</span>
-        <span class="tag tag-accent" id="lsb">Jamais scanné</span>
+      <div class="hr">
+        <span class="tag">JSearch</span><span class="tag">Adzuna</span>
+        <span class="tag">Jooble</span><span class="tag">Remotive</span>
+        <span class="tag tag-a" id="lsb">Jamais scanné</span>
       </div>
     </div>
   </div>
@@ -275,98 +152,97 @@
     <button class="tab" onclick="switchTab('cc',this)">Pipeline Call Centers</button>
   </div>
 
-  <!-- CONFIG -->
   <div class="card">
-    <div class="card-title">Configuration</div>
-    <div class="config-grid">
+    <div class="ct">Configuration</div>
+    <div class="cg">
       <div class="field"><label>JSearch Key (RapidAPI)</label><input type="password" id="jk" value="5dda3681c5mshe59f206550f94bcp1434b0jsn70f9c5b72fec"></div>
       <div class="field"><label>Adzuna App ID</label><input type="text" id="ai" value="zebrov69"></div>
       <div class="field"><label>Adzuna App Key</label><input type="password" id="ak" value="8f5a15d1bfc4df10843b8a9307ec194f"></div>
       <div class="field"><label>Jooble API Key</label><input type="password" id="jok" value="d2cc0fb5-4b89-4d9c-b668-ab85b0f23201"></div>
       <div class="field"><label>Région</label><select id="reg"><option value="ca">Canada</option><option value="us">États-Unis</option></select></div>
     </div>
-    <div class="src-label">Sources actives</div>
-    <div class="src-row">
-      <div class="src-chip" id="s-js" onclick="tSrc('js')">JSearch</div>
-      <div class="src-chip" id="s-az" onclick="tSrc('az')">Adzuna</div>
-      <div class="src-chip" id="s-jo" onclick="tSrc('jo')">Jooble</div>
-      <div class="src-chip" id="s-re" onclick="tSrc('re')">Remotive</div>
+    <div class="sl">Sources actives</div>
+    <div class="sr">
+      <div class="sc" id="s-js" onclick="tSrc('js')">JSearch</div>
+      <div class="sc" id="s-az" onclick="tSrc('az')">Adzuna</div>
+      <div class="sc" id="s-jo" onclick="tSrc('jo')">Jooble</div>
+      <div class="sc" id="s-re" onclick="tSrc('re')">Remotive</div>
     </div>
     <button class="btn-scan" id="sbtn" onclick="lancerScan()">
       <span class="bi">→</span><div class="sp"></div><span id="blbl">Lancer le scan PME</span>
     </button>
   </div>
 
-  <!-- PROGRESS -->
-  <div class="pw" id="pw">
-    <div class="pt"><div class="pf" id="pf"></div></div>
-    <div class="ptxt" id="ptxt">Initialisation...</div>
-  </div>
+  <div class="pw" id="pw"><div class="pt"><div class="pf" id="pf"></div></div><div class="ptxt" id="ptxt">Initialisation...</div></div>
 
   <!-- STATS PME -->
-  <div class="stats-grid" id="sb-pme">
-    <div class="stat"><div class="stat-n" id="sp0">0</div><div class="stat-l">Offres qualifiées</div></div>
-    <div class="stat"><div class="stat-n" style="color:#065F46" id="sp1">0</div><div class="stat-l">Haute priorité</div></div>
-    <div class="stat"><div class="stat-n" style="color:#92400E" id="sp2">0</div><div class="stat-l">Priorité moyenne</div></div>
-    <div class="stat"><div class="stat-n" style="color:#1D4ED8" id="sp3">0</div><div class="stat-l">Fit 4/4</div></div>
-    <div class="stat"><div class="stat-n" style="color:#059669" id="sp4">—</div><div class="stat-l">Éco max / mois</div></div>
+  <div class="sg" id="sb-pme">
+    <div class="st"><div class="sn" id="sp0">0</div><div class="sk">Offres qualifiées</div></div>
+    <div class="st"><div class="sn" style="color:#065F46" id="sp1">0</div><div class="sk">Haute priorité</div></div>
+    <div class="st"><div class="sn" style="color:#92400E" id="sp2">0</div><div class="sk">Priorité moyenne</div></div>
+    <div class="st"><div class="sn" style="color:#7C3AED" id="sp3">—</div><div class="sk">Marge potentielle pipeline</div></div>
+    <div class="st"><div class="sn" style="color:#059669" id="sp4">—</div><div class="sk">Économie client totale</div></div>
+    <div class="st"><div class="sn" style="color:#1D4ED8" id="sp5">0</div><div class="sk">% haute priorité</div></div>
   </div>
 
   <!-- STATS CC -->
-  <div class="stats-grid" id="sb-cc">
-    <div class="stat"><div class="stat-n" id="sc0">0</div><div class="stat-l">Employeurs</div></div>
-    <div class="stat"><div class="stat-n" style="color:#9A3412" id="sc1">0</div><div class="stat-l">Gros volume (5+)</div></div>
-    <div class="stat"><div class="stat-n" style="color:#92400E" id="sc2">0</div><div class="stat-l">Volume (3–4)</div></div>
-    <div class="stat"><div class="stat-n" style="color:#1D4ED8" id="sc3">0</div><div class="stat-l">Bilingues FR/EN</div></div>
-    <div class="stat"><div class="stat-n" style="color:#059669" id="sc4">—</div><div class="stat-l">Éco potentielle max</div></div>
+  <div class="sg" id="sb-cc">
+    <div class="st"><div class="sn" id="sc0">0</div><div class="sk">Employeurs</div></div>
+    <div class="st"><div class="sn" style="color:#9A3412" id="sc1">0</div><div class="sk">Gros volume (5+)</div></div>
+    <div class="st"><div class="sn" style="color:#92400E" id="sc2">0</div><div class="sk">Volume (3–4)</div></div>
+    <div class="st"><div class="sn" style="color:#1D4ED8" id="sc3">0</div><div class="sk">Bilingues FR/EN</div></div>
+    <div class="st"><div class="sn" style="color:#7C3AED" id="sc4">—</div><div class="sk">Marge potentielle pipeline</div></div>
+    <div class="st"><div class="sn" style="color:#059669" id="sc5">—</div><div class="sk">Économie client totale</div></div>
   </div>
 
   <!-- FILTERS PME -->
-  <div class="filter-row" id="fr-pme">
-    <button class="fb act" onclick="fPME('tous',this)">Tous</button>
-    <button class="fb" onclick="fPME('haute',this)">Haute priorité</button>
-    <button class="fb" onclick="fPME('moyenne',this)">Priorité moyenne</button>
-    <button class="fb" onclick="fPME('fit4',this)">Fit 4/4</button>
-    <input class="search-inp" id="qi-pme" placeholder="Rechercher..." oninput="rPME()">
-    <button class="btn-csv" onclick="xCSV('pme')">↓ Exporter CSV</button>
+  <div class="fr" id="fr-pme">
+    <button class="fb act" onclick="fPME('haute',this)">Haute priorité</button>
+    <button class="fb" onclick="fPME('moyenne',this)">Moyenne</button>
+    <button class="fb" onclick="fPME('tous',this)">Toutes</button>
+    <button class="fb toggle-faible" id="tf-pme" onclick="toggleFaible('pme',this)">Masquer les faibles</button>
+    <input class="si" id="qi-pme" placeholder="Rechercher..." oninput="rPME()">
+    <button class="btn-det" onclick="toggleDet()">+ Colonnes détail</button>
+    <button class="btn-csv" onclick="xCSV('pme')">↓ CSV</button>
   </div>
 
   <!-- FILTERS CC -->
-  <div class="filter-row" id="fr-cc">
+  <div class="fr" id="fr-cc">
     <button class="fb act" onclick="fCC('tous',this)">Tous</button>
     <button class="fb" onclick="fCC('gros',this)">Gros volume</button>
     <button class="fb" onclick="fCC('vol',this)">Volume</button>
     <button class="fb" onclick="fCC('bil',this)">Bilingues</button>
-    <input class="search-inp" id="qi-cc" placeholder="Rechercher..." oninput="rCC()">
-    <button class="btn-csv" onclick="xCSV('cc')">↓ Exporter CSV</button>
+    <input class="si" id="qi-cc" placeholder="Rechercher..." oninput="rCC()">
+    <button class="btn-csv" onclick="xCSV('cc')">↓ CSV</button>
   </div>
 
   <!-- TABLE PME -->
-  <div class="table-wrap" id="tw-pme">
+  <div class="tw" id="tw-pme">
     <table>
       <thead><tr>
         <th onclick="srtP('pn')">Priorité</th>
-        <th onclick="srtP('fn')">Fit</th>
         <th onclick="srtP('en')">Entreprise</th>
         <th>Poste</th>
+        <th>Type d'opportunité</th>
+        <th>Angle d'attaque</th>
+        <th onclick="srtP('hn')">Heures est.</th>
+        <th onclick="srtP('xn')">Éco. client/mois</th>
+        <th onclick="srtP('mn')">Marge Opex/mois</th>
         <th>Blocs externalisables</th>
-        <th>Signal</th>
-        <th onclick="srtP('sn')">Salaire</th>
-        <th onclick="srtP('cn')">Coût employeur</th>
-        <th onclick="srtP('xn')">Économie / mois</th>
-        <th>Sensibilité</th>
-        <th>Outils</th>
-        <th>Source</th>
+        <th class="th-sec">Fit 160h</th>
+        <th class="th-sec">Sensibilité</th>
+        <th class="th-sec">Outils</th>
+        <th class="th-sec">Source</th>
         <th>Lien</th>
       </tr></thead>
       <tbody id="tb-pme">
-        <tr><td colspan="13"><div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">Aucun scan lancé</div><div class="empty-sub">Configurez et cliquez sur "Lancer le scan"</div></div></td></tr>
+        <tr><td colspan="14"><div class="empty"><div class="ei">🔍</div><div class="et">Aucun scan lancé</div><div class="es">Configurez et cliquez sur "Lancer le scan"</div></div></td></tr>
       </tbody>
     </table>
   </div>
 
   <!-- TABLE CC -->
-  <div class="table-wrap" id="tw-cc">
+  <div class="tw" id="tw-cc">
     <table>
       <thead><tr>
         <th onclick="srtC('vn')">Volume</th>
@@ -374,23 +250,45 @@
         <th>Secteur</th>
         <th onclick="srtC('pn')">Postes détectés</th>
         <th onclick="srtC('sn')">Salaire moyen</th>
-        <th onclick="srtC('xn')">Économie potentielle</th>
+        <th onclick="srtC('xn')">Éco. client/mois</th>
+        <th onclick="srtC('mn')">Marge Opex/mois</th>
         <th>Bilingue FR/EN</th>
         <th>Remote</th>
         <th>Titres détectés</th>
         <th>Lien</th>
       </tr></thead>
       <tbody id="tb-cc">
-        <tr><td colspan="10"><div class="empty"><div class="empty-icon">📞</div><div class="empty-title">Aucun scan lancé</div><div class="empty-sub">Sélectionnez l'onglet Call Centers et lancez le scan</div></div></td></tr>
+        <tr><td colspan="11"><div class="empty"><div class="ei">📞</div><div class="et">Aucun scan lancé</div><div class="es">Sélectionnez l'onglet Call Centers et lancez</div></div></td></tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- LEXIQUE -->
+  <div class="lexique">
+    <div class="lex-title">Lexique des colonnes</div>
+    <div class="lex-grid">
+      <div class="lex-row"><div class="lex-col">Priorité</div><div class="lex-def">Potentiel commercial du lead — Haute = à appeler en premier, Moyenne = à qualifier, Faible = à ignorer.</div></div>
+      <div class="lex-row"><div class="lex-col">Type d'opportunité</div><div class="lex-def">Contexte du recrutement détecté : Remplacement, Croissance, Volume ou Désorganisation.</div></div>
+      <div class="lex-row"><div class="lex-col">Angle d'attaque</div><div class="lex-def">Phrase d'accroche suggérée pour le premier contact, générée automatiquement selon le contexte.</div></div>
+      <div class="lex-row"><div class="lex-col">Heures estimées</div><div class="lex-def">Estimation du volume mensuel : 80h (mi-temps), 120h (3/4 temps), 160h (plein temps).</div></div>
+      <div class="lex-row"><div class="lex-col">Éco. client / mois</div><div class="lex-def">Économie mensuelle estimée pour le client vs embauche locale (coût employeur − 23$/h × heures).</div></div>
+      <div class="lex-row"><div class="lex-col">Marge Opex / mois</div><div class="lex-def">Marge nette mensuelle pour Opex House sur ce contrat (prix facturé − coût Madani 18$/h × heures).</div></div>
+      <div class="lex-row"><div class="lex-col">Blocs externalisables</div><div class="lex-def">Tâches du poste pouvant être réalisées à distance par une ressource Madani.</div></div>
+      <div class="lex-row"><div class="lex-col">Fit 160h</div><div class="lex-def">Score /4 estimant si le besoin correspond à une ressource dédiée plein temps (remote + tp + blocs + salaire).</div></div>
+      <div class="lex-row"><div class="lex-col">Sensibilité</div><div class="lex-def">Niveau de confidentialité du poste — Faible = externalisable sans risque, Élevée = prudence (paie, audit...).</div></div>
+      <div class="lex-row"><div class="lex-col">Volume (CC)</div><div class="lex-def">Nombre de postes similaires ouverts chez le même employeur — signal de recrutement en masse.</div></div>
+      <div class="lex-row"><div class="lex-col">Marge potentielle pipeline</div><div class="lex-def">Somme des marges Opex House si tous les leads haute priorité sont signés.</div></div>
+      <div class="lex-row"><div class="lex-col">Économie client totale</div><div class="lex-def">Somme des économies clients si tous les leads haute priorité choisissent Opex House.</div></div>
+    </div>
   </div>
 
 </div>
 
 <script>
-let tab='pme', OP=[], OC=[], src={js:1,az:1,jo:1,re:1};
-let tpCol='pn', tpDir=1, tcCol='vn', tcDir=-1, fpF='tous', fcF='tous';
+let tab='pme',OP=[],OC=[],src={js:1,az:1,jo:1,re:1};
+let tpCol='pn',tpDir=1,tcCol='vn',tcDir=-1,fpF='haute',fcF='tous';
+let showFaible=false,showDet=false;
+const MADANI=18,PRIX=23,PRIX_CC=16,MADANI_CC=13;
 
 const KE=['saisie','facturation','comptes fournisseurs','comptes payables','comptes recevables','rapprochement','conciliation bancaire','entrée de données','traitement des factures','suivi des paiements','support administratif','classement','archivage','mise à jour','suivi des dossiers','gestion des courriels','prise de rendez-vous','service à la clientèle','réponse aux demandes','accounts payable','accounts receivable','data entry','bookkeeping','invoice processing','bank reconciliation','customer support','appointment scheduling'];
 const KSH=['paie','payroll','t4','relevé 1','das','déclaration gouvernementale','cpa','audit','vérification comptable','états financiers annuels'];
@@ -409,25 +307,44 @@ const slp=ms=>new Promise(r=>setTimeout(r,ms));
 function setP(p,t){document.getElementById('pf').style.width=p+'%';document.getElementById('ptxt').textContent=t;}
 
 function salH(o){
-  if(o.salary_min&&o.salary_max){const m=(o.salary_min+o.salary_max)/2;return m>500?m/(52*40):m;}
-  if(o.salary_min)return o.salary_min>500?o.salary_min/(52*40):o.salary_min;
+  if(o.salary_min&&o.salary_max){const m=(o.salary_min+o.salary_max)/2;const h=m>500?m/(52*40):m;return h>80?null:h;}
+  if(o.salary_min){const h=o.salary_min>500?o.salary_min/(52*40):o.salary_min;return h>80?null:h;}
   const t=(o.description||o.snippet||'').toLowerCase();
   const m1=t.match(/(\d+[.,]\d+)\s*(?:à|-)\s*(\d+[.,]\d+)\s*\$?\s*(?:\/h|par heure|\/hour)/);
-  if(m1)return(parseFloat(m1[1])+parseFloat(m1[2]))/2;
+  if(m1){const h=(parseFloat(m1[1])+parseFloat(m1[2]))/2;return h>80?null:h;}
   const m2=t.match(/\$\s*(\d{2,3}[.,]\d{2})\s*(?:\/h|per hour)/);
-  if(m2)return parseFloat(m2[1]);
+  if(m2){const h=parseFloat(m2[1]);return h>80?null:h;}
   return null;
 }
 
-function sensib(t){
-  const h=KSH.filter(k=>t.includes(k)).length,f=KSF.filter(k=>t.includes(k)).length;
-  if(h>=2)return'Élevée';if(h===1&&f===0)return'Moyenne';if(f>=1)return'Faible';return'Moyenne';
-}
+function sensib(t){const h=KSH.filter(k=>t.includes(k)).length,f=KSF.filter(k=>t.includes(k)).length;if(h>=2)return'Élevée';if(h===1&&f===0)return'Moyenne';if(f>=1)return'Faible';return'Moyenne';}
 function blocs(t){return KE.filter(k=>t.includes(k)).slice(0,5).map(k=>k.charAt(0).toUpperCase()+k.slice(1)).join(' · ')||'À qualifier';}
 function outils(t){return KC.filter(k=>t.includes(k)).map(k=>k.charAt(0).toUpperCase()+k.slice(1)).join(', ')||'—';}
-function patterns(t){const p=[];if(KUR.some(k=>t.includes(k)))p.push('Urgent');if(KGR.some(k=>t.includes(k)))p.push('Croissance');if(t.includes('remplacement')||t.includes('replacement'))p.push('Remplacement');return p;}
+
+function typeOpportunite(t,pa){
+  if(t.includes('remplacement')||t.includes('replacement')||t.includes('départ')||t.includes('turnover'))return'Remplacement';
+  if(KGR.some(k=>t.includes(k)))return'Croissance';
+  if(KUR.some(k=>t.includes(k)))return'Urgence';
+  if(t.includes('désorganis')||t.includes('chaos')||t.includes('débordé')||t.includes('overwhelm'))return'Désorganisation';
+  return'Nouveau poste';
+}
+
+function angleAttaque(type,ti,bl){
+  if(type==='Remplacement')return'Remplacez ce départ sans embaucher — ressource disponible immédiatement.';
+  if(type==='Croissance')return'Votre croissance devance vos embauches — on prend la surcharge dès cette semaine.';
+  if(type==='Urgence')return'Besoin urgent ? Ressource dédiée opérationnelle en 48h, sans CV ni entretien.';
+  if(type==='Désorganisation')return'Libérez votre équipe du backlog — ressource dédiée pour stabiliser les opérations.';
+  return'Externalisez ce poste sans embauche — même résultat, 35% moins cher.';
+}
+
+function estHeures(t,tp){
+  if(t.includes('temps partiel')||t.includes('part-time')||t.includes('20h')||t.includes('25h'))return 80;
+  if(t.includes('30h')||t.includes('32h')||t.includes('35h'))return 120;
+  return 160;
+}
+
 function fit(o){let s=0;if(o.tp)s++;if(o.rm)s++;if(o.bl!=='À qualifier')s++;if(o.cn>=27)s++;return s;}
-function prio(s,b,o,c,f){if(s==='Élevée')return'faible';let sc=0;if(c>=30)sc+=3;else if(c>=27)sc+=2;else if(c>=24)sc+=1;if(s==='Faible')sc+=3;else if(s==='Moyenne')sc+=1;if(b!=='À qualifier')sc+=2;if(o!=='—')sc+=1;if(f>=3)sc+=2;if(sc>=8)return'haute';if(sc>=4)return'moyenne';return'faible';}
+function prio(s,b,ou,c,f){if(s==='Élevée')return'faible';let sc=0;if(c>=30)sc+=3;else if(c>=27)sc+=2;else if(c>=24)sc+=1;if(s==='Faible')sc+=3;else if(s==='Moyenne')sc+=1;if(b!=='À qualifier')sc+=2;if(ou!=='—')sc+=1;if(f>=3)sc+=2;if(sc>=8)return'haute';if(sc>=4)return'moyenne';return'faible';}
 function normCC(titre){const t=titre.toLowerCase().replace(/representative|representant|représentant/g,'agent').replace(/customer service|service à la clientèle|service client/g,'service client').replace(/call center|centre d.appels|contact center/g,'call center').replace(/bilingual|bilingue/g,'bilingue').replace(/\s+/g,' ').trim();for(const[f,mots]of Object.entries(FAM)){if(mots.some(m=>t.includes(m)))return f;}return t.split(' ').slice(0,3).join(' ');}
 function isCCp(titre){const t=titre.toLowerCase();return KCC.some(k=>t.includes(k));}
 
@@ -437,12 +354,17 @@ function procPME(o,src2){
   const da=(o.created||o.date_posted||o.updated||'').split('T')[0]||'';
   const t=`${ti} ${co} ${de}`.toLowerCase();
   if(KXP.some(k=>t.includes(k)))return null;if(KSN.some(k=>t.includes(k)))return null;if(!ti)return null;
-  const s=sensib(t),bl=blocs(t),ou=outils(t),pa=patterns(t);
-  const sal=salH(o),cout=sal?sal*1.20:null,eco=cout&&cout>23?Math.round((cout-23)*160):null;
+  const s=sensib(t),bl=blocs(t),ou=outils(t);
+  const sal=salH(o),cout=sal?sal*1.20:null;
   const rm=t.includes('télétravail')||t.includes('remote')||t.includes('work from home');
   const tp=!t.includes('temps partiel')&&!t.includes('part-time');
   if(cout&&cout<22)return null;
-  const ob={s,bl,ou,pa,sn:sal||0,cn:cout||0,xn:eco||0,sa:sal?`${sal.toFixed(2)} $/h`:'À discuter',ca:cout?`~${cout.toFixed(2)} $/h`:'—',xa:eco?`${eco.toLocaleString('fr-CA')} $`:'—',rm,tp,en:co||'Inconnue',ti,src:src2,li,da,fn:0,pn:0,pr:'faible'};
+  const hn=estHeures(t,tp);
+  const eco=cout&&cout>PRIX?Math.round((cout-PRIX)*hn):null;
+  const marge=Math.round((PRIX-MADANI)*hn);
+  const type=typeOpportunite(t,[]);
+  const angle=angleAttaque(type,ti,bl);
+  const ob={s,bl,ou,sn:sal||0,cn:cout||0,xn:eco||0,mn:marge,hn,sa:sal?`${sal.toFixed(2)} $/h`:'À discuter',ca:cout?`~${cout.toFixed(2)} $/h`:'—',xa:eco?`${eco.toLocaleString('fr-CA')} $`:'—',ma:`${marge.toLocaleString('fr-CA')} $`,rm,tp,en:co||'Inconnue',ti,src:src2,li,da,fn:0,pn:0,pr:'faible',type,angle};
   ob.fn=fit(ob);ob.pr=prio(s,bl,ou,cout||0,ob.fn);ob.pn=ob.pr==='haute'?0:ob.pr==='moyenne'?1:2;
   return ob;
 }
@@ -473,9 +395,11 @@ function agrCC(brutes){
     const tot=e.ps.reduce((s,p)=>s+p.cnt,0);
     const sm=e.sals.length?e.sals.reduce((a,b)=>a+b,0)/e.sals.length:null;
     const cm=sm?sm*1.20:null;
-    const em=cm&&cm>16?Math.round((cm-16)*160*Math.min(tot,10)):null;
+    const h=160*Math.min(tot,10);
+    const eco=cm&&cm>PRIX_CC?Math.round((cm-PRIX_CC)*h):null;
+    const marge=Math.round((PRIX_CC-MADANI_CC)*h);
     const vl=tot>=5?'gros':tot>=3?'vol':'faible';
-    return{en:e.en,sec:e.sec,pn:tot,vn:tot>=5?0:tot>=3?1:2,vl,tits:e.ps.map(p=>`${p.ti}${p.cnt>1?` (×${p.cnt})`:''}`).join(', '),sn:sm||0,sa:sm?`~${sm.toFixed(2)} $/h`:'À discuter',cn:cm||0,xn:em||0,xa:em?`${em.toLocaleString('fr-CA')} $`:'—',rm:e.rm,bil:e.bil,li:e.li};
+    return{en:e.en,sec:e.sec,pn:tot,vn:tot>=5?0:tot>=3?1:2,vl,tits:e.ps.map(p=>`${p.ti}${p.cnt>1?` (×${p.cnt})`:''}`).join(', '),sn:sm||0,sa:sm?`~${sm.toFixed(2)} $/h`:'À discuter',cn:cm||0,xn:eco||0,mn:marge,xa:eco?`${eco.toLocaleString('fr-CA')} $`:'—',ma:`${marge.toLocaleString('fr-CA')} $`,rm:e.rm,bil:e.bil,li:e.li};
   }).filter(e=>e.pn>=2).sort((a,b)=>a.vn-b.vn||b.pn-a.pn);
 }
 
@@ -485,6 +409,10 @@ async function fJO(q,k){try{const res=await fetch(`https://jooble.org/api/${k}`,
 async function fRE(){const cats=['data','finance','customer-support','marketing','hr'],r=[];for(const c of cats){try{const res=await fetch(`https://remotive.com/api/remote-jobs?category=${c}&limit=15`);if(!res.ok)continue;const d=await res.json();r.push(...(d.jobs||[]).map(j=>({title:j.title,company:{display_name:j.company_name},description:j.description,redirect_url:j.url,created:j.publication_date})));}catch{continue;}await slp(150);}return r;}
 
 async function lancerScan(){
+  // Reset
+  OP=[];OC=[];
+  ['sp0','sp1','sp2','sp3','sp4','sp5','sc0','sc1','sc2','sc3','sc4','sc5'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=id.startsWith('s')&&(id.endsWith('3')||id.endsWith('4')||id.endsWith('5'))?'—':'0';});
+
   const jk=document.getElementById('jk').value.trim(),ai=document.getElementById('ai').value.trim(),ak=document.getElementById('ak').value.trim(),jok=document.getElementById('jok').value.trim(),r=document.getElementById('reg').value;
   const btn=document.getElementById('sbtn');btn.disabled=true;btn.classList.add('loading');
   document.getElementById('pw').classList.add('show');
@@ -505,7 +433,7 @@ async function scanPME(jk,ai,ak,jok,r){
   for(const o of br){const x=procPME(o,o._s);if(!x)continue;const k=`${x.en}|${x.ti}|${x.li}`.toLowerCase();if(vu.has(k))continue;vu.add(k);OP.push(x);}
   OP.sort((a,b)=>a.pn-b.pn||b.fn-a.fn);
   setP(100,`Terminé — ${OP.length} offres qualifiées`);
-  statsPME();renPME(OP);
+  statsPME();apPME();
   ['sb-pme','fr-pme','tw-pme'].forEach(id=>document.getElementById(id).classList.add('show'));
 }
 
@@ -524,66 +452,98 @@ async function scanCC(jk,ai,ak,jok,r){
 }
 
 function statsPME(){
+  const h=OP.filter(o=>o.pr==='haute');
+  const margeTot=h.reduce((s,o)=>s+o.mn,0);
+  const ecoTot=h.reduce((s,o)=>s+o.xn,0);
   document.getElementById('sp0').textContent=OP.length;
-  document.getElementById('sp1').textContent=OP.filter(o=>o.pr==='haute').length;
+  document.getElementById('sp1').textContent=h.length;
   document.getElementById('sp2').textContent=OP.filter(o=>o.pr==='moyenne').length;
-  document.getElementById('sp3').textContent=OP.filter(o=>o.fn===4).length;
-  const m=Math.max(...OP.map(o=>o.xn),0);
-  document.getElementById('sp4').textContent=m>0?`${m.toLocaleString('fr-CA')} $`:'—';
+  document.getElementById('sp3').textContent=margeTot>0?`${margeTot.toLocaleString('fr-CA')} $`:'—';
+  document.getElementById('sp4').textContent=ecoTot>0?`${ecoTot.toLocaleString('fr-CA')} $`:'—';
+  document.getElementById('sp5').textContent=OP.length>0?`${Math.round(h.length/OP.length*100)} %`:'—';
 }
 
 function statsCC(){
+  const tot=OC.reduce((s,o)=>s+o.mn,0);
+  const eco=OC.reduce((s,o)=>s+o.xn,0);
   document.getElementById('sc0').textContent=OC.length;
   document.getElementById('sc1').textContent=OC.filter(o=>o.vl==='gros').length;
   document.getElementById('sc2').textContent=OC.filter(o=>o.vl==='vol').length;
   document.getElementById('sc3').textContent=OC.filter(o=>o.bil).length;
-  const m=Math.max(...OC.map(o=>o.xn),0);
-  document.getElementById('sc4').textContent=m>0?`${m.toLocaleString('fr-CA')} $`:'—';
+  document.getElementById('sc4').textContent=tot>0?`${tot.toLocaleString('fr-CA')} $`:'—';
+  document.getElementById('sc5').textContent=eco>0?`${eco.toLocaleString('fr-CA')} $`:'—';
 }
 
 function renPME(of){
   const tb=document.getElementById('tb-pme');
-  if(!of.length){tb.innerHTML=`<tr><td colspan="13"><div class="empty"><div class="empty-icon">📭</div><div class="empty-title">Aucune offre</div><div class="empty-sub">Essayez un autre filtre</div></div></td></tr>`;return;}
-  const pc={haute:'badge-green',moyenne:'badge-yellow',faible:'badge-red'};
+  if(!of.length){tb.innerHTML=`<tr><td colspan="14"><div class="empty"><div class="ei">📭</div><div class="et">Aucune offre</div><div class="es">Essayez un autre filtre</div></div></td></tr>`;return;}
+  const pc={haute:'bg',moyenne:'by',faible:'br'};
   const pl={haute:'Haute',moyenne:'Moyenne',faible:'Faible'};
-  const sc={Faible:'badge-green',Moyenne:'badge-yellow',Élevée:'badge-red'};
-  tb.innerHTML=of.map(o=>`<tr>
+  const sc={Faible:'bg',Moyenne:'by',Élevée:'br'};
+  const tc={Remplacement:'bv',Croissance:'bb',Urgence:'bo','Désorganisation':'by','Nouveau poste':'tag'};
+  const ds=showDet?'show':'';
+  tb.innerHTML=of.map(o=>`<tr class="${o.pr==='faible'?'row-faible':''}">
     <td><span class="badge ${pc[o.pr]}">${pl[o.pr]}</span></td>
-    <td><span style="font-size:14px;font-weight:600;color:#1A1A2E">${o.fn}/4</span></td>
-    <td><div class="co-name">${esc(o.en)}</div><div class="co-meta">${o.src} · ${o.da}</div></td>
-    <td style="color:#374151;font-size:14px">${esc(o.ti)}</td>
-    <td class="td-blocs">${esc(o.bl)}</td>
-    <td>${o.pa.map(p=>`<span class="pattern-tag">${p}</span>`).join('')||'—'}</td>
-    <td class="td-mono">${o.sa}</td>
-    <td class="td-mono">${o.ca}</td>
+    <td><div class="cn">${esc(o.en)}</div><div class="cm">${o.src} · ${o.da}</div></td>
+    <td style="font-size:14px;color:#374151">${esc(o.ti)}</td>
+    <td><span class="badge ${tc[o.type]||'tag'}">${o.type}</span></td>
+    <td class="td-angle">${esc(o.angle)}</td>
+    <td class="td-mono">${o.hn}h</td>
     <td class="td-eco">${o.xa}</td>
-    <td><span class="badge ${sc[o.s]||'badge-yellow'}">${o.s}</span></td>
-    <td style="font-size:13px;color:#6B7280">${o.ou}</td>
-    <td><span class="badge badge-blue">${o.src}</span></td>
-    <td>${o.li?`<a href="${esc(o.li)}" target="_blank" class="link-btn">Voir →</a>`:'—'}</td>
+    <td class="td-marge">${o.ma}</td>
+    <td class="td-blocs">${esc(o.bl)}</td>
+    <td class="td-sec ${ds}"><span style="font-size:14px;font-weight:600">${o.fn}/4</span></td>
+    <td class="td-sec ${ds}"><span class="badge ${sc[o.s]||'by'}">${o.s}</span></td>
+    <td class="td-sec ${ds}" style="font-size:12px;color:#6B7280">${o.ou}</td>
+    <td class="td-sec ${ds}"><span class="badge bb">${o.src}</span></td>
+    <td>${o.li?`<a href="${esc(o.li)}" target="_blank" class="lnk">Voir →</a>`:'—'}</td>
   </tr>`).join('');
 }
 
 function renCC(em){
   const tb=document.getElementById('tb-cc');
-  if(!em.length){tb.innerHTML=`<tr><td colspan="10"><div class="empty"><div class="empty-icon">📭</div><div class="empty-title">Aucun employeur</div><div class="empty-sub">Lancez le scan Call Centers</div></div></td></tr>`;return;}
+  if(!em.length){tb.innerHTML=`<tr><td colspan="11"><div class="empty"><div class="ei">📭</div><div class="et">Aucun employeur</div><div class="es">Lancez le scan Call Centers</div></div></td></tr>`;return;}
   tb.innerHTML=em.map(e=>`<tr>
-    <td><span class="badge ${e.vl==='gros'?'badge-orange':'badge-yellow'}">${e.vl==='gros'?'Gros volume':'Volume'}</span></td>
-    <td><div class="co-name">${esc(e.en)}</div></td>
+    <td><span class="badge ${e.vl==='gros'?'bo':'by'}">${e.vl==='gros'?'Gros volume':'Volume'}</span></td>
+    <td><div class="cn">${esc(e.en)}</div></td>
     <td style="font-size:14px;color:#374151">${e.sec}</td>
-    <td><span style="font-size:22px;font-weight:700;color:#1A1A2E">${e.pn}</span></td>
+    <td><span style="font-size:22px;font-weight:700;color:#111827">${e.pn}</span></td>
     <td class="td-mono">${e.sa}</td>
     <td class="td-eco">${e.xa}</td>
+    <td class="td-marge">${e.ma}</td>
     <td style="font-size:14px">${e.bil?'✅ Oui':'—'}</td>
     <td style="font-size:14px">${e.rm?'✅ Oui':'—'}</td>
-    <td style="font-size:13px;color:#6B7280;max-width:220px">${esc(e.tits)}</td>
-    <td>${e.li?`<a href="${esc(e.li)}" target="_blank" class="link-btn">Voir →</a>`:'—'}</td>
+    <td style="font-size:12px;color:#6B7280;max-width:220px">${esc(e.tits)}</td>
+    <td>${e.li?`<a href="${esc(e.li)}" target="_blank" class="lnk">Voir →</a>`:'—'}</td>
   </tr>`).join('');
 }
 
-function fPME(f,btn){fpF=f;document.querySelectorAll('#fr-pme .fb').forEach(b=>b.classList.remove('act'));btn.classList.add('act');apPME();}
+function fPME(f,btn){fpF=f;document.querySelectorAll('#fr-pme .fb:not(.toggle-faible):not(.btn-det)').forEach(b=>b.classList.remove('act'));btn.classList.add('act');apPME();}
 function rPME(){apPME();}
-function apPME(){const q=document.getElementById('qi-pme').value.toLowerCase();let f=OP;if(fpF==='haute')f=f.filter(o=>o.pr==='haute');else if(fpF==='moyenne')f=f.filter(o=>o.pr==='moyenne');else if(fpF==='fit4')f=f.filter(o=>o.fn===4);if(q)f=f.filter(o=>o.en.toLowerCase().includes(q)||o.ti.toLowerCase().includes(q)||o.bl.toLowerCase().includes(q));renPME(f);}
+function apPME(){
+  const q=document.getElementById('qi-pme').value.toLowerCase();
+  let f=OP;
+  if(fpF==='haute')f=f.filter(o=>o.pr==='haute');
+  else if(fpF==='moyenne')f=f.filter(o=>o.pr==='moyenne');
+  if(!showFaible)f=f.filter(o=>o.pr!=='faible');
+  if(q)f=f.filter(o=>o.en.toLowerCase().includes(q)||o.ti.toLowerCase().includes(q)||o.bl.toLowerCase().includes(q));
+  renPME(f);
+}
+
+function toggleFaible(tab2,btn){
+  showFaible=!showFaible;
+  btn.textContent=showFaible?'Masquer les faibles':'Afficher les faibles';
+  btn.classList.toggle('on',showFaible);
+  apPME();
+}
+
+function toggleDet(){
+  showDet=!showDet;
+  document.querySelectorAll('.td-sec').forEach(el=>el.classList.toggle('show',showDet));
+  document.querySelectorAll('th.th-sec').forEach(el=>el.style.display=showDet?'':'none');
+  document.querySelector('.btn-det').textContent=showDet?'− Colonnes détail':'+ Colonnes détail';
+}
+
 function fCC(f,btn){fcF=f;document.querySelectorAll('#fr-cc .fb').forEach(b=>b.classList.remove('act'));btn.classList.add('act');apCC();}
 function rCC(){apCC();}
 function apCC(){const q=document.getElementById('qi-cc').value.toLowerCase();let f=OC;if(fcF==='gros')f=f.filter(o=>o.vl==='gros');else if(fcF==='vol')f=f.filter(o=>o.vl==='vol');else if(fcF==='bil')f=f.filter(o=>o.bil);if(q)f=f.filter(o=>o.en.toLowerCase().includes(q)||o.sec.toLowerCase().includes(q));renCC(f);}
@@ -601,11 +561,14 @@ function tSrc(s){src[s]=!src[s];document.getElementById('s-'+s).classList.toggle
 
 function xCSV(t){
   let rows,h;
-  if(t==='pme'){h=['Priorité','Fit','Entreprise','Poste','Blocs','Patterns','Salaire','Coût emp.','Éco/mois','Sensibilité','Outils','Source','Lien'];rows=OP.map(o=>[o.pr,`${o.fn}/4`,o.en,o.ti,o.bl,o.pa.join(';'),o.sa,o.ca,o.xa,o.s,o.ou,o.src,o.li]);}
-  else{h=['Volume','Entreprise','Secteur','Postes','Salaire moy.','Éco pot.','Bilingue','Remote','Titres'];rows=OC.map(o=>[o.vl,o.en,o.sec,o.pn,o.sa,o.xa,o.bil?'Oui':'Non',o.rm?'Oui':'Non',o.tits]);}
+  if(t==='pme'){h=["Priorité","Entreprise","Poste","Type","Angle d'attaque","Heures","Éco client","Marge Opex","Blocs","Fit","Sensibilité","Outils","Source","Lien"];rows=OP.map(o=>[o.pr,o.en,o.ti,o.type,o.angle,o.hn,o.xa,o.ma,o.bl,`${o.fn}/4`,o.s,o.ou,o.src,o.li]);}
+  else{h=['Volume','Entreprise','Secteur','Postes','Salaire moy.','Éco client','Marge Opex','Bilingue','Remote','Titres'];rows=OC.map(o=>[o.vl,o.en,o.sec,o.pn,o.sa,o.xa,o.ma,o.bil?'Oui':'Non',o.rm?'Oui':'Non',o.tits]);}
   const csv=[h.join(','),...rows.map(r=>r.map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(','))].join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));a.download=`pipeline_opex_${t}_${new Date().toISOString().split('T')[0]}.csv`;a.click();
 }
+
+// Init: hide secondary th
+document.querySelectorAll('th.th-sec').forEach(el=>el.style.display='none');
 </script>
 </body>
 </html>
