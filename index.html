@@ -422,7 +422,7 @@ async function lancerScan(){
 }
 
 async function scanPME(jk,ai,ak,jok,r){
-  const PS=['adjoint administratif','technicien comptable','commis comptable','agent facturation','comptes payables','bookkeeper','coordonnateur administratif','agent service client','support informatique','coordonnateur marketing','technicien RH','administrative assistant','accounting technician','accounts payable','customer service agent','data entry','IT helpdesk'];
+  const PS=['adjoint administratif','technicien comptable','commis comptable','agent facturation','comptes payables','bookkeeper','coordonnateur administratif','agent service client','support informatique','coordonnateur marketing','technicien RH','administrative assistant','accounting technician','accounts payable','customer service agent','data entry','IT helpdesk','helpdesk informatique francophone','technicien support TI','coordonnateur de projets','chargé de compte interne','spécialiste facturation','agent recouvrement','analyste financier junior','coordinateur revenue operations','support commercial','gestionnaire CRM'];
   const br=[];let i=0;
   for(const p of PS.slice(0,8)){setP(Math.round(i/8*25),`Scan JSearch : "${p}"...`);if(src.js&&jk)br.push(...(await fJS(p+' Quebec',jk,r)).map(o=>({...o,_s:'JSearch'})));i++;await slp(300);}
   for(const p of PS.slice(0,6)){setP(25+Math.round(i/6*25),`Scan Adzuna : "${p}"...`);if(src.az&&ai&&ak)br.push(...(await fAZ(p,ai,ak,r)).map(o=>({...o,_s:'Adzuna'})));await slp(250);}
