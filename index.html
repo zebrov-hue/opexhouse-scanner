@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opex House — Scanner Pipeline</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0D1B2A;
+    --navy2: #1A2E4A;
+    --teal: #00C9A7;
+    --teal2: #00A896;
+    --orange: #FF6B35;
+    --gold: #F5C842;
+    --white: #F0F4F8;
+    --gray: #8899AA;
+    --green-bg: #0A2E1A;
+    --green: #22C55E;
+    --yellow-bg: #2A1F00;
+    --yellow: #EAB308;
+    --red-bg: #2A0A0A;
+    --red: #EF4444;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── GRID BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,201,167,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,201,167,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 32px 0 24px;
+    border-bottom: 1px solid rgba(0,201,167,0.15);
+    margin-bottom: 40px;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-mark {
+    width: 40px;
+    height: 40px;
+    background: var(--teal);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--navy);
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.5px;
+  }
+
+  .logo-sub {
+    font-size: 11px;
+    color: var(--gray);
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 2px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .badge {
+    background: rgba(0,201,167,0.1);
+    border: 1px solid rgba(0,201,167,0.3);
+    color: var(--teal);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1px;
+  }
+
+  /* ── CONFIG PANEL ── */
+  .config-panel {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 32px;
+  }
+
+  .config-title {
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+
+  .config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .field label {
+    font-size: 11px;
+    color: var(--gray);
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .field input, .field select {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .field input:focus, .field select:focus {
+    border-color: var(--teal);
+  }
+
+  .field select option {
+    background: var(--navy2);
+  }
+
+  .btn-scan {
+    background: var(--teal);
+    color: var(--navy);
+    border: none;
+    border-radius: 10px;
+    padding: 14px 32px;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: -0.3px;
+  }
+
+  .btn-scan:hover {
+    background: #00E5C0;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(0,201,167,0.3);
+  }
+
+  .btn-scan:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-scan .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(13,27,42,0.3);
+    border-top-color: var(--navy);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+
+  .btn-scan.loading .spinner { display: block; }
+  .btn-scan.loading .btn-icon { display: none; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .stats-bar.visible { opacity: 1; }
+
+  .stat-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--teal);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--gray);
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* ── STATUS LOG ── */
+  .status-log {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(0,201,167,0.15);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--teal);
+    min-height: 44px;
+    display: none;
+  }
+
+  .status-log.visible { display: block; }
+
+  /* ── FILTERS ── */
+  .filters-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .filters-row.visible { opacity: 1; }
+
+  .filter-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 7px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gray);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--teal);
+    color: var(--teal);
+    background: rgba(0,201,167,0.08);
+  }
+
+  .filter-btn.green.active { border-color: var(--green); color: var(--green); background: rgba(34,197,94,0.08); }
+  .filter-btn.yellow.active { border-color: var(--yellow); color: var(--yellow); background: rgba(234,179,8,0.08); }
+  .filter-btn.red.active { border-color: var(--red); color: var(--red); background: rgba(239,68,68,0.08); }
+
+  .export-btn {
+    margin-left: auto;
+    background: rgba(245,200,66,0.1);
+    border: 1px solid rgba(245,200,66,0.3);
+    border-radius: 20px;
+    padding: 7px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .export-btn:hover {
+    background: rgba(245,200,66,0.2);
+  }
+
+  /* ── TABLE ── */
+  .table-wrap {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .table-wrap.visible { opacity: 1; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead tr {
+    background: rgba(255,255,255,0.05);
+  }
+
+  thead th {
+    padding: 14px 16px;
+    text-align: left;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gray);
+    font-weight: 500;
+    white-space: nowrap;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background 0.15s;
+  }
+
+  tbody tr:hover { background: rgba(255,255,255,0.03); }
+  tbody tr:last-child { border-bottom: none; }
+
+  td {
+    padding: 14px 16px;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  .td-entreprise { font-weight: 700; color: var(--white); }
+  .td-poste { color: var(--gray); font-size: 12px; }
+  .td-blocs { font-family: 'DM Mono', monospace; font-size: 11px; color: rgba(0,201,167,0.8); }
+  .td-salaire { font-family: 'DM Mono', monospace; font-size: 12px; }
+  .td-economie { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 700; color: var(--green); }
+
+  .priority-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    white-space: nowrap;
+  }
+
+  .priority-haute { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+  .priority-moyenne { background: rgba(234,179,8,0.15); color: var(--yellow); border: 1px solid rgba(234,179,8,0.3); }
+  .priority-faible { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+
+  .sens-badge {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--teal);
+    text-decoration: none;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+  }
+
+  .link-btn:hover { opacity: 1; }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--gray);
+  }
+
+  .empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.4;
+  }
+
+  .empty-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--white);
+    opacity: 0.5;
+  }
+
+  .empty-sub {
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .config-grid { grid-template-columns: 1fr; }
+    table { font-size: 12px; }
+    td { padding: 10px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-mark">OH</div>
+        <div>
+          <div class="logo-text">Opex House</div>
+          <div class="logo-sub">Pipeline Scanner</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="badge">Adzuna API</div>
+        <div class="badge" id="last-scan">Jamais scanné</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONFIG -->
+  <div class="config-panel">
+    <div class="config-title">⚙ Configuration du scan</div>
+    <div class="config-grid">
+      <div class="field">
+        <label>Adzuna App ID</label>
+        <input type="text" id="app-id" placeholder="zebrov69" value="zebrov69">
+      </div>
+      <div class="field">
+        <label>Adzuna App Key</label>
+        <input type="password" id="app-key" placeholder="8f5a15d1bfc4df10843b8a9307ec194f" value="8f5a15d1bfc4df10843b8a9307ec194f">
+      </div>
+      <div class="field">
+        <label>Région</label>
+        <select id="region">
+          <option value="ca">Canada</option>
+          <option value="us">États-Unis</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Seuil coût employeur min ($/h)</label>
+        <input type="number" id="seuil" value="27" min="20" max="60" step="0.5">
+      </div>
+    </div>
+    <button class="btn-scan" id="scan-btn" onclick="lancerScan()">
+      <span class="btn-icon">⚡</span>
+      <div class="spinner"></div>
+      Lancer le scan
+    </button>
+  </div>
+
+  <!-- STATUS -->
+  <div class="status-log" id="status-log"></div>
+
+  <!-- STATS -->
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat-card">
+      <div class="stat-num" id="stat-total">0</div>
+      <div class="stat-label">Offres trouvées</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--green)" id="stat-haute">0</div>
+      <div class="stat-label">Priorité haute</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--yellow)" id="stat-moy">0</div>
+      <div class="stat-label">Priorité moyenne</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--teal)" id="stat-eco">0 $</div>
+      <div class="stat-label">Économie max/mois</div>
+    </div>
+  </div>
+
+  <!-- FILTERS + EXPORT -->
+  <div class="filters-row" id="filters-row">
+    <button class="filter-btn active" onclick="filtrer('tous', this)">Tous</button>
+    <button class="filter-btn green" onclick="filtrer('haute', this)">🟢 Haute</button>
+    <button class="filter-btn yellow" onclick="filtrer('moyenne', this)">🟡 Moyenne</button>
+    <button class="filter-btn red" onclick="filtrer('faible', this)">🔴 Faible</button>
+    <button class="export-btn" onclick="exporterCSV()">⬇ Export CSV</button>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrap" id="table-wrap">
+    <table id="pipeline-table">
+      <thead>
+        <tr>
+          <th>Priorité</th>
+          <th>Entreprise</th>
+          <th>Poste</th>
+          <th>Blocs externalisables</th>
+          <th>Salaire affiché</th>
+          <th>Coût employeur</th>
+          <th>Économie/mois</th>
+          <th>Sensibilité</th>
+          <th>Outils cloud</th>
+          <th>Lien</th>
+        </tr>
+      </thead>
+      <tbody id="pipeline-body">
+        <tr>
+          <td colspan="10">
+            <div class="empty-state">
+              <div class="empty-icon">🔍</div>
+              <div class="empty-title">Aucun scan lancé</div>
+              <div class="empty-sub">Configure tes paramètres et clique sur "Lancer le scan"</div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+// ── CONFIGURATION ──────────────────────────────────────────
+
+const POSTES = [
+  "adjoint administratif", "assistant administratif", "technicien comptable",
+  "commis comptable", "agent facturation", "comptes payables",
+  "comptes recevables", "bookkeeper", "coordonnateur administratif",
+  "agent service client", "support informatique", "coordonnateur marketing",
+  "technicien ressources humaines", "soutien administratif",
+];
+
+const MOTS_EXTERNALISABLES = [
+  "saisie", "facturation", "comptes fournisseurs", "comptes payables",
+  "comptes recevables", "rapprochement", "conciliation bancaire",
+  "entrée de données", "traitement des factures", "suivi des paiements",
+  "support administratif", "classement", "archivage", "mise à jour",
+  "suivi des dossiers", "gestion des courriels", "prise de rendez-vous",
+  "service à la clientèle", "réponse aux demandes", "saisie comptable",
+  "traitement de la correspondance", "gestion des achats",
+];
+
+const MOTS_SENSIBILITE_ELEVEE = [
+  "paie", "payroll", "t4", "relevé 1", "das", "déclaration",
+  "cpa", "audit", "vérification comptable", "états financiers annuels",
+];
+
+const MOTS_SENSIBILITE_FAIBLE = [
+  "saisie", "comptes fournisseurs", "facturation", "rapprochement",
+  "conciliation", "archivage", "classement", "support administratif",
+  "prise de rendez-vous", "comptes payables",
+];
+
+const MOTS_OUTILS_CLOUD = [
+  "quickbooks", "acomba", "sage", "netsuite", "xero", "hubspot",
+  "salesforce", "microsoft 365", "google workspace", "teams", "slack",
+  "notion", "asana", "monday", "zoho", "dynamics",
+];
+
+const EXCLUSIONS = [
+  "gouvernement", "ministère", "ville de", "agence de placement",
+  "randstad", "adecco", "manpower", "robert half",
+  "hydro-québec", "banque", "desjardins", "cisss", "ciusss",
+  "commission scolaire", "soluvox", "nordia",
+];
+
+let toutesOffres = [];
+let filtreCourant = 'tous';
+
+// ── SCORING ────────────────────────────────────────────────
+
+function scorerSensibilite(texte) {
+  const t = texte.toLowerCase();
+  const eleve = MOTS_SENSIBILITE_ELEVEE.filter(m => t.includes(m)).length;
+  const faible = MOTS_SENSIBILITE_FAIBLE.filter(m => t.includes(m)).length;
+  if (eleve >= 2) return "Élevée ❌";
+  if (eleve === 1 && faible === 0) return "Moyenne ⚠️";
+  if (faible >= 1) return "Faible ✅";
+  return "Moyenne ⚠️";
+}
+
+function scorerBlocs(texte) {
+  const t = texte.toLowerCase();
+  const trouves = MOTS_EXTERNALISABLES.filter(m => t.includes(m));
+  return trouves.slice(0, 4).map(m => m.charAt(0).toUpperCase() + m.slice(1)).join(' · ') || 'À vérifier';
+}
+
+function detecterOutils(texte) {
+  const t = texte.toLowerCase();
+  const trouves = MOTS_OUTILS_CLOUD.filter(m => t.includes(m));
+  return trouves.map(m => m.charAt(0).toUpperCase() + m.slice(1)).join(' / ') || 'Non mentionné';
+}
+
+function estExclu(texte) {
+  const t = texte.toLowerCase();
+  return EXCLUSIONS.some(m => t.includes(m));
+}
+
+function calculerPriorite(cout, sensibilite, blocs, outils) {
+  const seuil = parseFloat(document.getElementById('seuil').value) || 27;
+  if (!cout || cout < seuil) return 'exclu';
+  if (sensibilite === "Élevée ❌") return 'faible';
+
+  let score = 0;
+  if (cout >= 30) score += 3;
+  else if (cout >= 27) score += 1;
+  if (sensibilite === "Faible ✅") score += 3;
+  else if (sensibilite === "Moyenne ⚠️") score += 1;
+  if (blocs !== 'À vérifier') score += 2;
+  if (outils !== 'Non mentionné') score += 1;
+
+  if (score >= 7) return 'haute';
+  if (score >= 4) return 'moyenne';
+  return 'faible';
+}
+
+// ── API ADZUNA ─────────────────────────────────────────────
+
+async function fetchAdzuna(poste, appId, appKey, region) {
+  const url = `https://api.adzuna.com/v1/api/jobs/${region}/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=20&what=${encodeURIComponent(poste)}&where=Quebec&content-type=application/json`;
+  
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) return [];
+    const data = await resp.json();
+    return data.results || [];
+  } catch(e) {
+    return [];
+  }
+}
+
+function extraireSalaire(offre) {
+  if (offre.salary_min && offre.salary_max) {
+    const moy = (offre.salary_min + offre.salary_max) / 2;
+    // Si annuel, convertir en horaire
+    if (moy > 1000) return moy / (52 * 40);
+    return moy;
+  }
+  return null;
+}
+
+// ── SCAN PRINCIPAL ─────────────────────────────────────────
+
+async function lancerScan() {
+  const appId = document.getElementById('app-id').value.trim();
+  const appKey = document.getElementById('app-key').value.trim();
+  const region = document.getElementById('region').value;
+
+  if (!appId || !appKey) {
+    logStatus('⚠ Entre ton App ID et App Key Adzuna');
+    return;
+  }
+
+  const btn = document.getElementById('scan-btn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.querySelector('span:not(.spinner)') && (btn.querySelector('.btn-icon') ? btn.querySelector('.btn-icon').style.display = 'none' : null);
+
+  const statusLog = document.getElementById('status-log');
+  statusLog.classList.add('visible');
+
+  toutesOffres = [];
+  let total = 0;
+
+  const postesAScanner = POSTES.slice(0, 8); // Limiter pour économiser les requêtes
+
+  for (let i = 0; i < postesAScanner.length; i++) {
+    const poste = postesAScanner[i];
+    logStatus(`📡 Scan "${poste}" (${i+1}/${postesAScanner.length})...`);
+
+    const resultats = await fetchAdzuna(poste, appId, appKey, region);
+    
+    for (const offre of resultats) {
+      const titre = offre.title || '';
+      const entreprise = offre.company?.display_name || '';
+      const description = offre.description || '';
+      const lien = offre.redirect_url || '';
+      const date = offre.created?.split('T')[0] || '';
+      const texteComplet = `${titre} ${entreprise} ${description}`.toLowerCase();
+
+      // Filtres
+      if (estExclu(texteComplet)) continue;
+      if (!offre.contract_type?.toLowerCase().includes('permanent') && 
+          !offre.contract_time?.toLowerCase().includes('full_time') &&
+          resultats.indexOf(offre) > 5) continue;
+
+      const salaire = extraireSalaire(offre);
+      const coutEmployeur = salaire ? salaire * 1.20 : null;
+      const seuil = parseFloat(document.getElementById('seuil').value) || 27;
+      const economie = coutEmployeur && coutEmployeur >= seuil ? Math.round((coutEmployeur - 23) * 160) : null;
+
+      const sensibilite = scorerSensibilite(texteComplet);
+      const blocs = scorerBlocs(texteComplet);
+      const outils = detecterOutils(texteComplet);
+      const priorite = calculerPriorite(coutEmployeur, sensibilite, blocs, outils);
+
+      if (priorite === 'exclu') continue;
+
+      toutesOffres.push({
+        priorite,
+        entreprise: entreprise || 'Inconnue',
+        titre,
+        blocs,
+        salaire_affiche: salaire ? `${salaire.toFixed(2)} $/h` : 'À discuter',
+        cout_employeur: coutEmployeur ? `~${coutEmployeur.toFixed(2)} $/h` : 'Inconnu',
+        economie: economie ? `${economie.toLocaleString('fr-CA')} $` : '—',
+        economie_num: economie || 0,
+        sensibilite,
+        outils,
+        lien,
+        date,
+      });
+
+      total++;
+    }
+
+    await sleep(300); // Respecter l'API
+  }
+
+  // Trier
+  const ordre = { haute: 0, moyenne: 1, faible: 2 };
+  toutesOffres.sort((a, b) => (ordre[a.priorite] || 3) - (ordre[b.priorite] || 3));
+
+  // Dédupliquer
+  const vus = new Set();
+  toutesOffres = toutesOffres.filter(o => {
+    const cle = `${o.entreprise}|${o.titre}`.toLowerCase();
+    if (vus.has(cle)) return false;
+    vus.add(cle);
+    return true;
+  });
+
+  logStatus(`✅ Scan terminé — ${toutesOffres.length} offres qualifiées`);
+  document.getElementById('last-scan').textContent = `Scanné: ${new Date().toLocaleTimeString('fr-CA')}`;
+
+  afficherStats();
+  afficherTableau(toutesOffres);
+
+  btn.disabled = false;
+  btn.classList.remove('loading');
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function logStatus(msg) {
+  document.getElementById('status-log').textContent = msg;
+}
+
+// ── AFFICHAGE ──────────────────────────────────────────────
+
+function afficherStats() {
+  const haute = toutesOffres.filter(o => o.priorite === 'haute').length;
+  const moy = toutesOffres.filter(o => o.priorite === 'moyenne').length;
+  const maxEco = Math.max(...toutesOffres.map(o => o.economie_num), 0);
+
+  document.getElementById('stat-total').textContent = toutesOffres.length;
+  document.getElementById('stat-haute').textContent = haute;
+  document.getElementById('stat-moy').textContent = moy;
+  document.getElementById('stat-eco').textContent = maxEco > 0 ? `${maxEco.toLocaleString('fr-CA')} $` : '—';
+
+  document.getElementById('stats-bar').classList.add('visible');
+  document.getElementById('filters-row').classList.add('visible');
+  document.getElementById('table-wrap').classList.add('visible');
+}
+
+function afficherTableau(offres) {
+  const tbody = document.getElementById('pipeline-body');
+
+  if (!offres.length) {
+    tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <div class="empty-title">Aucune offre pour ce filtre</div>
+      <div class="empty-sub">Essaie un autre filtre ou relance le scan</div>
+    </div></td></tr>`;
+    return;
+  }
+
+  const prioriteLabel = {
+    haute: '<span class="priority-badge priority-haute">🟢 Haute</span>',
+    moyenne: '<span class="priority-badge priority-moyenne">🟡 Moyenne</span>',
+    faible: '<span class="priority-badge priority-faible">🔴 Faible</span>',
+  };
+
+  tbody.innerHTML = offres.map(o => `
+    <tr>
+      <td>${prioriteLabel[o.priorite] || ''}</td>
+      <td>
+        <div class="td-entreprise">${escHtml(o.entreprise)}</div>
+        <div class="td-poste">${escHtml(o.titre)}</div>
+        <div style="font-size:10px;color:var(--gray);font-family:'DM Mono',monospace;margin-top:4px">${o.date}</div>
+      </td>
+      <td class="td-poste">${escHtml(o.titre)}</td>
+      <td class="td-blocs">${escHtml(o.blocs)}</td>
+      <td class="td-salaire">${o.salaire_affiche}</td>
+      <td class="td-salaire">${o.cout_employeur}</td>
+      <td class="td-economie">${o.economie}</td>
+      <td><span class="sens-badge">${o.sensibilite}</span></td>
+      <td style="font-size:11px;color:var(--gray);font-family:'DM Mono',monospace">${o.outils}</td>
+      <td>${o.lien ? `<a href="${o.lien}" target="_blank" class="link-btn">Voir ↗</a>` : '—'}</td>
+    </tr>
+  `).join('');
+}
+
+function filtrer(type, btn) {
+  filtreCourant = type;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const filtrees = type === 'tous' ? toutesOffres : toutesOffres.filter(o => o.priorite === type);
+  afficherTableau(filtrees);
+}
+
+function escHtml(str) {
+  return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── EXPORT CSV ─────────────────────────────────────────────
+
+function exporterCSV() {
+  if (!toutesOffres.length) return;
+
+  const headers = ['Priorité','Entreprise','Poste','Blocs externalisables','Salaire affiché','Coût employeur','Économie/mois','Sensibilité','Outils cloud','Lien'];
+  const rows = toutesOffres.map(o => [
+    o.priorite, o.entreprise, o.titre, o.blocs,
+    o.salaire_affiche, o.cout_employeur, o.economie,
+    o.sensibilite, o.outils, o.lien
+  ].map(v => `"${(v||'').replace(/"/g,'""')}"`).join(','));
+
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `pipeline_opexhouse_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+}
+</script>
+
+</body>
+</html>
