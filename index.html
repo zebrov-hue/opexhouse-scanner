@@ -392,7 +392,6 @@ function procPME(o,src2){
   const sal=salH(o),cout=sal?sal*1.20:null;
   const rm=t.includes('télétravail')||t.includes('remote')||t.includes('work from home');
   const tp=!t.includes('temps partiel')&&!t.includes('part-time');
-  if(cout&&cout<22)return null;
   const hn=estHeures(t,tp);
   const eco=cout&&cout>PRIX?Math.round((cout-PRIX)*hn):null;
   const marge=Math.round((PRIX-MADANI)*hn);
