@@ -295,6 +295,20 @@ const KSH=['paie','payroll','t4','relevé 1','das','déclaration gouvernementale
 const KSF=['saisie','comptes fournisseurs','facturation','rapprochement','conciliation','archivage','classement','support administratif','accounts payable','data entry','invoice','bookkeeping'];
 const KC=['quickbooks','acomba','sage','netsuite','xero','hubspot','salesforce','microsoft 365','google workspace','teams','slack','notion','asana','monday','zoho','dynamics','oracle','sap','freshdesk','zendesk'];
 const KXP=['gouvernement','ministère','ville de','agence de placement','randstad','adecco','manpower','robert half','hydro-québec','banque nationale','desjardins','commission scolaire','cisss','ciusss','soluvox','nordia','concentrix'];
+
+// Titres à exclure explicitement — hors périmètre Opex House
+const KTP=[
+  'technicien automobile','automotive technician','automotive service','mécanicien',
+  'technicien laboratoire','laboratory technician','lab technician','chimique','chimiste',
+  'apprenti','apprentice','electricien','électricien','plombier','soudeur','welder',
+  'infirmier','infirmière','nurse','médecin','pharmacien','dentiste',
+  'chauffeur','conducteur','driver','livreur','delivery',
+  'cuisinier','chef cuisinier','restaurant','hôtellerie',
+  'enseignant','professeur','teacher','éducateur',
+  'ingénieur','engineer','architecte','géologue',
+  'technicien réseau','network engineer','développeur','developer','software engineer',
+  'modification pi','rem technicien','technicien pi',
+];
 const KSN=['directeur','director','vp ','vice-président','chief','cfo','cto','coo','senior manager'];
 const KUR=['dès que possible','immediate','immédiatement','urgent','asap','start immediately'];
 const KGR=['croissance','expansion','nouveau poste','new position','growing','en pleine expansion'];
@@ -344,7 +358,27 @@ function estHeures(t,tp){
 }
 
 function fit(o){let s=0;if(o.tp)s++;if(o.rm)s++;if(o.bl!=='À qualifier')s++;if(o.cn>=27)s++;return s;}
-function prio(s,b,ou,c,f){if(s==='Élevée')return'faible';let sc=0;if(c>=30)sc+=3;else if(c>=27)sc+=2;else if(c>=24)sc+=1;if(s==='Faible')sc+=3;else if(s==='Moyenne')sc+=1;if(b!=='À qualifier')sc+=2;if(ou!=='—')sc+=1;if(f>=3)sc+=2;if(sc>=8)return'haute';if(sc>=4)return'moyenne';return'faible';}
+function prio(s,b,ou,c,f,rm,tp){
+  if(s==='Élevée')return'faible';
+  let sc=0;
+  // Salaire
+  if(c>=30)sc+=3;else if(c>=27)sc+=2;else if(c>=24)sc+=1;else if(!c||c===0)sc+=1; // pas de salaire = pas pénalisé
+  // Sensibilité
+  if(s==='Faible')sc+=3;else if(s==='Moyenne')sc+=2; // Moyenne moins pénalisante
+  // Blocs externalisables
+  if(b!=='À qualifier')sc+=2;
+  // Outils cloud
+  if(ou!=='—')sc+=1;
+  // Fit
+  if(f>=3)sc+=2;else if(f>=2)sc+=1;
+  // Remote + temps plein bonus
+  if(rm)sc+=1;
+  if(tp)sc+=1;
+  // Seuils abaissés
+  if(sc>=9)return'haute';
+  if(sc>=4)return'moyenne'; // était 4, maintenant plus de postes en moyenne
+  return'faible';
+}
 function normCC(titre){const t=titre.toLowerCase().replace(/representative|representant|représentant/g,'agent').replace(/customer service|service à la clientèle|service client/g,'service client').replace(/call center|centre d.appels|contact center/g,'call center').replace(/bilingual|bilingue/g,'bilingue').replace(/\s+/g,' ').trim();for(const[f,mots]of Object.entries(FAM)){if(mots.some(m=>t.includes(m)))return f;}return t.split(' ').slice(0,3).join(' ');}
 function isCCp(titre){const t=titre.toLowerCase();return KCC.some(k=>t.includes(k));}
 
@@ -353,7 +387,7 @@ function procPME(o,src2){
   const de=o.description||o.snippet||o.job_description||'',li=o.redirect_url||o.url||o.job_apply_link||o.link||'';
   const da=(o.created||o.date_posted||o.updated||'').split('T')[0]||'';
   const t=`${ti} ${co} ${de}`.toLowerCase();
-  if(KXP.some(k=>t.includes(k)))return null;if(KSN.some(k=>t.includes(k)))return null;if(!ti)return null;
+  if(KXP.some(k=>t.includes(k)))return null;if(KSN.some(k=>t.includes(k)))return null;if(KTP.some(k=>ti.toLowerCase().includes(k)))return null;if(!ti)return null;
   const s=sensib(t),bl=blocs(t),ou=outils(t);
   const sal=salH(o),cout=sal?sal*1.20:null;
   const rm=t.includes('télétravail')||t.includes('remote')||t.includes('work from home');
@@ -365,7 +399,7 @@ function procPME(o,src2){
   const type=typeOpportunite(t,[]);
   const angle=angleAttaque(type,ti,bl);
   const ob={s,bl,ou,sn:sal||0,cn:cout||0,xn:eco||0,mn:marge,hn,sa:sal?`${sal.toFixed(2)} $/h`:'À discuter',ca:cout?`~${cout.toFixed(2)} $/h`:'—',xa:eco?`${eco.toLocaleString('fr-CA')} $`:'—',ma:`${marge.toLocaleString('fr-CA')} $`,rm,tp,en:co||'Inconnue',ti,src:src2,li,da,fn:0,pn:0,pr:'faible',type,angle};
-  ob.fn=fit(ob);ob.pr=prio(s,bl,ou,cout||0,ob.fn);ob.pn=ob.pr==='haute'?0:ob.pr==='moyenne'?1:2;
+  ob.fn=fit(ob);ob.pr=prio(s,bl,ou,cout||0,ob.fn,ob.rm,ob.tp);ob.pn=ob.pr==='haute'?0:ob.pr==='moyenne'?1:2;
   return ob;
 }
 
@@ -422,7 +456,25 @@ async function lancerScan(){
 }
 
 async function scanPME(jk,ai,ak,jok,r){
-  const PS=['adjoint administratif','technicien comptable','commis comptable','agent facturation','comptes payables','bookkeeper','coordonnateur administratif','agent service client','support informatique','coordonnateur marketing','technicien RH','administrative assistant','accounting technician','accounts payable','customer service agent','data entry','IT helpdesk','helpdesk informatique francophone','technicien support TI','coordonnateur de projets','chargé de compte interne','spécialiste facturation','agent recouvrement','analyste financier junior','coordinateur revenue operations','support commercial','gestionnaire CRM'];
+  const PS=[
+  // Admin & Finance
+  'adjoint administratif','technicien comptable','commis comptable','agent facturation',
+  'comptes payables','bookkeeper','coordonnateur administratif','technicien RH',
+  'administrative assistant','accounting technician','accounts payable','data entry',
+  // Service client & Support
+  'agent service client','customer service agent','support informatique',
+  'helpdesk informatique','technicien support TI','IT helpdesk',
+  // Commercial & CRM (leads qualifiés uniquement - pas cold call)
+  'chargé de compte interne','gestionnaire CRM','coordonnateur ventes',
+  'agent qualification leads','inside sales','support commercial',
+  // Finance avancée
+  'analyste financier junior','agent recouvrement','spécialiste facturation',
+  'revenue operations','contrôleur adjoint',
+  // Coordination & Projets
+  'coordonnateur de projets','coordonnateur marketing','project coordinator',
+  // Parajuridique & Conformité
+  'parajuriste','agent conformité','assistant juridique',
+];
   const br=[];let i=0;
   for(const p of PS.slice(0,8)){setP(Math.round(i/8*25),`Scan JSearch : "${p}"...`);if(src.js&&jk)br.push(...(await fJS(p+' Quebec',jk,r)).map(o=>({...o,_s:'JSearch'})));i++;await slp(300);}
   for(const p of PS.slice(0,6)){setP(25+Math.round(i/6*25),`Scan Adzuna : "${p}"...`);if(src.az&&ai&&ak)br.push(...(await fAZ(p,ai,ak,r)).map(o=>({...o,_s:'Adzuna'})));await slp(250);}
