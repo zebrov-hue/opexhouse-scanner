@@ -310,6 +310,7 @@ const KTP=[
   'modification pi','rem technicien','technicien pi',
 ];
 const KSN=['directeur','director','vp ','vice-président','chief','cfo','cto','coo','senior manager'];
+const PM=['secrétaire médicale','réceptionniste médicale','adjoint administratif médical','coordonnateur médical','agent prise de rendez-vous','télésecrétaire médical','commis médical','secrétariat clinique','réceptionniste clinique','coordonnateur clinique','agent administratif médical','medical secretary','medical receptionist','patient coordinator','healthcare administrative assistant','medical administrative assistant','clinic coordinator','appointment scheduler','medical office assistant'];
 const KUR=['dès que possible','immediate','immédiatement','urgent','asap','start immediately'];
 const KGR=['croissance','expansion','nouveau poste','new position','growing','en pleine expansion'];
 const KCC=['agent de centre d\'appels','agent service client','téléagent','téléconseiller','représentant service client','call center agent','customer service representative','customer service agent','inbound agent','outbound agent','contact center agent','agent bilingue','bilingual agent','csr'];
@@ -390,7 +391,7 @@ function procPME(o,src2){
   if(KXP.some(k=>t.includes(k)))return null;if(KSN.some(k=>t.includes(k)))return null;if(KTP.some(k=>ti.toLowerCase().includes(k)))return null;if(!ti)return null;
   const s=sensib(t),bl=blocs(t),ou=outils(t);
   const sal=salH(o),cout=sal?sal*1.20:null;
-  const isMed=PM&&PM.some&&PM.some(m=>ti.toLowerCase().includes(m.toLowerCase().split(' ')[0]));
+  const isMed=PM.some(m=>ti.toLowerCase().includes(m.toLowerCase().split(' ')[0]));
   const rm=t.includes('télétravail')||t.includes('remote')||t.includes('work from home')||isMed;
   const tp=!t.includes('temps partiel')&&!t.includes('part-time');
   const hn=estHeures(t,tp);
@@ -476,7 +477,6 @@ async function scanPME(jk,ai,ak,jok,r){
   'parajuriste','agent conformité','assistant juridique',
 ];
   const br=[];let i=0;
-  const PM=['secrétaire médicale','réceptionniste médicale','adjoint administratif médical','coordonnateur médical','agent prise de rendez-vous','télésecrétaire médical','commis médical','secrétariat clinique','réceptionniste clinique','coordonnateur clinique','agent administratif médical','medical secretary','medical receptionist','patient coordinator','healthcare administrative assistant','medical administrative assistant','clinic coordinator','appointment scheduler','medical office assistant'];
   const isMedical = (p) => PM.some(m=>p.toLowerCase().includes(m.toLowerCase().split(' ')[0]));
   for(const p of PS.slice(0,8)){setP(Math.round(i/8*25),`Scan JSearch : "${p}"...`);if(src.js&&jk){const q=isMedical(p)?p+' Quebec':p+' remote Quebec';br.push(...(await fJS(q,jk,r)).map(o=>({...o,_s:'JSearch'})));}i++;await slp(300);}
   for(const p of PS.slice(0,6)){setP(25+Math.round(i/6*25),`Scan Adzuna : "${p}"...`);if(src.az&&ai&&ak)br.push(...(await fAZ(p,ai,ak,r)).map(o=>({...o,_s:'Adzuna'})));await slp(250);}
