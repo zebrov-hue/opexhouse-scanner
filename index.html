@@ -390,7 +390,8 @@ function procPME(o,src2){
   if(KXP.some(k=>t.includes(k)))return null;if(KSN.some(k=>t.includes(k)))return null;if(KTP.some(k=>ti.toLowerCase().includes(k)))return null;if(!ti)return null;
   const s=sensib(t),bl=blocs(t),ou=outils(t);
   const sal=salH(o),cout=sal?sal*1.20:null;
-  const rm=t.includes('télétravail')||t.includes('remote')||t.includes('work from home');
+  const isMed=PM&&PM.some&&PM.some(m=>ti.toLowerCase().includes(m.toLowerCase().split(' ')[0]));
+  const rm=t.includes('télétravail')||t.includes('remote')||t.includes('work from home')||isMed;
   const tp=!t.includes('temps partiel')&&!t.includes('part-time');
   const hn=estHeures(t,tp);
   const eco=cout&&cout>PRIX?Math.round((cout-PRIX)*hn):null;
@@ -436,7 +437,7 @@ function agrCC(brutes){
   }).filter(e=>e.pn>=2).sort((a,b)=>a.vn-b.vn||b.pn-a.pn);
 }
 
-async function fJS(q,k,r){const loc=r==='ca'?'Canada':'USA';try{const res=await fetch(`https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(q+' remote '+loc)}&num_pages=2&date_posted=month`,{headers:{'x-rapidapi-key':k,'x-rapidapi-host':'jsearch.p.rapidapi.com'}});if(!res.ok)return[];const d=await res.json();return(d.data||[]).map(j=>({title:j.job_title,company:{display_name:j.employer_name},description:j.job_description,redirect_url:j.job_apply_link,created:j.job_posted_at_datetime_utc,salary_min:j.job_min_salary,salary_max:j.job_max_salary}));}catch{return[];}}
+async function fJS(q,k,r){const loc=r==='ca'?'Canada':'USA';try{const res=await fetch(`https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(q+' '+loc)}&num_pages=2&date_posted=month`,{headers:{'x-rapidapi-key':k,'x-rapidapi-host':'jsearch.p.rapidapi.com'}});if(!res.ok)return[];const d=await res.json();return(d.data||[]).map(j=>({title:j.job_title,company:{display_name:j.employer_name},description:j.job_description,redirect_url:j.job_apply_link,created:j.job_posted_at_datetime_utc,salary_min:j.job_min_salary,salary_max:j.job_max_salary}));}catch{return[];}}
 async function fAZ(q,i,k,r){try{const res=await fetch(`https://api.adzuna.com/v1/api/jobs/${r}/search/1?app_id=${i}&app_key=${k}&results_per_page=20&what=${encodeURIComponent(q)}&content-type=application/json`);if(!res.ok)return[];const d=await res.json();return d.results||[];}catch{return[];}}
 async function fJO(q,k){try{const res=await fetch(`https://jooble.org/api/${k}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({keywords:q,location:'Quebec, Canada',page:1,SearchMode:1})});if(!res.ok)return[];const d=await res.json();return(d.jobs||[]).map(j=>({title:j.title,company:j.company,description:j.snippet,redirect_url:j.link,created:j.updated,salary_min:j.salary?parseFloat(j.salary.replace(/[^0-9.]/g,'')):null}));}catch{return[];}}
 async function fRE(){const cats=['data','finance','customer-support','marketing','hr'],r=[];for(const c of cats){try{const res=await fetch(`https://remotive.com/api/remote-jobs?category=${c}&limit=15`);if(!res.ok)continue;const d=await res.json();r.push(...(d.jobs||[]).map(j=>({title:j.title,company:{display_name:j.company_name},description:j.description,redirect_url:j.url,created:j.publication_date})));}catch{continue;}await slp(150);}return r;}
@@ -475,7 +476,9 @@ async function scanPME(jk,ai,ak,jok,r){
   'parajuriste','agent conformité','assistant juridique',
 ];
   const br=[];let i=0;
-  for(const p of PS.slice(0,8)){setP(Math.round(i/8*25),`Scan JSearch : "${p}"...`);if(src.js&&jk)br.push(...(await fJS(p+' Quebec',jk,r)).map(o=>({...o,_s:'JSearch'})));i++;await slp(300);}
+  const PM=['secrétaire médicale','réceptionniste médicale','adjoint administratif médical','coordonnateur médical','agent prise de rendez-vous','télésecrétaire médical','commis médical','secrétariat clinique','réceptionniste clinique','coordonnateur clinique','agent administratif médical','medical secretary','medical receptionist','patient coordinator','healthcare administrative assistant','medical administrative assistant','clinic coordinator','appointment scheduler','medical office assistant'];
+  const isMedical = (p) => PM.some(m=>p.toLowerCase().includes(m.toLowerCase().split(' ')[0]));
+  for(const p of PS.slice(0,8)){setP(Math.round(i/8*25),`Scan JSearch : "${p}"...`);if(src.js&&jk){const q=isMedical(p)?p+' Quebec':p+' remote Quebec';br.push(...(await fJS(q,jk,r)).map(o=>({...o,_s:'JSearch'})));}i++;await slp(300);}
   for(const p of PS.slice(0,6)){setP(25+Math.round(i/6*25),`Scan Adzuna : "${p}"...`);if(src.az&&ai&&ak)br.push(...(await fAZ(p,ai,ak,r)).map(o=>({...o,_s:'Adzuna'})));await slp(250);}
   for(const p of PS.slice(0,4)){setP(55+Math.round(i/4*15),`Scan Jooble : "${p}"...`);if(src.jo&&jok)br.push(...(await fJO(p,jok)).map(o=>({...o,_s:'Jooble'})));await slp(250);}
   setP(72,'Scan Remotive...');if(src.re)br.push(...(await fRE()).map(o=>({...o,_s:'Remotive'})));
