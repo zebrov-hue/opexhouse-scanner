@@ -150,6 +150,7 @@
   <div class="tabs">
     <button class="tab active" onclick="switchTab('pme',this)">Pipeline PME</button>
     <button class="tab" onclick="switchTab('cc',this)">Pipeline Call Centers</button>
+    <button class="tab" onclick="switchTab('cli',this)">Pipeline Cliniques 🏥</button>
   </div>
 
   <div class="card">
@@ -193,6 +194,15 @@
     <div class="st"><div class="sn" style="color:#1D4ED8" id="sc3">0</div><div class="sk">Bilingues FR/EN</div></div>
     <div class="st"><div class="sn" style="color:#7C3AED" id="sc4">—</div><div class="sk">Marge potentielle pipeline</div></div>
     <div class="st"><div class="sn" style="color:#059669" id="sc5">—</div><div class="sk">Économie client totale</div></div>
+  </div>
+
+  <!-- STATS CLINIQUES -->
+  <div class="sg" id="sb-cli">
+    <div class="st"><div class="sn" id="scl0">0</div><div class="sk">Cliniques détectées</div></div>
+    <div class="st"><div class="sn" style="color:#065F46" id="scl1">0</div><div class="sk">Recrutement actif</div></div>
+    <div class="st"><div class="sn" style="color:#92400E" id="scl2">0</div><div class="sk">Multi-postes</div></div>
+    <div class="st"><div class="sn" style="color:#1D4ED8" id="scl3">0</div><div class="sk">Sources</div></div>
+    <div class="st"><div class="sn" style="color:#7C3AED" id="scl4">—</div><div class="sk">Marge potentielle</div></div>
   </div>
 
   <!-- FILTERS PME -->
@@ -263,6 +273,35 @@
     </table>
   </div>
 
+  <!-- FILTERS CLINIQUES -->
+  <div class="fr" id="fr-cli">
+    <button class="fb act" onclick="fCLI('tous',this)">Toutes</button>
+    <button class="fb" onclick="fCLI('actif',this)">Recrutement actif</button>
+    <button class="fb" onclick="fCLI('multi',this)">Multi-postes</button>
+    <input class="si" id="qi-cli" placeholder="Rechercher clinique..." oninput="rCLI()">
+    <button class="btn-csv" onclick="xCSV('cli')">↓ CSV</button>
+  </div>
+
+  <!-- TABLE CLINIQUES -->
+  <div class="tw" id="tw-cli">
+    <table>
+      <thead><tr>
+        <th onclick="srtCLI('vn')">Volume</th>
+        <th onclick="srtCLI('en')">Clinique</th>
+        <th onclick="srtCLI('cn')">Ville</th>
+        <th onclick="srtCLI('pn')">Postes détectés</th>
+        <th>Titres</th>
+        <th>Source</th>
+        <th onclick="srtCLI('sn')">Salaire observé</th>
+        <th onclick="srtCLI('mn')">Marge Opex/mois</th>
+        <th>Lien</th>
+      </tr></thead>
+      <tbody id="tb-cli">
+        <tr><td colspan="9"><div class="empty"><div class="ei">🏥</div><div class="et">Aucun scan lancé</div><div class="es">Sélectionnez Pipeline Cliniques et lancez</div></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+
   <!-- LEXIQUE -->
   <div class="lexique">
     <div class="lex-title">Lexique des colonnes</div>
@@ -285,7 +324,7 @@
 </div>
 
 <script>
-let tab='pme',OP=[],OC=[],src={js:1,az:1,jo:1,re:1};
+let tab='pme',OP=[],OC=[],OCLI=[],src={js:1,az:1,jo:1,re:1};let fcliF='tous',tcliCol='vn',tcliDir=-1;
 let tpCol='pn',tpDir=1,tcCol='vn',tcDir=-1,fpF='haute',fcF='tous';
 let showFaible=false,showDet=false;
 const MADANI=18,PRIX=23,PRIX_CC=16,MADANI_CC=13;
@@ -451,7 +490,7 @@ async function lancerScan(){
   const jk=document.getElementById('jk').value.trim(),ai=document.getElementById('ai').value.trim(),ak=document.getElementById('ak').value.trim(),jok=document.getElementById('jok').value.trim(),r=document.getElementById('reg').value;
   const btn=document.getElementById('sbtn');btn.disabled=true;btn.classList.add('loading');
   document.getElementById('pw').classList.add('show');
-  if(tab==='pme')await scanPME(jk,ai,ak,jok,r);else await scanCC(jk,ai,ak,jok,r);
+  if(tab==='pme')await scanPME(jk,ai,ak,jok,r);else if(tab==='cc')await scanCC(jk,ai,ak,jok,r);else await scanCLI();
   btn.disabled=false;btn.classList.remove('loading');
   document.getElementById('lsb').textContent=`Scanné à ${new Date().toLocaleTimeString('fr-CA')}`;
 }
@@ -607,20 +646,144 @@ function srtC(c){if(tcCol===c)tcDir*=-1;else{tcCol=c;tcDir=-1;}OC.sort((a,b)=>ty
 
 function switchTab(t,btn){
   tab=t;document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
-  document.getElementById('blbl').textContent=t==='pme'?'Lancer le scan PME':'Lancer le scan Call Centers';
+  document.getElementById('blbl').textContent=t==='pme'?'Lancer le scan PME':t==='cc'?'Lancer le scan Call Centers':'Lancer le scan Cliniques';
   ['sb-pme','fr-pme','tw-pme'].forEach(id=>{const el=document.getElementById(id);if(!el)return;if(t==='pme'&&OP.length>0)el.classList.add('show');else if(t!=='pme')el.classList.remove('show');});
   ['sb-cc','fr-cc','tw-cc'].forEach(id=>{const el=document.getElementById(id);if(!el)return;if(t==='cc'&&OC.length>0)el.classList.add('show');else if(t!=='cc')el.classList.remove('show');});
+  ['sb-cli','fr-cli','tw-cli'].forEach(id=>{const el=document.getElementById(id);if(!el)return;if(t==='cli'&&OCLI.length>0)el.classList.add('show');else if(t!=='cli')el.classList.remove('show');});
 }
 
 function tSrc(s){src[s]=!src[s];document.getElementById('s-'+s).classList.toggle('off',!src[s]);}
 
 function xCSV(t){
   let rows,h;
+  if(t==='cli'){h=['Volume','Clinique','Ville','Postes','Titres','Source','Salaire','Marge Opex'];rows=OCLI.map(o=>[o.vl,o.en,o.cn,o.pn,o.tits,o.src,o.sa,o.ma]);const csv=[h.join(','),...rows.map(r=>r.map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(','))].join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));a.download=`pipeline_opex_cliniques_${new Date().toISOString().split('T')[0]}.csv`;a.click();return;}
   if(t==='pme'){h=["Priorité","Entreprise","Poste","Type","Angle d'attaque","Heures","Éco client","Marge Opex","Blocs","Fit","Sensibilité","Outils","Source","Lien"];rows=OP.map(o=>[o.pr,o.en,o.ti,o.type,o.angle,o.hn,o.xa,o.ma,o.bl,`${o.fn}/4`,o.s,o.ou,o.src,o.li]);}
   else{h=['Volume','Entreprise','Secteur','Postes','Salaire moy.','Éco client','Marge Opex','Bilingue','Remote','Titres'];rows=OC.map(o=>[o.vl,o.en,o.sec,o.pn,o.sa,o.xa,o.ma,o.bil?'Oui':'Non',o.rm?'Oui':'Non',o.tits]);}
   const csv=[h.join(','),...rows.map(r=>r.map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(','))].join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));a.download=`pipeline_opex_${t}_${new Date().toISOString().split('T')[0]}.csv`;a.click();
 }
+
+// ── CLINIQUES ────────────────────────────────────────────────────────────────
+const PROXY = 'https://opex-proxy-production.up.railway.app';
+const POSTES_CLI = [
+  'secrétaire médicale','réceptionniste médicale','adjoint administratif médical',
+  'coordonnateur médical','agent prise de rendez-vous','secrétaire clinique',
+  'commis médical','coordonnateur clinique','medical receptionist','medical secretary',
+  'patient coordinator','clinic coordinator','appointment scheduler','medical office assistant',
+  'healthcare administrative assistant'
+];
+
+async function fProxy(endpoint, q, extra='') {
+  try {
+    const url = `${PROXY}/${endpoint}?q=${encodeURIComponent(q)}${extra}`;
+    const r = await fetch(url);
+    if(!r.ok) return [];
+    const d = await r.json();
+    return d.jobs || [];
+  } catch { return []; }
+}
+
+async function scanCLI() {
+  OCLI = [];
+  setP(0, 'Initialisation scan cliniques...');
+  const raw = [];
+  let i = 0;
+  const total = POSTES_CLI.length * 3;
+
+  for(const p of POSTES_CLI) {
+    setP(Math.round(i/total*50), `Jobillico : "${p}"...`);
+    const jobs = await fProxy('jobillico', p, '&ville=montreal');
+    raw.push(...jobs);
+    const jobs2 = await fProxy('jobillico', p, '&ville=quebec');
+    raw.push(...jobs2);
+    i += 2; await slp(400);
+  }
+
+  setP(60, 'Guichet Emplois...');
+  for(const p of POSTES_CLI.slice(0,8)) {
+    const jobs = await fProxy('guichet', p, '&province=QC');
+    raw.push(...jobs);
+    i++; await slp(300);
+  }
+
+  setP(85, 'Agrégation par clinique...');
+  await slp(100);
+  OCLI = agrCLI(raw);
+  setP(100, `Terminé — ${OCLI.length} cliniques détectées`);
+  statsCLI();
+  renCLI(OCLI);
+  ['sb-cli','fr-cli','tw-cli'].forEach(id=>document.getElementById(id).classList.add('show'));
+}
+
+function agrCLI(raw) {
+  const m = {};
+  for(const j of raw) {
+    if(!j || !j.company || j.company.length < 2) continue;
+    const k = j.company.toLowerCase().trim();
+    if(!m[k]) m[k] = {en:j.company, city:j.location||'—', postes:[], sources:new Set(), li:j.link};
+    const exists = m[k].postes.find(p=>p.toLowerCase()===j.title.toLowerCase());
+    if(!exists && j.title) m[k].postes.push(j.title);
+    if(j.source) m[k].sources.add(j.source);
+  }
+  return Object.values(m).map(e => {
+    const pn = e.postes.length;
+    const marge = pn * 160 * (23-18);
+    return {
+      en: e.en,
+      cn: e.city,
+      pn,
+      vn: pn >= 3 ? 0 : pn >= 2 ? 1 : 2,
+      vl: pn >= 3 ? 'actif' : pn >= 2 ? 'multi' : 'unique',
+      tits: e.postes.join(' · '),
+      src: [...e.sources].join(', '),
+      sn: 0,
+      sa: '20–25 $/h',
+      mn: marge,
+      ma: `${marge.toLocaleString('fr-CA')} $`,
+      li: e.li
+    };
+  }).filter(e=>e.pn>=1).sort((a,b)=>a.vn-b.vn||b.pn-a.pn);
+}
+
+function statsCLI() {
+  const actif = OCLI.filter(o=>o.vl==='actif').length;
+  const multi = OCLI.filter(o=>o.vl==='multi').length;
+  const sources = new Set(OCLI.flatMap(o=>o.src.split(', '))).size;
+  const marge = OCLI.reduce((s,o)=>s+o.mn,0);
+  document.getElementById('scl0').textContent = OCLI.length;
+  document.getElementById('scl1').textContent = actif;
+  document.getElementById('scl2').textContent = multi;
+  document.getElementById('scl3').textContent = sources;
+  document.getElementById('scl4').textContent = marge>0?`${marge.toLocaleString('fr-CA')} $`:'—';
+}
+
+function renCLI(em) {
+  const tb = document.getElementById('tb-cli');
+  if(!em.length){tb.innerHTML=`<tr><td colspan="9"><div class="empty"><div class="ei">🏥</div><div class="et">Aucune clinique</div><div class="es">Lancez le scan Cliniques</div></div></td></tr>`;return;}
+  tb.innerHTML = em.map(e=>`<tr>
+    <td><span class="badge ${e.vl==='actif'?'bo':e.vl==='multi'?'by':'bb'}">${e.vl==='actif'?'Actif':e.vl==='multi'?'Multi':'Unique'}</span></td>
+    <td><div class="cn">${esc(e.en)}</div></td>
+    <td style="font-size:14px;color:#374151">${esc(e.cn)}</td>
+    <td><span style="font-size:22px;font-weight:700;color:#111827">${e.pn}</span></td>
+    <td style="font-size:12px;color:#6B7280;max-width:240px">${esc(e.tits)}</td>
+    <td><span class="badge bb" style="font-size:11px">${esc(e.src)}</span></td>
+    <td class="td-mono">${e.sa}</td>
+    <td class="td-marge">${e.ma}</td>
+    <td>${e.li?`<a href="${esc(e.li)}" target="_blank" class="lnk">Voir →</a>`:'—'}</td>
+  </tr>`).join('');
+}
+
+function fCLI(f,btn){fcliF=f;document.querySelectorAll('#fr-cli .fb').forEach(b=>b.classList.remove('act'));btn.classList.add('act');apCLI();}
+function rCLI(){apCLI();}
+function apCLI(){
+  const q=document.getElementById('qi-cli').value.toLowerCase();
+  let f=OCLI;
+  if(fcliF==='actif')f=f.filter(o=>o.vl==='actif');
+  else if(fcliF==='multi')f=f.filter(o=>o.vl==='multi'||o.vl==='actif');
+  if(q)f=f.filter(o=>o.en.toLowerCase().includes(q)||o.cn.toLowerCase().includes(q)||o.tits.toLowerCase().includes(q));
+  renCLI(f);
+}
+function srtCLI(c){if(tcliCol===c)tcliDir*=-1;else{tcliCol=c;tcliDir=-1;}OCLI.sort((a,b)=>typeof a[c]==='string'?tcliDir*a[c].localeCompare(b[c]):tcliDir*(a[c]-b[c]));apCLI();}
 
 // Init: hide secondary th
 document.querySelectorAll('th.th-sec').forEach(el=>el.style.display='none');
