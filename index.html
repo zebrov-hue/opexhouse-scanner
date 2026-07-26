@@ -63,6 +63,15 @@
   .sn{font-size:28px;font-weight:700;color:#111827;line-height:1;margin-bottom:4px;}
   .sk{font-size:11px;color:#6B7280;font-weight:500;}
 
+  /* BATCH BAR */
+  .batch-bar{display:none;align-items:center;gap:12px;background:#111827;color:#fff;padding:10px 18px;border-radius:6px;margin-bottom:14px;}
+  .batch-bar.show{display:flex;}
+  .batch-count{font-size:14px;font-weight:600;}
+  .btn-batch{background:#fff;color:#111827;border:none;border-radius:4px;padding:7px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;}
+  .btn-batch:hover{background:#F3F4F6;}
+  .btn-clear{background:transparent;color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.3);border-radius:4px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;margin-left:auto;}
+  .btn-clear:hover{color:#fff;border-color:#fff;}
+
   /* FILTERS */
   .fr{display:none;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
   .fr.show{display:flex;}
@@ -73,7 +82,7 @@
   .fb.toggle-faible.on{background:#FEE2E2;border-color:#FCA5A5;color:#991B1B;}
   .si{border:1px solid #D1D5DB;border-radius:4px;padding:6px 12px;font-size:13px;font-family:'Inter',sans-serif;color:#111827;outline:none;width:200px;}
   .si:focus{border-color:#111827;}
-  .btn-csv{margin-left:auto;background:#fff;border:1px solid #D1D5DB;border-radius:4px;padding:6px 14px;font-size:13px;font-weight:500;color:#374151;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif;}
+  .btn-csv{background:#fff;border:1px solid #D1D5DB;border-radius:4px;padding:6px 14px;font-size:13px;font-weight:500;color:#374151;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif;}
   .btn-csv:hover{border-color:#9CA3AF;}
   .btn-det{background:#fff;border:1px solid #D1D5DB;border-radius:4px;padding:6px 12px;font-size:12px;font-weight:500;color:#6B7280;cursor:pointer;font-family:'Inter',sans-serif;}
   .btn-det:hover{color:#374151;}
@@ -85,12 +94,16 @@
   thead tr{background:#F9FAFB;border-bottom:1px solid #E5E7EB;}
   thead th{padding:13px 16px;text-align:left;font-size:12px;font-weight:600;color:#6B7280;white-space:nowrap;cursor:pointer;user-select:none;text-transform:uppercase;letter-spacing:.4px;}
   thead th:hover{color:#111827;}
+  thead th.th-cb{width:36px;padding:13px 8px;cursor:default;}
   .th-sec{color:#9CA3AF!important;font-size:11px!important;}
   tbody tr{border-bottom:1px solid #F3F4F6;transition:background .1s;}
   tbody tr:hover{background:#F9FAFB;}
   tbody tr:last-child{border-bottom:none;}
   tbody tr.row-faible{opacity:.5;}
+  tbody tr.row-checked{background:#EFF6FF!important;}
   td{padding:15px 16px;vertical-align:top;line-height:1.6;font-size:14px;}
+  td.td-cb{width:36px;padding:15px 8px;text-align:center;vertical-align:middle;}
+  td.td-cb input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:#111827;}
   td.td-sec{display:none;}
   td.td-sec.show{display:table-cell;}
   .cn{font-weight:600;color:#111827;font-size:15px;}
@@ -205,6 +218,27 @@
     <div class="st"><div class="sn" style="color:#7C3AED" id="scl4">—</div><div class="sk">Marge potentielle</div></div>
   </div>
 
+  <!-- BATCH BAR PME -->
+  <div class="batch-bar" id="bb-pme">
+    <span class="batch-count" id="bc-pme">0 sélectionnés</span>
+    <button class="btn-batch" onclick="exportBatch('pme')">↓ Exporter vers Pré-qualification</button>
+    <button class="btn-clear" onclick="clearSel('pme')">✕ Tout désélectionner</button>
+  </div>
+
+  <!-- BATCH BAR CC -->
+  <div class="batch-bar" id="bb-cc">
+    <span class="batch-count" id="bc-cc">0 sélectionnés</span>
+    <button class="btn-batch" onclick="exportBatch('cc')">↓ Exporter vers Pré-qualification</button>
+    <button class="btn-clear" onclick="clearSel('cc')">✕ Tout désélectionner</button>
+  </div>
+
+  <!-- BATCH BAR CLI -->
+  <div class="batch-bar" id="bb-cli">
+    <span class="batch-count" id="bc-cli">0 sélectionnés</span>
+    <button class="btn-batch" onclick="exportBatch('cli')">↓ Exporter vers Pré-qualification</button>
+    <button class="btn-clear" onclick="clearSel('cli')">✕ Tout désélectionner</button>
+  </div>
+
   <!-- FILTERS PME -->
   <div class="fr" id="fr-pme">
     <button class="fb act" onclick="fPME('haute',this)">Haute priorité</button>
@@ -213,7 +247,7 @@
     <button class="fb toggle-faible" id="tf-pme" onclick="toggleFaible('pme',this)">Masquer les faibles</button>
     <input class="si" id="qi-pme" placeholder="Rechercher..." oninput="rPME()">
     <button class="btn-det" onclick="toggleDet()">+ Colonnes détail</button>
-    <button class="btn-csv" onclick="xCSV('pme')">↓ CSV</button>
+    <button class="btn-csv" onclick="xCSV('pme')">↓ CSV complet</button>
   </div>
 
   <!-- FILTERS CC -->
@@ -223,13 +257,14 @@
     <button class="fb" onclick="fCC('vol',this)">Volume</button>
     <button class="fb" onclick="fCC('bil',this)">Bilingues</button>
     <input class="si" id="qi-cc" placeholder="Rechercher..." oninput="rCC()">
-    <button class="btn-csv" onclick="xCSV('cc')">↓ CSV</button>
+    <button class="btn-csv" onclick="xCSV('cc')">↓ CSV complet</button>
   </div>
 
   <!-- TABLE PME -->
   <div class="tw" id="tw-pme">
     <table>
       <thead><tr>
+        <th class="th-cb"><input type="checkbox" id="cb-all-pme" onchange="selAll('pme',this)" title="Tout sélectionner"></th>
         <th onclick="srtP('pn')">Priorité</th>
         <th onclick="srtP('en')">Entreprise</th>
         <th>Poste</th>
@@ -246,7 +281,7 @@
         <th>Lien</th>
       </tr></thead>
       <tbody id="tb-pme">
-        <tr><td colspan="14"><div class="empty"><div class="ei">🔍</div><div class="et">Aucun scan lancé</div><div class="es">Configurez et cliquez sur "Lancer le scan"</div></div></td></tr>
+        <tr><td colspan="15"><div class="empty"><div class="ei">🔍</div><div class="et">Aucun scan lancé</div><div class="es">Configurez et cliquez sur "Lancer le scan"</div></div></td></tr>
       </tbody>
     </table>
   </div>
@@ -255,6 +290,7 @@
   <div class="tw" id="tw-cc">
     <table>
       <thead><tr>
+        <th class="th-cb"><input type="checkbox" id="cb-all-cc" onchange="selAll('cc',this)" title="Tout sélectionner"></th>
         <th onclick="srtC('vn')">Volume</th>
         <th onclick="srtC('en')">Entreprise</th>
         <th>Secteur</th>
@@ -268,7 +304,7 @@
         <th>Lien</th>
       </tr></thead>
       <tbody id="tb-cc">
-        <tr><td colspan="11"><div class="empty"><div class="ei">📞</div><div class="et">Aucun scan lancé</div><div class="es">Sélectionnez l'onglet Call Centers et lancez</div></div></td></tr>
+        <tr><td colspan="12"><div class="empty"><div class="ei">📞</div><div class="et">Aucun scan lancé</div><div class="es">Sélectionnez l'onglet Call Centers et lancez</div></div></td></tr>
       </tbody>
     </table>
   </div>
@@ -279,13 +315,14 @@
     <button class="fb" onclick="fCLI('actif',this)">Recrutement actif</button>
     <button class="fb" onclick="fCLI('multi',this)">Multi-postes</button>
     <input class="si" id="qi-cli" placeholder="Rechercher clinique..." oninput="rCLI()">
-    <button class="btn-csv" onclick="xCSV('cli')">↓ CSV</button>
+    <button class="btn-csv" onclick="xCSV('cli')">↓ CSV complet</button>
   </div>
 
   <!-- TABLE CLINIQUES -->
   <div class="tw" id="tw-cli">
     <table>
       <thead><tr>
+        <th class="th-cb"><input type="checkbox" id="cb-all-cli" onchange="selAll('cli',this)" title="Tout sélectionner"></th>
         <th onclick="srtCLI('vn')">Volume</th>
         <th onclick="srtCLI('en')">Clinique</th>
         <th onclick="srtCLI('cn')">Ville</th>
@@ -297,7 +334,7 @@
         <th>Lien</th>
       </tr></thead>
       <tbody id="tb-cli">
-        <tr><td colspan="9"><div class="empty"><div class="ei">🏥</div><div class="et">Aucun scan lancé</div><div class="es">Sélectionnez Pipeline Cliniques et lancez</div></div></td></tr>
+        <tr><td colspan="10"><div class="empty"><div class="ei">🏥</div><div class="et">Aucun scan lancé</div><div class="es">Sélectionnez Pipeline Cliniques et lancez</div></div></td></tr>
       </tbody>
     </table>
   </div>
@@ -313,41 +350,142 @@
       <div class="lex-row"><div class="lex-col">Éco. client / mois</div><div class="lex-def">Économie mensuelle estimée pour le client vs embauche locale (coût employeur − 23$/h × heures).</div></div>
       <div class="lex-row"><div class="lex-col">Marge Opex / mois</div><div class="lex-def">Marge nette mensuelle pour Opex House sur ce contrat (prix facturé − coût Madani 18$/h × heures).</div></div>
       <div class="lex-row"><div class="lex-col">Blocs externalisables</div><div class="lex-def">Tâches du poste pouvant être réalisées à distance par une ressource Madani.</div></div>
-      <div class="lex-row"><div class="lex-col">Fit 160h</div><div class="lex-def">Score /4 estimant si le besoin correspond à une ressource dédiée plein temps (remote + tp + blocs + salaire).</div></div>
-      <div class="lex-row"><div class="lex-col">Sensibilité</div><div class="lex-def">Niveau de confidentialité du poste — Faible = externalisable sans risque, Élevée = prudence (paie, audit...).</div></div>
-      <div class="lex-row"><div class="lex-col">Volume (CC)</div><div class="lex-def">Nombre de postes similaires ouverts chez le même employeur — signal de recrutement en masse.</div></div>
-      <div class="lex-row"><div class="lex-col">Marge potentielle pipeline</div><div class="lex-def">Somme des marges Opex House si tous les leads haute priorité sont signés.</div></div>
-      <div class="lex-row"><div class="lex-col">Économie client totale</div><div class="lex-def">Somme des économies clients si tous les leads haute priorité choisissent Opex House.</div></div>
+      <div class="lex-row"><div class="lex-col">☑ Cases à cocher</div><div class="lex-def">Cochez les lignes intéressantes → "Exporter vers Pré-qualification" → collez dans l'onglet Pré-qualification du CRM Excel.</div></div>
     </div>
   </div>
 
 </div>
 
 <script>
-let tab='pme',OP=[],OC=[],OCLI=[],src={js:1,az:1,jo:1,re:1};let fcliF='tous',tcliCol='vn',tcliDir=-1;
+let tab='pme',OP=[],OC=[],OCLI=[],src={js:1,az:1,jo:1,re:1};
+let fcliF='tous',tcliCol='vn',tcliDir=-1;
 let tpCol='pn',tpDir=1,tcCol='vn',tcDir=-1,fpF='haute',fcF='tous';
 let showFaible=false,showDet=false;
-const MADANI=18,PRIX=23,PRIX_CC=16,MADANI_CC=13;
 
+// ── SÉLECTION ────────────────────────────────────────────────────────────────
+let SEL = { pme: new Set(), cc: new Set(), cli: new Set() };
+
+function onCheck(t, idx, checked) {
+  if (checked) SEL[t].add(idx);
+  else SEL[t].delete(idx);
+  updateBatchBar(t);
+  // update row highlight
+  const row = document.querySelector(`#tb-${t} tr[data-idx="${idx}"]`);
+  if (row) row.classList.toggle('row-checked', checked);
+}
+
+function selAll(t, cb) {
+  const rows = document.querySelectorAll(`#tb-${t} tr[data-idx]`);
+  rows.forEach(row => {
+    const idx = parseInt(row.dataset.idx);
+    const box = row.querySelector('input[type=checkbox]');
+    if (cb.checked) { SEL[t].add(idx); row.classList.add('row-checked'); }
+    else { SEL[t].delete(idx); row.classList.remove('row-checked'); }
+    if (box) box.checked = cb.checked;
+  });
+  updateBatchBar(t);
+}
+
+function clearSel(t) {
+  SEL[t].clear();
+  document.querySelectorAll(`#tb-${t} input[type=checkbox]`).forEach(cb => cb.checked = false);
+  document.querySelectorAll(`#tb-${t} tr.row-checked`).forEach(r => r.classList.remove('row-checked'));
+  const cbAll = document.getElementById(`cb-all-${t}`);
+  if (cbAll) cbAll.checked = false;
+  updateBatchBar(t);
+}
+
+function updateBatchBar(t) {
+  const n = SEL[t].size;
+  const bar = document.getElementById(`bb-${t}`);
+  const cnt = document.getElementById(`bc-${t}`);
+  if (bar) { bar.classList.toggle('show', n > 0); }
+  if (cnt) cnt.textContent = `${n} sélectionné${n > 1 ? 's' : ''}`;
+}
+
+// ── EXPORT VERS PRÉ-QUALIFICATION ────────────────────────────────────────────
+// Format : Entreprise | Poste | Lien annonce | Source | Date annonce | Domaine | Commentaire | Statut
+// Compatible avec copier-coller tabulaire dans Excel (TSV)
+
+function exportBatch(t) {
+  const indices = [...SEL[t]];
+  if (!indices.length) return;
+
+  let rows = [];
+  const today = new Date().toISOString().split('T')[0];
+
+  if (t === 'pme') {
+    rows = indices.map(i => {
+      const o = OP[i];
+      if (!o) return null;
+      const domaine = inferDomaine(o.ti);
+      return [o.en, o.ti, o.li||'', o.src, o.da||today, domaine, o.angle||'', 'Nouveau'];
+    }).filter(Boolean);
+  } else if (t === 'cc') {
+    rows = indices.map(i => {
+      const o = OC[i];
+      if (!o) return null;
+      return [o.en, o.tits, o.li||'', 'JobBoards', today, 'Relation client', '', 'Nouveau'];
+    }).filter(Boolean);
+  } else if (t === 'cli') {
+    rows = indices.map(i => {
+      const o = OCLI[i];
+      if (!o) return null;
+      return [o.en, o.tits, o.li||'', o.src||'Jobillico/Guichet', today, 'Secrétariat médical', '', 'Nouveau'];
+    }).filter(Boolean);
+  }
+
+  if (!rows.length) return;
+
+  // Générer TSV (tabulation) — collage direct dans Excel, colonnes bien alignées
+  const header = ['Entreprise','Poste','Lien annonce','Source','Date annonce','Domaine Opex House','Commentaire','Statut'];
+  const tsv = [header, ...rows].map(r => r.map(v => (v||'').toString().replace(/\t/g,' ')).join('\t')).join('\n');
+
+  // Copier dans le presse-papier
+  navigator.clipboard.writeText(tsv).then(() => {
+    // Feedback visuel
+    const bar = document.getElementById(`bb-${t}`);
+    const btn = bar.querySelector('.btn-batch');
+    const orig = btn.textContent;
+    btn.textContent = `✓ ${rows.length} ligne${rows.length>1?'s':''} copiée${rows.length>1?'s':''} — coller dans Pré-qualification`;
+    btn.style.background = '#D1FAE5';
+    btn.style.color = '#065F46';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 3000);
+  }).catch(() => {
+    // Fallback : télécharger en CSV si clipboard API indisponible
+    const csv = [header, ...rows].map(r => r.map(v => `"${(v||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'}));
+    a.download = `prequal_opex_${today}.csv`;
+    a.click();
+  });
+}
+
+function inferDomaine(titre) {
+  const t = (titre||'').toLowerCase();
+  if (t.includes('compt') || t.includes('facturation') || t.includes('payable') || t.includes('receivable') || t.includes('bookkeep')) return 'Comptabilité';
+  if (t.includes('médical') || t.includes('medical') || t.includes('clinique') || t.includes('clinic') || t.includes('patient') || t.includes('rendez-vous')) return 'Secrétariat médical';
+  if (t.includes('service client') || t.includes('customer service') || t.includes('relation client') || t.includes('support client')) return 'Relation client';
+  if (t.includes('helpdesk') || t.includes('support ti') || t.includes('it support') || t.includes('informatique')) return 'Support IT';
+  if (t.includes('marketing') || t.includes('réseaux sociaux') || t.includes('social media')) return 'Marketing';
+  if (t.includes('rh') || t.includes('ressources humaines') || t.includes('human resources')) return 'RH';
+  if (t.includes('développ') || t.includes('developer') || t.includes('logiciel')) return 'Développement logiciel';
+  if (t.includes('ia') || t.includes('digital') || t.includes('données') || t.includes('data')) return 'IA & Digital';
+  return 'Autre';
+}
+
+// ── TOUT LE RESTE DU CODE ORIGINAL ───────────────────────────────────────────
+const MADANI=18,PRIX=23,PRIX_CC=16,MADANI_CC=13;
 const KE=['saisie','facturation','comptes fournisseurs','comptes payables','comptes recevables','rapprochement','conciliation bancaire','entrée de données','traitement des factures','suivi des paiements','support administratif','classement','archivage','mise à jour','suivi des dossiers','gestion des courriels','prise de rendez-vous','service à la clientèle','réponse aux demandes','accounts payable','accounts receivable','data entry','bookkeeping','invoice processing','bank reconciliation','customer support','appointment scheduling'];
 const KSH=['paie','payroll','t4','relevé 1','das','déclaration gouvernementale','cpa','audit','vérification comptable','états financiers annuels'];
 const KSF=['saisie','comptes fournisseurs','facturation','rapprochement','conciliation','archivage','classement','support administratif','accounts payable','data entry','invoice','bookkeeping'];
 const KC=['quickbooks','acomba','sage','netsuite','xero','hubspot','salesforce','microsoft 365','google workspace','teams','slack','notion','asana','monday','zoho','dynamics','oracle','sap','freshdesk','zendesk'];
 const KXP=['gouvernement','ministère','ville de','agence de placement','randstad','adecco','manpower','robert half','hydro-québec','banque nationale','desjardins','commission scolaire','cisss','ciusss','soluvox','nordia','concentrix'];
-
-// Titres à exclure explicitement — hors périmètre Opex House
-const KTP=[
-  'technicien automobile','automotive technician','automotive service','mécanicien',
-  'technicien laboratoire','laboratory technician','lab technician','chimique','chimiste',
-  'apprenti','apprentice','electricien','électricien','plombier','soudeur','welder',
-  'infirmier','infirmière','nurse','médecin','pharmacien','dentiste',
-  'chauffeur','conducteur','driver','livreur','delivery',
-  'cuisinier','chef cuisinier','restaurant','hôtellerie',
-  'enseignant','professeur','teacher','éducateur',
-  'ingénieur','engineer','architecte','géologue',
-  'technicien réseau','network engineer','développeur','developer','software engineer',
-  'modification pi','rem technicien','technicien pi',
-];
+const KTP=['technicien automobile','automotive technician','automotive service','mécanicien','technicien laboratoire','laboratory technician','lab technician','chimique','chimiste','apprenti','apprentice','electricien','électricien','plombier','soudeur','welder','infirmier','infirmière','nurse','médecin','pharmacien','dentiste','chauffeur','conducteur','driver','livreur','delivery','cuisinier','chef cuisinier','restaurant','hôtellerie','enseignant','professeur','teacher','éducateur','ingénieur','engineer','architecte','géologue','technicien réseau','network engineer','développeur','developer','software engineer','modification pi','rem technicien','technicien pi'];
 const KSN=['directeur','director','vp ','vice-président','chief','cfo','cto','coo','senior manager'];
 const PM=['secrétaire médicale','réceptionniste médicale','adjoint administratif médical','coordonnateur médical','agent prise de rendez-vous','télésecrétaire médical','commis médical','secrétariat clinique','réceptionniste clinique','coordonnateur clinique','agent administratif médical','medical secretary','medical receptionist','patient coordinator','healthcare administrative assistant','medical administrative assistant','clinic coordinator','appointment scheduler','medical office assistant'];
 const KUR=['dès que possible','immediate','immédiatement','urgent','asap','start immediately'];
@@ -360,65 +498,15 @@ const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&g
 const slp=ms=>new Promise(r=>setTimeout(r,ms));
 function setP(p,t){document.getElementById('pf').style.width=p+'%';document.getElementById('ptxt').textContent=t;}
 
-function salH(o){
-  if(o.salary_min&&o.salary_max){const m=(o.salary_min+o.salary_max)/2;const h=m>500?m/(52*40):m;return h>80?null:h;}
-  if(o.salary_min){const h=o.salary_min>500?o.salary_min/(52*40):o.salary_min;return h>80?null:h;}
-  const t=(o.description||o.snippet||'').toLowerCase();
-  const m1=t.match(/(\d+[.,]\d+)\s*(?:à|-)\s*(\d+[.,]\d+)\s*\$?\s*(?:\/h|par heure|\/hour)/);
-  if(m1){const h=(parseFloat(m1[1])+parseFloat(m1[2]))/2;return h>80?null:h;}
-  const m2=t.match(/\$\s*(\d{2,3}[.,]\d{2})\s*(?:\/h|per hour)/);
-  if(m2){const h=parseFloat(m2[1]);return h>80?null:h;}
-  return null;
-}
-
+function salH(o){if(o.salary_min&&o.salary_max){const m=(o.salary_min+o.salary_max)/2;const h=m>500?m/(52*40):m;return h>80?null:h;}if(o.salary_min){const h=o.salary_min>500?o.salary_min/(52*40):o.salary_min;return h>80?null:h;}const t=(o.description||o.snippet||'').toLowerCase();const m1=t.match(/(\d+[.,]\d+)\s*(?:à|-)\s*(\d+[.,]\d+)\s*\$?\s*(?:\/h|par heure|\/hour)/);if(m1){const h=(parseFloat(m1[1])+parseFloat(m1[2]))/2;return h>80?null:h;}const m2=t.match(/\$\s*(\d{2,3}[.,]\d{2})\s*(?:\/h|per hour)/);if(m2){const h=parseFloat(m2[1]);return h>80?null:h;}return null;}
 function sensib(t){const h=KSH.filter(k=>t.includes(k)).length,f=KSF.filter(k=>t.includes(k)).length;if(h>=2)return'Élevée';if(h===1&&f===0)return'Moyenne';if(f>=1)return'Faible';return'Moyenne';}
 function blocs(t){return KE.filter(k=>t.includes(k)).slice(0,5).map(k=>k.charAt(0).toUpperCase()+k.slice(1)).join(' · ')||'À qualifier';}
 function outils(t){return KC.filter(k=>t.includes(k)).map(k=>k.charAt(0).toUpperCase()+k.slice(1)).join(', ')||'—';}
-
-function typeOpportunite(t,pa){
-  if(t.includes('remplacement')||t.includes('replacement')||t.includes('départ')||t.includes('turnover'))return'Remplacement';
-  if(KGR.some(k=>t.includes(k)))return'Croissance';
-  if(KUR.some(k=>t.includes(k)))return'Urgence';
-  if(t.includes('désorganis')||t.includes('chaos')||t.includes('débordé')||t.includes('overwhelm'))return'Désorganisation';
-  return'Nouveau poste';
-}
-
-function angleAttaque(type,ti,bl){
-  if(type==='Remplacement')return'Remplacez ce départ sans embaucher — ressource disponible immédiatement.';
-  if(type==='Croissance')return'Votre croissance devance vos embauches — on prend la surcharge dès cette semaine.';
-  if(type==='Urgence')return'Besoin urgent ? Ressource dédiée opérationnelle en 48h, sans CV ni entretien.';
-  if(type==='Désorganisation')return'Libérez votre équipe du backlog — ressource dédiée pour stabiliser les opérations.';
-  return'Externalisez ce poste sans embauche — même résultat, 35% moins cher.';
-}
-
-function estHeures(t,tp){
-  if(t.includes('temps partiel')||t.includes('part-time')||t.includes('20h')||t.includes('25h'))return 80;
-  if(t.includes('30h')||t.includes('32h')||t.includes('35h'))return 120;
-  return 160;
-}
-
+function typeOpportunite(t){if(t.includes('remplacement')||t.includes('replacement')||t.includes('départ')||t.includes('turnover'))return'Remplacement';if(KGR.some(k=>t.includes(k)))return'Croissance';if(KUR.some(k=>t.includes(k)))return'Urgence';if(t.includes('désorganis')||t.includes('chaos')||t.includes('débordé')||t.includes('overwhelm'))return'Désorganisation';return'Nouveau poste';}
+function angleAttaque(type){if(type==='Remplacement')return'Remplacez ce départ sans embaucher — ressource disponible immédiatement.';if(type==='Croissance')return'Votre croissance devance vos embauches — on prend la surcharge dès cette semaine.';if(type==='Urgence')return'Besoin urgent ? Ressource dédiée opérationnelle en 48h, sans CV ni entretien.';if(type==='Désorganisation')return'Libérez votre équipe du backlog — ressource dédiée pour stabiliser les opérations.';return'Externalisez ce poste sans embauche — même résultat, 35% moins cher.';}
+function estHeures(t){if(t.includes('temps partiel')||t.includes('part-time')||t.includes('20h')||t.includes('25h'))return 80;if(t.includes('30h')||t.includes('32h')||t.includes('35h'))return 120;return 160;}
 function fit(o){let s=0;if(o.tp)s++;if(o.rm)s++;if(o.bl!=='À qualifier')s++;if(o.cn>=27)s++;return s;}
-function prio(s,b,ou,c,f,rm,tp){
-  if(s==='Élevée')return'faible';
-  let sc=0;
-  // Salaire
-  if(c>=30)sc+=3;else if(c>=27)sc+=2;else if(c>=24)sc+=1;else if(!c||c===0)sc+=1; // pas de salaire = pas pénalisé
-  // Sensibilité
-  if(s==='Faible')sc+=3;else if(s==='Moyenne')sc+=2; // Moyenne moins pénalisante
-  // Blocs externalisables
-  if(b!=='À qualifier')sc+=2;
-  // Outils cloud
-  if(ou!=='—')sc+=1;
-  // Fit
-  if(f>=3)sc+=2;else if(f>=2)sc+=1;
-  // Remote + temps plein bonus
-  if(rm)sc+=1;
-  if(tp)sc+=1;
-  // Seuils abaissés
-  if(sc>=9)return'haute';
-  if(sc>=4)return'moyenne'; // était 4, maintenant plus de postes en moyenne
-  return'faible';
-}
+function prio(s,b,ou,c,f,rm,tp){if(s==='Élevée')return'faible';let sc=0;if(c>=30)sc+=3;else if(c>=27)sc+=2;else if(c>=24)sc+=1;else if(!c||c===0)sc+=1;if(s==='Faible')sc+=3;else if(s==='Moyenne')sc+=2;if(b!=='À qualifier')sc+=2;if(ou!=='—')sc+=1;if(f>=3)sc+=2;else if(f>=2)sc+=1;if(rm)sc+=1;if(tp)sc+=1;if(sc>=9)return'haute';if(sc>=4)return'moyenne';return'faible';}
 function normCC(titre){const t=titre.toLowerCase().replace(/representative|representant|représentant/g,'agent').replace(/customer service|service à la clientèle|service client/g,'service client').replace(/call center|centre d.appels|contact center/g,'call center').replace(/bilingual|bilingue/g,'bilingue').replace(/\s+/g,' ').trim();for(const[f,mots]of Object.entries(FAM)){if(mots.some(m=>t.includes(m)))return f;}return t.split(' ').slice(0,3).join(' ');}
 function isCCp(titre){const t=titre.toLowerCase();return KCC.some(k=>t.includes(k));}
 
@@ -430,14 +518,13 @@ function procPME(o,src2){
   if(KXP.some(k=>t.includes(k)))return null;if(KSN.some(k=>t.includes(k)))return null;if(KTP.some(k=>ti.toLowerCase().includes(k)))return null;if(!ti)return null;
   const s=sensib(t),bl=blocs(t),ou=outils(t);
   const sal=salH(o),cout=sal?sal*1.20:null;
-  const isMed=PM.some(m=>ti.toLowerCase()===m.toLowerCase()) || ti.toLowerCase().includes('médical') || ti.toLowerCase().includes('medical') || ti.toLowerCase().includes('clinique') || ti.toLowerCase().includes('clinic');
-  const rm=t.includes('télétravail')||t.includes('remote')||t.includes('work from home')||isMed;
+  const rm=t.includes('télétravail')||t.includes('remote')||t.includes('work from home');
   const tp=!t.includes('temps partiel')&&!t.includes('part-time');
-  const hn=estHeures(t,tp);
+  const hn=estHeures(t);
   const eco=cout&&cout>PRIX?Math.round((cout-PRIX)*hn):null;
   const marge=Math.round((PRIX-MADANI)*hn);
-  const type=typeOpportunite(t,[]);
-  const angle=angleAttaque(type,ti,bl);
+  const type=typeOpportunite(t);
+  const angle=angleAttaque(type);
   const ob={s,bl,ou,sn:sal||0,cn:cout||0,xn:eco||0,mn:marge,hn,sa:sal?`${sal.toFixed(2)} $/h`:'À discuter',ca:cout?`~${cout.toFixed(2)} $/h`:'—',xa:eco?`${eco.toLocaleString('fr-CA')} $`:'—',ma:`${marge.toLocaleString('fr-CA')} $`,rm,tp,en:co||'Inconnue',ti,src:src2,li,da,fn:0,pn:0,pr:'faible',type,angle};
   ob.fn=fit(ob);ob.pr=prio(s,bl,ou,cout||0,ob.fn,ob.rm,ob.tp);ob.pn=ob.pr==='haute'?0:ob.pr==='moyenne'?1:2;
   return ob;
@@ -456,25 +543,8 @@ function procCC(o,src2){
 
 function agrCC(brutes){
   const m={};
-  for(const b of brutes){
-    if(!b)continue;
-    const k=b.co.toLowerCase().trim();
-    if(!m[k])m[k]={en:b.co,sec:b.sec,ps:[],sals:[],rm:false,bil:false,li:b.li};
-    const ex=m[k].ps.find(p=>p.fam===b.fam);
-    if(ex)ex.cnt++;else m[k].ps.push({fam:b.fam,cnt:1,ti:b.ti});
-    if(b.sal)m[k].sals.push(b.sal);
-    if(b.rm)m[k].rm=true;if(b.bil)m[k].bil=true;
-  }
-  return Object.values(m).map(e=>{
-    const tot=e.ps.reduce((s,p)=>s+p.cnt,0);
-    const sm=e.sals.length?e.sals.reduce((a,b)=>a+b,0)/e.sals.length:null;
-    const cm=sm?sm*1.20:null;
-    const h=160*Math.min(tot,10);
-    const eco=cm&&cm>PRIX_CC?Math.round((cm-PRIX_CC)*h):null;
-    const marge=Math.round((PRIX_CC-MADANI_CC)*h);
-    const vl=tot>=5?'gros':tot>=3?'vol':'faible';
-    return{en:e.en,sec:e.sec,pn:tot,vn:tot>=5?0:tot>=3?1:2,vl,tits:e.ps.map(p=>`${p.ti}${p.cnt>1?` (×${p.cnt})`:''}`).join(', '),sn:sm||0,sa:sm?`~${sm.toFixed(2)} $/h`:'À discuter',cn:cm||0,xn:eco||0,mn:marge,xa:eco?`${eco.toLocaleString('fr-CA')} $`:'—',ma:`${marge.toLocaleString('fr-CA')} $`,rm:e.rm,bil:e.bil,li:e.li};
-  }).filter(e=>e.pn>=2).sort((a,b)=>a.vn-b.vn||b.pn-a.pn);
+  for(const b of brutes){if(!b)continue;const k=b.co.toLowerCase().trim();if(!m[k])m[k]={en:b.co,sec:b.sec,ps:[],sals:[],rm:false,bil:false,li:b.li};const ex=m[k].ps.find(p=>p.fam===b.fam);if(ex)ex.cnt++;else m[k].ps.push({fam:b.fam,cnt:1,ti:b.ti});if(b.sal)m[k].sals.push(b.sal);if(b.rm)m[k].rm=true;if(b.bil)m[k].bil=true;}
+  return Object.values(m).map(e=>{const tot=e.ps.reduce((s,p)=>s+p.cnt,0);const sm=e.sals.length?e.sals.reduce((a,b)=>a+b,0)/e.sals.length:null;const cm=sm?sm*1.20:null;const h=160*Math.min(tot,10);const eco=cm&&cm>PRIX_CC?Math.round((cm-PRIX_CC)*h):null;const marge=Math.round((PRIX_CC-MADANI_CC)*h);const vl=tot>=5?'gros':tot>=3?'vol':'faible';return{en:e.en,sec:e.sec,pn:tot,vn:tot>=5?0:tot>=3?1:2,vl,tits:e.ps.map(p=>`${p.ti}${p.cnt>1?` (×${p.cnt})`:''}`).join(', '),sn:sm||0,sa:sm?`~${sm.toFixed(2)} $/h`:'À discuter',cn:cm||0,xn:eco||0,mn:marge,xa:eco?`${eco.toLocaleString('fr-CA')} $`:'—',ma:`${marge.toLocaleString('fr-CA')} $`,rm:e.rm,bil:e.bil,li:e.li};}).filter(e=>e.pn>=2).sort((a,b)=>a.vn-b.vn||b.pn-a.pn);
 }
 
 async function fJS(q,k,r){const loc=r==='ca'?'Canada':'USA';try{const res=await fetch(`https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(q+' '+loc)}&num_pages=2&date_posted=month`,{headers:{'x-rapidapi-key':k,'x-rapidapi-host':'jsearch.p.rapidapi.com'}});if(!res.ok)return[];const d=await res.json();return(d.data||[]).map(j=>({title:j.job_title,company:{display_name:j.employer_name},description:j.job_description,redirect_url:j.job_apply_link,created:j.job_posted_at_datetime_utc,salary_min:j.job_min_salary,salary_max:j.job_max_salary}));}catch{return[];}}
@@ -483,10 +553,8 @@ async function fJO(q,k){try{const res=await fetch(`https://jooble.org/api/${k}`,
 async function fRE(){const cats=['data','finance','customer-support','marketing','hr'],r=[];for(const c of cats){try{const res=await fetch(`https://remotive.com/api/remote-jobs?category=${c}&limit=15`);if(!res.ok)continue;const d=await res.json();r.push(...(d.jobs||[]).map(j=>({title:j.title,company:{display_name:j.company_name},description:j.description,redirect_url:j.url,created:j.publication_date})));}catch{continue;}await slp(150);}return r;}
 
 async function lancerScan(){
-  // Reset
-  OP=[];OC=[];
+  OP=[];OC=[];SEL={pme:new Set(),cc:new Set(),cli:new Set()};
   ['sp0','sp1','sp2','sp3','sp4','sp5','sc0','sc1','sc2','sc3','sc4','sc5'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=id.startsWith('s')&&(id.endsWith('3')||id.endsWith('4')||id.endsWith('5'))?'—':'0';});
-
   const jk=document.getElementById('jk').value.trim(),ai=document.getElementById('ai').value.trim(),ak=document.getElementById('ak').value.trim(),jok=document.getElementById('jok').value.trim(),r=document.getElementById('reg').value;
   const btn=document.getElementById('sbtn');btn.disabled=true;btn.classList.add('loading');
   document.getElementById('pw').classList.add('show');
@@ -496,49 +564,10 @@ async function lancerScan(){
 }
 
 async function scanPME(jk,ai,ak,jok,r){
-  const PS=[
-    // Tier A — Admin & Back-office
-    'adjoint administratif','assistant administratif','coordonnateur administratif',
-    'assistant exécutif virtuel','soutien administratif','agent de bureau',
-    // Tier A — Comptabilité opérationnelle
-    'commis comptable','technicien comptable','agent facturation',
-    'comptes payables','comptes recevables','bookkeeper','agent recouvrement',
-    // Tier A — Service client écrit
-    'agent service client','support chat email','service clientèle bilingue',
-    'représentant service client','customer service','support client',
-    // Tier A — E-commerce & Digital opérationnel
-    'coordonnateur e-commerce','traitement commandes','saisie fiches produits',
-    'opérations shopify','gestion inventaire','support e-commerce',
-    // Tier A — CRM & Support commercial
-    'gestionnaire CRM','chargé de compte interne','qualification leads',
-    'support commercial','coordination ventes','inside sales',
-    // Tier B — IT Helpdesk
-    'support informatique','helpdesk informatique','technicien support TI',
-    'IT helpdesk','support microsoft 365','support technique niveau 1',
-    // Tier B — Marketing opérationnel
-    'coordonnateur marketing','gestionnaire réseaux sociaux',
-    'coordination marketing','mise en ligne contenu',
-    // Tier B — Gestion documentaire
-    'gestion documentaire','sharepoint','coordination projets',
-    'coordination appels offres','préparation soumissions',
-    // Tier A — Secrétariat médical & Cliniques
-    'secrétaire médicale','réceptionniste médicale','adjoint administratif médical',
-    'coordonnateur médical','agent prise de rendez-vous','télésecrétaire médical',
-    'commis médical','secrétariat clinique','réceptionniste clinique',
-    'coordonnateur clinique','agent administratif médical',
-    // Anglais — Médical
-    'medical secretary','medical receptionist','patient coordinator',
-    'healthcare administrative assistant','medical administrative assistant',
-    'clinic coordinator','appointment scheduler','medical office assistant',
-    // Anglais — Général
-    'administrative assistant','accounting technician','accounts payable',
-    'accounts receivable','data entry','customer service agent','IT helpdesk',
-    'bookkeeper','e-commerce coordinator','CRM coordinator',
-  ];
+  const PS=['adjoint administratif','assistant administratif','coordonnateur administratif','assistant exécutif virtuel','soutien administratif','agent de bureau','commis comptable','technicien comptable','agent facturation','comptes payables','comptes recevables','bookkeeper','agent recouvrement','agent service client','support chat email','service clientèle bilingue','représentant service client','customer service','support client','coordonnateur e-commerce','traitement commandes','saisie fiches produits','opérations shopify','gestion inventaire','support e-commerce','gestionnaire CRM','chargé de compte interne','qualification leads','support commercial','coordination ventes','inside sales','support informatique','helpdesk informatique','technicien support TI','IT helpdesk','support microsoft 365','support technique niveau 1','coordonnateur marketing','gestionnaire réseaux sociaux','coordination marketing','mise en ligne contenu','gestion documentaire','sharepoint','coordination projets','coordination appels offres','préparation soumissions','secrétaire médicale','réceptionniste médicale','adjoint administratif médical','coordonnateur médical','agent prise de rendez-vous','télésecrétaire médical','commis médical','secrétariat clinique','réceptionniste clinique','coordonnateur clinique','agent administratif médical','medical secretary','medical receptionist','patient coordinator','healthcare administrative assistant','medical administrative assistant','clinic coordinator','appointment scheduler','medical office assistant','administrative assistant','accounting technician','accounts payable','accounts receivable','data entry','customer service agent','IT helpdesk','bookkeeper','e-commerce coordinator','CRM coordinator'];
   const br=[];let i=0;
-  const isMedical = (p) => PM.some(m=>p.toLowerCase()===m.toLowerCase() || (m.toLowerCase().includes('médical') && p.toLowerCase().includes('médical')) || (m.toLowerCase().includes('medical') && p.toLowerCase().includes('medical')) || (m.toLowerCase().includes('clinique') && p.toLowerCase().includes('clinique')) || (m.toLowerCase().includes('clinic') && p.toLowerCase().includes('clinic')));
   const totalJS=Math.min(PS.length,15);
-  for(const p of PS.slice(0,totalJS)){setP(Math.round(i/totalJS*25),`Scan JSearch : "${p}"...`);if(src.js&&jk){const q=isMedical(p)?p:p+' remote';br.push(...(await fJS(q,jk,r)).map(o=>({...o,_s:'JSearch'})));}i++;await slp(300);}
+  for(const p of PS.slice(0,totalJS)){setP(Math.round(i/totalJS*25),`Scan JSearch : "${p}"...`);if(src.js&&jk)br.push(...(await fJS(p,jk,r)).map(o=>({...o,_s:'JSearch'})));i++;await slp(300);}
   for(const p of PS.slice(0,10)){setP(25+Math.round(i/10*25),`Scan Adzuna : "${p}"...`);if(src.az&&ai&&ak)br.push(...(await fAZ(p,ai,ak,r)).map(o=>({...o,_s:'Adzuna'})));await slp(250);}
   for(const p of PS.slice(0,8)){setP(55+Math.round(i/8*15),`Scan Jooble : "${p}"...`);if(src.jo&&jok)br.push(...(await fJO(p,jok)).map(o=>({...o,_s:'Jooble'})));await slp(250);}
   setP(72,'Scan Remotive...');if(src.re)br.push(...(await fRE()).map(o=>({...o,_s:'Remotive'})));
@@ -590,46 +619,75 @@ function statsCC(){
 
 function renPME(of){
   const tb=document.getElementById('tb-pme');
-  if(!of.length){tb.innerHTML=`<tr><td colspan="14"><div class="empty"><div class="ei">📭</div><div class="et">Aucune offre</div><div class="es">Essayez un autre filtre</div></div></td></tr>`;return;}
+  if(!of.length){tb.innerHTML=`<tr><td colspan="15"><div class="empty"><div class="ei">📭</div><div class="et">Aucune offre</div><div class="es">Essayez un autre filtre</div></div></td></tr>`;return;}
   const pc={haute:'bg',moyenne:'by',faible:'br'};
   const pl={haute:'Haute',moyenne:'Moyenne',faible:'Faible'};
   const sc={Faible:'bg',Moyenne:'by',Élevée:'br'};
   const tc={Remplacement:'bv',Croissance:'bb',Urgence:'bo','Désorganisation':'by','Nouveau poste':'tag'};
   const ds=showDet?'show':'';
-  tb.innerHTML=of.map(o=>`<tr class="${o.pr==='faible'?'row-faible':''}">
-    <td><span class="badge ${pc[o.pr]}">${pl[o.pr]}</span></td>
-    <td><div class="cn">${esc(o.en)}</div><div class="cm">${o.src} · ${o.da}</div></td>
-    <td style="font-size:14px;color:#374151">${esc(o.ti)}</td>
-    <td><span class="badge ${tc[o.type]||'tag'}">${o.type}</span></td>
-    <td class="td-angle">${esc(o.angle)}</td>
-    <td class="td-mono">${o.hn}h</td>
-    <td class="td-eco">${o.xa}</td>
-    <td class="td-marge">${o.ma}</td>
-    <td class="td-blocs">${esc(o.bl)}</td>
-    <td class="td-sec ${ds}"><span style="font-size:14px;font-weight:600">${o.fn}/4</span></td>
-    <td class="td-sec ${ds}"><span class="badge ${sc[o.s]||'by'}">${o.s}</span></td>
-    <td class="td-sec ${ds}" style="font-size:12px;color:#6B7280">${o.ou}</td>
-    <td class="td-sec ${ds}"><span class="badge bb">${o.src}</span></td>
-    <td>${o.li?`<a href="${esc(o.li)}" target="_blank" class="lnk">Voir →</a>`:'—'}</td>
-  </tr>`).join('');
+  tb.innerHTML=of.map((o,i)=>{
+    const globalIdx=OP.indexOf(o);
+    const checked=SEL.pme.has(globalIdx);
+    return `<tr data-idx="${globalIdx}" class="${o.pr==='faible'?'row-faible':''}${checked?' row-checked':''}">
+      <td class="td-cb"><input type="checkbox" ${checked?'checked':''} onchange="onCheck('pme',${globalIdx},this.checked)"></td>
+      <td><span class="badge ${pc[o.pr]}">${pl[o.pr]}</span></td>
+      <td><div class="cn">${esc(o.en)}</div><div class="cm">${o.src} · ${o.da}</div></td>
+      <td style="font-size:14px;color:#374151">${esc(o.ti)}</td>
+      <td><span class="badge ${tc[o.type]||'tag'}">${o.type}</span></td>
+      <td class="td-angle">${esc(o.angle)}</td>
+      <td class="td-mono">${o.hn}h</td>
+      <td class="td-eco">${o.xa}</td>
+      <td class="td-marge">${o.ma}</td>
+      <td class="td-blocs">${esc(o.bl)}</td>
+      <td class="td-sec ${ds}"><span style="font-size:14px;font-weight:600">${o.fn}/4</span></td>
+      <td class="td-sec ${ds}"><span class="badge ${sc[o.s]||'by'}">${o.s}</span></td>
+      <td class="td-sec ${ds}" style="font-size:12px;color:#6B7280">${o.ou}</td>
+      <td class="td-sec ${ds}"><span class="badge bb">${o.src}</span></td>
+      <td>${o.li?`<a href="${esc(o.li)}" target="_blank" class="lnk">Voir →</a>`:'—'}</td>
+    </tr>`;
+  }).join('');
 }
 
 function renCC(em){
   const tb=document.getElementById('tb-cc');
-  if(!em.length){tb.innerHTML=`<tr><td colspan="11"><div class="empty"><div class="ei">📭</div><div class="et">Aucun employeur</div><div class="es">Lancez le scan Call Centers</div></div></td></tr>`;return;}
-  tb.innerHTML=em.map(e=>`<tr>
-    <td><span class="badge ${e.vl==='gros'?'bo':'by'}">${e.vl==='gros'?'Gros volume':'Volume'}</span></td>
-    <td><div class="cn">${esc(e.en)}</div></td>
-    <td style="font-size:14px;color:#374151">${e.sec}</td>
-    <td><span style="font-size:22px;font-weight:700;color:#111827">${e.pn}</span></td>
-    <td class="td-mono">${e.sa}</td>
-    <td class="td-eco">${e.xa}</td>
-    <td class="td-marge">${e.ma}</td>
-    <td style="font-size:14px">${e.bil?'✅ Oui':'—'}</td>
-    <td style="font-size:14px">${e.rm?'✅ Oui':'—'}</td>
-    <td style="font-size:12px;color:#6B7280;max-width:220px">${esc(e.tits)}</td>
-    <td>${e.li?`<a href="${esc(e.li)}" target="_blank" class="lnk">Voir →</a>`:'—'}</td>
-  </tr>`).join('');
+  if(!em.length){tb.innerHTML=`<tr><td colspan="12"><div class="empty"><div class="ei">📭</div><div class="et">Aucun employeur</div><div class="es">Lancez le scan Call Centers</div></div></td></tr>`;return;}
+  tb.innerHTML=em.map((e,i)=>{
+    const checked=SEL.cc.has(i);
+    return `<tr data-idx="${i}" class="${checked?'row-checked':''}">
+      <td class="td-cb"><input type="checkbox" ${checked?'checked':''} onchange="onCheck('cc',${i},this.checked)"></td>
+      <td><span class="badge ${e.vl==='gros'?'bo':'by'}">${e.vl==='gros'?'Gros volume':'Volume'}</span></td>
+      <td><div class="cn">${esc(e.en)}</div></td>
+      <td style="font-size:14px;color:#374151">${e.sec}</td>
+      <td><span style="font-size:22px;font-weight:700;color:#111827">${e.pn}</span></td>
+      <td class="td-mono">${e.sa}</td>
+      <td class="td-eco">${e.xa}</td>
+      <td class="td-marge">${e.ma}</td>
+      <td style="font-size:14px">${e.bil?'✅ Oui':'—'}</td>
+      <td style="font-size:14px">${e.rm?'✅ Oui':'—'}</td>
+      <td style="font-size:12px;color:#6B7280;max-width:220px">${esc(e.tits)}</td>
+      <td>${e.li?`<a href="${esc(e.li)}" target="_blank" class="lnk">Voir →</a>`:'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renCLI(em){
+  const tb=document.getElementById('tb-cli');
+  if(!em.length){tb.innerHTML=`<tr><td colspan="10"><div class="empty"><div class="ei">🏥</div><div class="et">Aucune clinique</div><div class="es">Lancez le scan Cliniques</div></div></td></tr>`;return;}
+  tb.innerHTML=em.map((e,i)=>{
+    const checked=SEL.cli.has(i);
+    return `<tr data-idx="${i}" class="${checked?'row-checked':''}">
+      <td class="td-cb"><input type="checkbox" ${checked?'checked':''} onchange="onCheck('cli',${i},this.checked)"></td>
+      <td><span class="badge ${e.vl==='actif'?'bo':e.vl==='multi'?'by':'bb'}">${e.vl==='actif'?'Actif':e.vl==='multi'?'Multi':'Unique'}</span></td>
+      <td><div class="cn">${esc(e.en)}</div></td>
+      <td style="font-size:14px;color:#374151">${esc(e.cn)}</td>
+      <td><span style="font-size:22px;font-weight:700;color:#111827">${e.pn}</span></td>
+      <td style="font-size:12px;color:#6B7280;max-width:240px">${esc(e.tits)}</td>
+      <td><span class="badge bb" style="font-size:11px">${esc(e.src)}</span></td>
+      <td class="td-mono">${e.sa}</td>
+      <td class="td-marge">${e.ma}</td>
+      <td>${e.li?`<a href="${esc(e.li)}" target="_blank" class="lnk">Voir →</a>`:'—'}</td>
+    </tr>`;
+  }).join('');
 }
 
 function fPME(f,btn){fpF=f;document.querySelectorAll('#fr-pme .fb:not(.toggle-faible):not(.btn-det)').forEach(b=>b.classList.remove('act'));btn.classList.add('act');apPME();}
@@ -643,170 +701,75 @@ function apPME(){
   if(q)f=f.filter(o=>o.en.toLowerCase().includes(q)||o.ti.toLowerCase().includes(q)||o.bl.toLowerCase().includes(q));
   renPME(f);
 }
-
-function toggleFaible(tab2,btn){
-  showFaible=!showFaible;
-  btn.textContent=showFaible?'Masquer les faibles':'Afficher les faibles';
-  btn.classList.toggle('on',showFaible);
-  apPME();
-}
-
-function toggleDet(){
-  showDet=!showDet;
-  document.querySelectorAll('.td-sec').forEach(el=>el.classList.toggle('show',showDet));
-  document.querySelectorAll('th.th-sec').forEach(el=>el.style.display=showDet?'':'none');
-  document.querySelector('.btn-det').textContent=showDet?'− Colonnes détail':'+ Colonnes détail';
-}
-
+function toggleFaible(tab2,btn){showFaible=!showFaible;btn.textContent=showFaible?'Masquer les faibles':'Afficher les faibles';btn.classList.toggle('on',showFaible);apPME();}
+function toggleDet(){showDet=!showDet;document.querySelectorAll('.td-sec').forEach(el=>el.classList.toggle('show',showDet));document.querySelectorAll('th.th-sec').forEach(el=>el.style.display=showDet?'':'none');document.querySelector('.btn-det').textContent=showDet?'− Colonnes détail':'+ Colonnes détail';}
 function fCC(f,btn){fcF=f;document.querySelectorAll('#fr-cc .fb').forEach(b=>b.classList.remove('act'));btn.classList.add('act');apCC();}
 function rCC(){apCC();}
 function apCC(){const q=document.getElementById('qi-cc').value.toLowerCase();let f=OC;if(fcF==='gros')f=f.filter(o=>o.vl==='gros');else if(fcF==='vol')f=f.filter(o=>o.vl==='vol');else if(fcF==='bil')f=f.filter(o=>o.bil);if(q)f=f.filter(o=>o.en.toLowerCase().includes(q)||o.sec.toLowerCase().includes(q));renCC(f);}
-
 function srtP(c){if(tpCol===c)tpDir*=-1;else{tpCol=c;tpDir=1;}OP.sort((a,b)=>typeof a[c]==='string'?tpDir*a[c].localeCompare(b[c]):tpDir*(a[c]-b[c]));apPME();}
 function srtC(c){if(tcCol===c)tcDir*=-1;else{tcCol=c;tcDir=-1;}OC.sort((a,b)=>typeof a[c]==='string'?tcDir*a[c].localeCompare(b[c]):tcDir*(a[c]-b[c]));apCC();}
 
 function switchTab(t,btn){
   tab=t;document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
   document.getElementById('blbl').textContent=t==='pme'?'Lancer le scan PME':t==='cc'?'Lancer le scan Call Centers':'Lancer le scan Cliniques';
-  ['sb-pme','fr-pme','tw-pme'].forEach(id=>{const el=document.getElementById(id);if(!el)return;if(t==='pme'&&OP.length>0)el.classList.add('show');else if(t!=='pme')el.classList.remove('show');});
-  ['sb-cc','fr-cc','tw-cc'].forEach(id=>{const el=document.getElementById(id);if(!el)return;if(t==='cc'&&OC.length>0)el.classList.add('show');else if(t!=='cc')el.classList.remove('show');});
-  ['sb-cli','fr-cli','tw-cli'].forEach(id=>{const el=document.getElementById(id);if(!el)return;if(t==='cli'&&OCLI.length>0)el.classList.add('show');else if(t!=='cli')el.classList.remove('show');});
+  ['sb-pme','fr-pme','tw-pme','bb-pme'].forEach(id=>{const el=document.getElementById(id);if(!el)return;if(t==='pme'&&OP.length>0)el.classList.add('show');else if(t!=='pme')el.classList.remove('show');});
+  ['sb-cc','fr-cc','tw-cc','bb-cc'].forEach(id=>{const el=document.getElementById(id);if(!el)return;if(t==='cc'&&OC.length>0)el.classList.add('show');else if(t!=='cc')el.classList.remove('show');});
+  ['sb-cli','fr-cli','tw-cli','bb-cli'].forEach(id=>{const el=document.getElementById(id);if(!el)return;if(t==='cli'&&OCLI.length>0)el.classList.add('show');else if(t!=='cli')el.classList.remove('show');});
 }
 
 function tSrc(s){src[s]=!src[s];document.getElementById('s-'+s).classList.toggle('off',!src[s]);}
 
 function xCSV(t){
   let rows,h;
-  if(t==='cli'){h=['Volume','Clinique','Ville','Postes','Titres','Source','Salaire','Marge Opex'];rows=OCLI.map(o=>[o.vl,o.en,o.cn,o.pn,o.tits,o.src,o.sa,o.ma]);const csv=[h.join(','),...rows.map(r=>r.map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(','))].join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));a.download=`pipeline_opex_cliniques_${new Date().toISOString().split('T')[0]}.csv`;a.click();return;}
-  if(t==='pme'){h=["Priorité","Entreprise","Poste","Type","Angle d'attaque","Heures","Éco client","Marge Opex","Blocs","Fit","Sensibilité","Outils","Source","Lien"];rows=OP.map(o=>[o.pr,o.en,o.ti,o.type,o.angle,o.hn,o.xa,o.ma,o.bl,`${o.fn}/4`,o.s,o.ou,o.src,o.li]);}
+  if(t==='cli'){h=['Volume','Clinique','Ville','Postes','Titres','Source','Salaire','Marge Opex'];rows=OCLI.map(o=>[o.vl,o.en,o.cn,o.pn,o.tits,o.src,o.sa,o.ma]);}
+  else if(t==='pme'){h=["Priorité","Entreprise","Poste","Type","Angle d'attaque","Heures","Éco client","Marge Opex","Blocs","Fit","Sensibilité","Outils","Source","Lien"];rows=OP.map(o=>[o.pr,o.en,o.ti,o.type,o.angle,o.hn,o.xa,o.ma,o.bl,`${o.fn}/4`,o.s,o.ou,o.src,o.li]);}
   else{h=['Volume','Entreprise','Secteur','Postes','Salaire moy.','Éco client','Marge Opex','Bilingue','Remote','Titres'];rows=OC.map(o=>[o.vl,o.en,o.sec,o.pn,o.sa,o.xa,o.ma,o.bil?'Oui':'Non',o.rm?'Oui':'Non',o.tits]);}
   const csv=[h.join(','),...rows.map(r=>r.map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(','))].join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));a.download=`pipeline_opex_${t}_${new Date().toISOString().split('T')[0]}.csv`;a.click();
 }
 
 // ── CLINIQUES ────────────────────────────────────────────────────────────────
-const PROXY = 'https://opex-proxy-production.up.railway.app';
-const POSTES_CLI = [
-  'secrétaire médicale','réceptionniste médicale','adjoint administratif médical',
-  'coordonnateur médical','agent prise de rendez-vous','secrétaire clinique',
-  'commis médical','coordonnateur clinique','medical receptionist','medical secretary',
-  'patient coordinator','clinic coordinator','appointment scheduler','medical office assistant',
-  'healthcare administrative assistant'
-];
+const PROXY='https://opex-proxy-production.up.railway.app';
+const POSTES_CLI=['secrétaire médicale','réceptionniste médicale','adjoint administratif médical','coordonnateur médical','agent prise de rendez-vous','secrétaire clinique','commis médical','coordonnateur clinique','medical receptionist','medical secretary','patient coordinator','clinic coordinator','appointment scheduler','medical office assistant','healthcare administrative assistant'];
 
-async function fProxy(endpoint, q, extra='') {
-  try {
-    const url = `${PROXY}/${endpoint}?q=${encodeURIComponent(q)}${extra}`;
-    const r = await fetch(url);
-    if(!r.ok) return [];
-    const d = await r.json();
-    return d.jobs || [];
-  } catch { return []; }
-}
+async function fProxy(endpoint,q,extra=''){try{const url=`${PROXY}/${endpoint}?q=${encodeURIComponent(q)}${extra}`;const r=await fetch(url);if(!r.ok)return[];const d=await r.json();return d.jobs||[];}catch{return[];}}
 
-async function scanCLI() {
-  OCLI = [];
-  setP(0, 'Initialisation scan cliniques...');
-  const raw = [];
-  let i = 0;
-  const total = POSTES_CLI.length * 3;
-
-  for(const p of POSTES_CLI) {
-    setP(Math.round(i/total*50), `Jobillico : "${p}"...`);
-    const jobs = await fProxy('jobillico', p, '&ville=montreal');
-    raw.push(...jobs);
-    const jobs2 = await fProxy('jobillico', p, '&ville=quebec');
-    raw.push(...jobs2);
-    i += 2; await slp(400);
-  }
-
-  setP(60, 'Guichet Emplois...');
-  for(const p of POSTES_CLI.slice(0,8)) {
-    const jobs = await fProxy('guichet', p, '&province=QC');
-    raw.push(...jobs);
-    i++; await slp(300);
-  }
-
-  setP(85, 'Agrégation par clinique...');
-  await slp(100);
-  OCLI = agrCLI(raw);
-  setP(100, `Terminé — ${OCLI.length} cliniques détectées`);
-  statsCLI();
-  renCLI(OCLI);
+async function scanCLI(){
+  OCLI=[];setP(0,'Initialisation scan cliniques...');
+  const raw=[];let i=0;const total=POSTES_CLI.length*3;
+  for(const p of POSTES_CLI){setP(Math.round(i/total*50),`Jobillico : "${p}"...`);const jobs=await fProxy('jobillico',p,'&ville=montreal');raw.push(...jobs);const jobs2=await fProxy('jobillico',p,'&ville=quebec');raw.push(...jobs2);i+=2;await slp(400);}
+  setP(60,'Guichet Emplois...');
+  for(const p of POSTES_CLI.slice(0,8)){const jobs=await fProxy('guichet',p,'&province=QC');raw.push(...jobs);i++;await slp(300);}
+  setP(85,'Agrégation par clinique...');await slp(100);
+  OCLI=agrCLI(raw);
+  setP(100,`Terminé — ${OCLI.length} cliniques détectées`);
+  statsCLI();renCLI(OCLI);
   ['sb-cli','fr-cli','tw-cli'].forEach(id=>document.getElementById(id).classList.add('show'));
 }
 
-function agrCLI(raw) {
-  const m = {};
-  for(const j of raw) {
-    if(!j || !j.company || j.company.length < 2) continue;
-    const k = j.company.toLowerCase().trim();
-    if(!m[k]) m[k] = {en:j.company, city:j.location||'—', postes:[], sources:new Set(), li:j.link};
-    const exists = m[k].postes.find(p=>p.toLowerCase()===j.title.toLowerCase());
-    if(!exists && j.title) m[k].postes.push(j.title);
-    if(j.source) m[k].sources.add(j.source);
-  }
-  return Object.values(m).map(e => {
-    const pn = e.postes.length;
-    const marge = pn * 160 * (23-18);
-    return {
-      en: e.en,
-      cn: e.city,
-      pn,
-      vn: pn >= 3 ? 0 : pn >= 2 ? 1 : 2,
-      vl: pn >= 3 ? 'actif' : pn >= 2 ? 'multi' : 'unique',
-      tits: e.postes.join(' · '),
-      src: [...e.sources].join(', '),
-      sn: 0,
-      sa: '20–25 $/h',
-      mn: marge,
-      ma: `${marge.toLocaleString('fr-CA')} $`,
-      li: e.li
-    };
-  }).filter(e=>e.pn>=1).sort((a,b)=>a.vn-b.vn||b.pn-a.pn);
+function agrCLI(raw){
+  const m={};
+  for(const j of raw){if(!j||!j.company||j.company.length<2)continue;const k=j.company.toLowerCase().trim();if(!m[k])m[k]={en:j.company,city:j.location||'—',postes:[],sources:new Set(),li:j.link};const exists=m[k].postes.find(p=>p.toLowerCase()===j.title.toLowerCase());if(!exists&&j.title)m[k].postes.push(j.title);if(j.source)m[k].sources.add(j.source);}
+  return Object.values(m).map(e=>{const pn=e.postes.length;const marge=pn*160*(23-18);return{en:e.en,cn:e.city,pn,vn:pn>=3?0:pn>=2?1:2,vl:pn>=3?'actif':pn>=2?'multi':'unique',tits:e.postes.join(' · '),src:[...e.sources].join(', '),sn:0,sa:'20–25 $/h',mn:marge,ma:`${marge.toLocaleString('fr-CA')} $`,li:e.li};}).filter(e=>e.pn>=1).sort((a,b)=>a.vn-b.vn||b.pn-a.pn);
 }
 
-function statsCLI() {
-  const actif = OCLI.filter(o=>o.vl==='actif').length;
-  const multi = OCLI.filter(o=>o.vl==='multi').length;
-  const sources = new Set(OCLI.flatMap(o=>o.src.split(', '))).size;
-  const marge = OCLI.reduce((s,o)=>s+o.mn,0);
-  document.getElementById('scl0').textContent = OCLI.length;
-  document.getElementById('scl1').textContent = actif;
-  document.getElementById('scl2').textContent = multi;
-  document.getElementById('scl3').textContent = sources;
-  document.getElementById('scl4').textContent = marge>0?`${marge.toLocaleString('fr-CA')} $`:'—';
-}
-
-function renCLI(em) {
-  const tb = document.getElementById('tb-cli');
-  if(!em.length){tb.innerHTML=`<tr><td colspan="9"><div class="empty"><div class="ei">🏥</div><div class="et">Aucune clinique</div><div class="es">Lancez le scan Cliniques</div></div></td></tr>`;return;}
-  tb.innerHTML = em.map(e=>`<tr>
-    <td><span class="badge ${e.vl==='actif'?'bo':e.vl==='multi'?'by':'bb'}">${e.vl==='actif'?'Actif':e.vl==='multi'?'Multi':'Unique'}</span></td>
-    <td><div class="cn">${esc(e.en)}</div></td>
-    <td style="font-size:14px;color:#374151">${esc(e.cn)}</td>
-    <td><span style="font-size:22px;font-weight:700;color:#111827">${e.pn}</span></td>
-    <td style="font-size:12px;color:#6B7280;max-width:240px">${esc(e.tits)}</td>
-    <td><span class="badge bb" style="font-size:11px">${esc(e.src)}</span></td>
-    <td class="td-mono">${e.sa}</td>
-    <td class="td-marge">${e.ma}</td>
-    <td>${e.li?`<a href="${esc(e.li)}" target="_blank" class="lnk">Voir →</a>`:'—'}</td>
-  </tr>`).join('');
+function statsCLI(){
+  const actif=OCLI.filter(o=>o.vl==='actif').length;
+  const multi=OCLI.filter(o=>o.vl==='multi').length;
+  const sources=new Set(OCLI.flatMap(o=>o.src.split(', '))).size;
+  const marge=OCLI.reduce((s,o)=>s+o.mn,0);
+  document.getElementById('scl0').textContent=OCLI.length;
+  document.getElementById('scl1').textContent=actif;
+  document.getElementById('scl2').textContent=multi;
+  document.getElementById('scl3').textContent=sources;
+  document.getElementById('scl4').textContent=marge>0?`${marge.toLocaleString('fr-CA')} $`:'—';
 }
 
 function fCLI(f,btn){fcliF=f;document.querySelectorAll('#fr-cli .fb').forEach(b=>b.classList.remove('act'));btn.classList.add('act');apCLI();}
 function rCLI(){apCLI();}
-function apCLI(){
-  const q=document.getElementById('qi-cli').value.toLowerCase();
-  let f=OCLI;
-  if(fcliF==='actif')f=f.filter(o=>o.vl==='actif');
-  else if(fcliF==='multi')f=f.filter(o=>o.vl==='multi'||o.vl==='actif');
-  if(q)f=f.filter(o=>o.en.toLowerCase().includes(q)||o.cn.toLowerCase().includes(q)||o.tits.toLowerCase().includes(q));
-  renCLI(f);
-}
+function apCLI(){const q=document.getElementById('qi-cli').value.toLowerCase();let f=OCLI;if(fcliF==='actif')f=f.filter(o=>o.vl==='actif');else if(fcliF==='multi')f=f.filter(o=>o.vl==='multi'||o.vl==='actif');if(q)f=f.filter(o=>o.en.toLowerCase().includes(q)||o.cn.toLowerCase().includes(q)||o.tits.toLowerCase().includes(q));renCLI(f);}
 function srtCLI(c){if(tcliCol===c)tcliDir*=-1;else{tcliCol=c;tcliDir=-1;}OCLI.sort((a,b)=>typeof a[c]==='string'?tcliDir*a[c].localeCompare(b[c]):tcliDir*(a[c]-b[c]));apCLI();}
 
-// Init: hide secondary th
 document.querySelectorAll('th.th-sec').forEach(el=>el.style.display='none');
 </script>
 </body>
